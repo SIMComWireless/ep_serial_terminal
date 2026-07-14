@@ -156,7 +156,7 @@
   aside {
     width: 224px; flex-shrink: 0;
     background: var(--surface);
-    overflow-y: auto; padding: 6px;
+    overflow-y: auto; padding: 6px 6px 40px;   /* bottom room so the fixed GitHub pill never covers the last item */
   }
   /* collapsible sidebar category: clicking the header shows/hides its sub-options.
      It is a "parent menu": same typography as the top-level items. */
