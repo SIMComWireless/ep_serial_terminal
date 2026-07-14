@@ -1,0 +1,21 @@
+/* AT Console — LIGHT theme.
+   Same structure, light palette with good contrast for a lit bench. */
+:root {
+  --bg:        #f3f5f8;
+  --surface:   #ffffff;
+  --surface-2: #eceff4;
+  --line:      #d3dae3;
+  --line-soft: #e4e8ee;
+  --ink:       #1b2531;
+  --ink-dim:   #586475;
+  --ink-faint: #8a97a6;
+  --amber:     #d9821f;   /* accent / brand (deeper for a light background) */
+  --amber-dim: #e9bd86;
+  --amber-hi:  #c5751a;   /* amber hover */
+  --hover:     #00000008; /* subtle hover background */
+  --tx:        #1f72c7;   /* comandos enviados */
+  --ok:        #1f9356;   /* OK */
+  --err:       #cf3142;   /* ERROR / CME / CMS */
+  --urc:       #a9760a;   /* URC (unsolicited) */
+  --body:      #46525f;   /* response body */
+}

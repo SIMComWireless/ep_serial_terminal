@@ -1,0 +1,22 @@
+# SIM7600SA-MNSE LE20 - Jamming --------
+
+AT+CREG?;+CGREG?;+CEREG?;+COPS?
+AT+CPSI?
+
+AT+SJDR=0
+AT+SJDR=1,2
+AT+SJDR=2
+AT+SJDR=3
+AT+SJDR?
+
+AT+SJDCFG="period"
+AT+SJDCFG="mnl"
+AT+SJDCFG="minch"
+AT+SJDCFG="minsinr"
+AT+SJDCFG="detecstat"
+
+AT+SJDCFG="period",1
+AT+SJDCFG="mnl",17
+AT+SJDCFG="minch",4
+AT+SJDCFG="minsinr",10
+AT+SJDCFG="detecstat",1

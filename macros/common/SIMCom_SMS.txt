@@ -1,0 +1,24 @@
+# SIMCom - SMS -------------------------
+
+# Configurate SMS
+AT+CMGF=1
+AT+CSCS="GSM"
+#AT+CSMP=49,167,0,0
+#AT+CNMI=1,1,0,1,0
+
+# Check all received SMS
+AT+CMGL="ALL"
+
+# Check SMS memory status
+AT+CPMS?
+
+# Delete all received SMS
+AT+CMGD=1,4
+
+# Send SMS in text mode
+# Edit number and message!
+AT+CMGS="+5491100000000"
+@500
+Test message
+^Z
+# Note: ^Z (Ctrl+Z) is 0x1A in Hex

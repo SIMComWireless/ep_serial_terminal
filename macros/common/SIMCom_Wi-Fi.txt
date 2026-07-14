@@ -1,0 +1,8 @@
+# Wi-Fi --------------------------------
+
+AT+CWSSID?
+AT+CWAUTH?
+AT+CWCLICNT?
+AT+CWMAP?
+
+AT+NUESTATS=RADIO

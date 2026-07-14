@@ -1,0 +1,21 @@
+# A76XX - JAMMING DETECTION ------------
+
+# Periodic based URC --> period>=1 & detectat=0
+AT+SJDCFG="period",1
+AT+SJDCFG="detecstat",0
+
+# Events based URC   --> period=1 & detecstat=1
+AT+SJDCFG="period",1
+AT+SJDCFG="detecstat",1
+
+AT+SJDR?
+AT+SJDR=0
+AT+SJDR=1
+
+AT+SJDCFG=?
+AT+SJDCFG?
+
+AT+SJDCFG="period",1
+AT+SJDCFG="mnl",17
+AT+SJDCFG="minch",5
+AT+SJDCFG="detecstat",1

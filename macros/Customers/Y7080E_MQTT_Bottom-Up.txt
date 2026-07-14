@@ -1,0 +1,16 @@
+# Y7080E - MQTT - Bottom-Up ------------
+
+AT+CEREG?
+AT+CGPADDR
+
+AT+CCERTLIST
+AT+CSSLCFG?
+
+AT+CMQTTCFG=?
+AT+CMQTTSTART
+AT+CMQTTACCQ=0,"device03",1
+AT+CMQTTCFG="version",0,3
+AT+CMQTTSSLCFG=0,0
+AT+CMQTTCONNECT=0,"tcp://br-sg-iot-teste-dev.azure-devices.net:8883",120,1,"br-s   g-iot-teste-dev.azure-devices.net/device03/?api-version=2021-04-12",""
+# Da error 0,32
+# Donde: 12 invalid parameter, 32 handshake fail

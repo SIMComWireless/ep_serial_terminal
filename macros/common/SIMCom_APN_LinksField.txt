@@ -1,0 +1,30 @@
+# SIMCom - APNs Links Field ------------
+
+AT+SIMCOMATI
+
+#AT+CFUN=0
+
+# Vodafone - Multicarrier - Conecta a todos. Es mejor usar el APN linternet4gd.gdsp, conecta a LTE el otro a 2G
+AT+CGDCONT=1,"IP","linternet4gd.gdsp"
+##AT+CGDCONT=1,"IP","linksapn"
+
+# KPN - Multi 1 - Conecta a todos menos Personal 4G
+#AT+CGDCONT=1,"IP","syniverse"
+
+# A1 (Austria) - Single Carrier - Solo Claro
+#AT+CGDCONT=1,"IP","linksnet"
+#AT+CGDCONT=1,"IP","m2m.tag.com"
+
+AT+CGDCONT?
+#AT+CFUN=1
+
+AT+CPIN?
+#AT+CPIN=1234
+
+AT+CSQ;+CREG?;+CGREG?;+CEREG?;+COPS?
+AT+CICCID
+AT+CPSI?
+
+# Test ping
+AT+CPING="8.8.8.8",1
+AT+CPING="www.google.com",1,4,64,1000,10000,255

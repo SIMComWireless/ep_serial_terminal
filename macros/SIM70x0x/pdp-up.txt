@@ -1,0 +1,5 @@
+# Levantar PDP de aplicación (SIM7070/80/90) - CNACT
+AT+CNCFG=0,1,"internet"
+AT+CNACT=0,1
+@2000
+AT+CNACT?

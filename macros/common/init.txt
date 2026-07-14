@@ -1,0 +1,8 @@
+# Inicialización básica (cualquier módulo SIMCom)
+AT
+ATE1
+AT+CMEE=2
+AT+CPIN?
+AT+CSQ
+AT+CEREG?
+AT+COPS?

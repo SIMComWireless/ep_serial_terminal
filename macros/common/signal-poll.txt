@@ -1,0 +1,5 @@
+# Señal y registro
+AT+CSQ
+AT+CESQ
+AT+CEREG?
+AT+COPS?

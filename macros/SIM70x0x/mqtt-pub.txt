@@ -1,0 +1,8 @@
+# MQTT publish (SIM7080/7070) — stack SM
+AT+SMCONF="URL","test.mosquitto.org","1883"
+AT+SMCONF="CLIENTID","simcom-demo"
+AT+SMCONF="KEEPTIME",60
+AT+SMCONN
+@2000
+AT+SMPUB="dev/test",5,1,0
+>hello

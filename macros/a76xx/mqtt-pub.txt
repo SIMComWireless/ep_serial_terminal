@@ -1,0 +1,11 @@
+# MQTT publish (A76xx / SIM7600) — broker de prueba
+AT+CMQTTSTART
+@1000
+AT+CMQTTACCQ=0,"simcom-demo",0
+AT+CMQTTCONNECT=0,"tcp://test.mosquitto.org:1883",60,1
+@2000
+AT+CMQTTTOPIC=0,8
+>dev/test
+AT+CMQTTPAYLOAD=0,5
+>hello
+AT+CMQTTPUB=0,1,60

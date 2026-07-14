@@ -1,0 +1,36 @@
+# Y7080E - Net and SSL - Bottom-Up -----
+
+AT+WORKLOCK=1
+AT+CPSMS=0
+
+AT+SIMCOMATI
+
+AT+NCCID
+AT+CGSN=1
+AT+CIMI
+
+AT+CFUN=0
+AT+CGDCONT=1,"IP","LF.BR",0
+AT+CGAUTH=1,1,"",""
+AT+NBAND=28,3
+AT+CFUN=1
+@5000
+
+AT+CESQ
+AT+CEREG?
+AT+CGPADDR
+
+# Load Certificates and configure SSL
+
+AT+CCERTDOWN="ca.pem",1316
+AT+CCERTDOWN="cliente_certificate.pem",2464
+AT+CCERTDOWN="cliente_key.pem",232
+AT+CCERTLIST
+
+AT+CSSLCFG="sslversion",0,4
+AT+CSSLCFG="authmode",0,2
+
+AT+CSSLCFG="cacert",0,"ca.pem"
+AT+CSSLCFG="clientcert",0,"cliente_certificate.pem"
+AT+CSSLCFG="clientkey",0,"client_key.pem"
+AT+CSSLCFG?

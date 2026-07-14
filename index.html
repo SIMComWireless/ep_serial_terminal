@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AT Console · SIMCom</title>
+<link rel="stylesheet" href="app/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="app/css/styles.css">
+<link id="theme-css" rel="stylesheet" href="app/css/theme-dark.css">
+</head>
+<body>
+
+<header>
+  <!-- header logo: serial (startup/None) · SIMCom · Espressif; syncBrand() swaps it per module and theme -->
+  <div class="brand">
+    <img class="logo" src="app/img/serial_term.svg" alt="Serial Terminal">
+  </div>
+  <!-- module info dashboard -->
+  <div class="hdr-inst" id="hdr-inst" style="display:none">
+    <div class="dcell sim-cell cell-only">
+      <span class="dk" data-i18n="g_sim">SIM</span>
+      <svg class="sim-ico" viewBox="0 0 22 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M3 1.5 h10.5 L20.5 8.5 V22.5 a2 2 0 0 1 -2 2 H3 a2 2 0 0 1 -2 -2 V3.5 a2 2 0 0 1 2 -2 z" stroke="currentColor" stroke-width="1.6"/>
+        <rect x="6" y="12" width="10" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+        <path d="M11 12 V21 M6 15.5 H16 M6 18 H16" stroke="currentColor" stroke-width="1"/>
+      </svg>
+      <span class="dv" id="g-sim">—</span>
+    </div>
+    <div class="dcell reg-cell cell-only">
+      <span class="dk" data-i18n="g_reg">Registration</span>
+      <span class="leds">
+        <span class="ledwrap"><i class="led" id="led-creg"></i><b>CREG</b></span>
+        <span class="ledwrap"><i class="led" id="led-cgreg"></i><b>CGREG</b></span>
+        <span class="ledwrap"><i class="led" id="led-cereg"></i><b>CEREG</b></span>
+      </span>
+    </div>
+    <!-- ESP (Espressif) cells: Wi-Fi mode, state and SSID -->
+    <div class="dcell esp-only"><span class="dk" data-i18n="g_wmode">Wi-Fi mode</span><span class="dv" id="g-wmode">—</span></div>
+    <div class="dcell esp-only"><span class="dk" data-i18n="g_wstate">State</span><span class="dv" id="g-wstate">—</span></div>
+    <div class="dcell esp-only"><span class="dk">SSID</span><span class="dv" id="g-ssid">—</span></div>
+    <div class="sig-cell">
+      <span class="dk" data-i18n="g_signal">Signal</span>
+      <div class="sig-row">
+        <span class="bars" id="g-bars"><i></i><i></i><i></i><i></i><i></i></span>
+        <div class="dcell mini cell-only"><span class="dk">CSQ</span><span class="dv" id="g-csq">—</span></div>
+        <div class="dcell mini"><span class="dk">RSSI</span><span class="dv" id="g-rssi">—</span></div>
+        <div class="dcell mini cell-only"><span class="dk">RS-SNR</span><span class="dv" id="g-rssnr">—</span></div>
+        <div class="dcell mini cell-only"><span class="dk">RSRP</span><span class="dv" id="g-rsrp">—</span></div>
+        <div class="dcell mini esp-only"><span class="dk">CH</span><span class="dv" id="g-chan">—</span></div>
+      </div>
+    </div>
+    <div class="dcell cell-only"><span class="dk" data-i18n="g_mode">Net mode</span><span class="dv" id="g-mode">—</span></div>
+    <div class="dcell cell-only"><span class="dk" data-i18n="g_band">Band</span><span class="dv" id="g-band">—</span></div>
+    <div class="dcell cell-only"><span class="dk" data-i18n="g_oper">Operator</span><span class="dv dim" id="g-oper">—</span></div>
+    <div class="dcell cell-only"><span class="dk">APN</span><span class="dv" id="g-apn">—</span></div>
+    <div class="dcell cell-only"><span class="dk" data-i18n="g_iptype">IP type</span><span class="dv" id="g-iptype">—</span></div>
+    <div class="dcell"><span class="dk">IP</span><span class="dv" id="g-ip">—</span></div>
+    <div class="dcell esp-only"><span class="dk" data-i18n="g_gw">Gateway</span><span class="dv" id="g-gw">—</span></div>
+    <div class="dcell esp-only"><span class="dk">MAC</span><span class="dv" id="g-mac">—</span></div>
+    <button class="iconbtn" id="dash-refresh" title="Query module">↻</button>
+  </div>
+  <!-- App control panel: New Serial Terminal, Language, Theme -->
+  <div class="ctl">
+    <button id="settings-btn" class="btn">＋ <span data-i18n="new_terminal">New Serial Terminal</span></button>
+    <span class="ctl-lbl" data-i18n="g_language">Language</span>
+    <select id="lang" title="Language / Idioma"></select>
+    <span class="ctl-lbl" data-i18n="g_theme">Theme</span>
+    <div class="seg" id="theme-toggle" title="Theme">
+      <button data-theme="light" aria-label="Light">☀</button>
+      <button data-theme="dark" aria-label="Dark">☾</button>
+    </div>
+  </div>
+</header>
+
+<!-- New Serial Terminal menu -->
+<div id="settings-pop" hidden>
+  <div class="setpop-head"><b id="setpop-title" data-i18n="new_terminal">New Serial Terminal</b><span id="setpop-target" class="setpop-target"></span><span class="sp"></span><button class="iconbtn" id="setpop-close">✕</button></div>
+  <div class="setpop-grid">
+    <label class="field phys"><span data-i18n="baud">Baud</span>
+      <select id="baud">
+        <option>9600</option><option>57600</option>
+        <option selected>115200</option><option>230400</option>
+        <option>460800</option><option>921600</option>
+      </select>
+    </label>
+    <label class="field phys"><span data-i18n="databits">Data</span>
+      <select id="databits"><option selected>8</option><option>7</option></select>
+    </label>
+    <label class="field phys"><span data-i18n="stopbits">Stop</span>
+      <select id="stopbits"><option selected>1</option><option>2</option></select>
+    </label>
+    <label class="field phys"><span data-i18n="parity">Parity</span>
+      <select id="parity">
+        <option value="none" selected data-i18n="par_none">None</option>
+        <option value="even" data-i18n="par_even">Even</option>
+        <option value="odd" data-i18n="par_odd">Odd</option>
+      </select>
+    </label>
+    <label class="field"><span data-i18n="enc">Enc</span>
+      <select id="enc">
+        <option value="utf-8" selected>UTF-8</option>
+        <option value="latin1">Latin-1</option>
+        <option value="ascii">ASCII</option>
+      </select>
+    </label>
+    <label class="field"><span data-i18n="module">Module</span>
+      <select id="module"></select>
+    </label>
+  </div>
+  <div class="setpop-toggles">
+    <label class="toggle"><input type="checkbox" id="t-ts" checked> <span data-i18n="ts">Time</span></label>
+    <label class="toggle"><input type="checkbox" id="t-dir" checked> <span data-i18n="dir">› ‹ Direction</span></label>
+    <label class="toggle"><input type="checkbox" id="t-echo"> <span data-i18n="echo">Show echo</span></label>
+    <label class="toggle"><input type="checkbox" id="t-scroll" checked> <span data-i18n="scroll">Auto-scroll</span></label>
+    <label class="toggle"><input type="checkbox" id="t-ansi"> <span data-i18n="ansi">ANSI colors</span></label>
+    <label class="toggle"><input type="checkbox" id="t-np"> <span data-i18n="np">Non-printable</span></label>
+    <label class="toggle sub-toggle"><input type="checkbox" id="t-eolshow"> <span data-i18n="show_eol">↳ show CR / LF</span></label>
+    <label class="toggle"><input type="checkbox" id="t-badges" checked> <span data-i18n="badges">Labels (URC / PROMPT / ERROR)</span></label>
+    <label class="toggle"><input type="checkbox" id="t-lat" checked> <span data-i18n="latency">Latency (ms)</span></label>
+  </div>
+  <div class="setpop-foot">
+    <label class="toggle phys"><input type="checkbox" id="t-autoreconn"> <span data-i18n="autoreconnect">Auto-reconnect</span></label>
+  </div>
+  <div class="setpop-conn" id="setpop-conn">
+    <button id="connect" class="btn primary" data-i18n="open_serial">Open serial port</button>
+    <button id="virtual" class="btn" data-i18n="open_sim">Open Serial simulator</button>
+  </div>
+  <!-- version + build stamp (populated by init.js from APP_BUILD; standalone builds carry the date) -->
+  <div class="setpop-ver" id="setpop-ver"></div>
+</div>
+
+<!-- Main: Left Menu, Wizzards pannel, Consoles pannel  -->
+<main>
+  <!-- Left Menu  -->
+  <button id="side-reopen" title="Show AT commands" hidden>›</button>
+  <aside id="sidebar"><!-- quick actions injected --></aside>
+
+  <div class="gutter" id="gutter-side" title="Resize"></div> <!-- Resize pannel  -->
+
+  <!-- Wizzards pannel  -->
+  <section id="wiz-panel" hidden>
+    <div class="wiz-scroll"><div id="wiz-stack"></div></div>
+  </section>
+
+  <div class="gutter" id="gutter-wiz" title="Resize" hidden></div> <!-- Resize pannel  -->
+
+  <!-- Consoles pannel  -->
+  <div class="panel">
+
+    <div id="consoles"></div>
+
+    <!-- Log search and filters (focused terminal) — opens with 🔍 or Ctrl+F -->
+    <div class="searchbar" id="searchbar" hidden>
+      <input id="log-q" type="text" data-i18n-ph="log_search" placeholder="Search log" autocomplete="off" spellcheck="false">
+      <span id="q-count" class="q-count"></span>
+      <button class="iconbtn" id="q-prev" title="Shift+Enter">↑</button>
+      <button class="iconbtn" id="q-next" title="Enter">↓</button>
+      <button class="qflt active" id="f-tx">TX</button>
+      <button class="qflt active" id="f-rx">RX</button>
+      <button class="qflt active" id="f-urc">URC</button>
+      <button class="qflt active" id="f-err">ERROR</button>
+      <button class="iconbtn" id="q-close" title="Esc">✕</button>
+    </div>
+
+    <div class="cmdbar">
+      <span id="cmd-target" class="cmd-target"></span>
+      <input id="cmd" type="text" data-i18n-ph="cmd_ph" placeholder="Type an AT command and press Enter  ·  ↑/↓ history" autocomplete="off" spellcheck="false">
+      <button id="send" class="btn primary" data-i18n="send">Send</button>
+      <span class="cmd-tools">
+        <button class="iconbtn" id="b-clear" data-i18n="clear">Clear</button>
+        <button class="iconbtn" id="b-search" title="Ctrl+F">🔍</button>
+      </span>
+      <label class="field cmd-eol"><span data-i18n="eol">End</span>
+        <select id="eol">
+          <option value="\r">CR</option>
+          <option value="\r\n" selected>CRLF</option>
+          <option value="\n">LF</option>
+          <option value="" data-i18n="eol_none">No end</option>
+        </select>
+      </label>
+      <label class="toggle hex-tg"><input type="checkbox" id="t-hex"> <span data-i18n="hex">Hex</span></label>
+      <label class="toggle hex-tg" title="\r \n \t \xHH \uHHHH"><input type="checkbox" id="t-esc"> <span data-i18n="esc">\n</span></label>
+      <span class="cmd-tools">
+        <button class="iconbtn" id="b-export" data-i18n="export_all">Export All</button>
+        <button class="iconbtn" id="b-exphist" data-i18n="export_input">Export Input Only</button>
+        <button class="iconbtn" id="b-import" data-i18n="log_open">Open log…</button>
+      </span>
+    </div>
+  </div>
+ 
+</main>
+
+<!-- Unsupported -->
+<div id="unsupported"><div>
+  <h2 data-i18n="unsup_title">Web Serial not available</h2>
+  <p data-i18n="unsup_text">Your browser doesn't support the <b>Web Serial API</b> (available in desktop Chrome, Edge or Opera, over <code>https</code> or <code>localhost</code>). You can still try the console with the <b>virtual modem</b>, which needs no hardware or port.</p>
+  <button class="btn primary" id="u-virtual" style="margin-top:16px" data-i18n="unsup_btn">Continue in Virtual mode</button>
+</div></div>
+
+<!-- Scripts -->
+<script src="app/js/util.js"></script>
+<script src="app/js/icons.js"></script>
+<script src="app/js/i18n.js"></script>
+<script src="app/lang/en.js"></script>
+<script src="app/lang/es.js"></script>
+<script src="app/lang/pt.js"></script>
+<script src="app/lang/zh.js"></script>
+<script src="app/lang/it.js"></script>
+<script src="app/lang/fr.js"></script>
+<script src="app/lang/ja.js"></script>
+<script src="app/lang/ko.js"></script>
+<script src="app/lang/de.js"></script>
+<script src="app/lang/ru.js"></script>
+<script src="app/vendor/leaflet/leaflet.js"></script>
+<script src="app/js/serial.js"></script>
+<script src="app/js/emulator.js"></script>
+<script src="app/js/drivers.js"></script>
+<script src="app/js/profiles.js"></script>
+<script src="app/js/data.js"></script>
+<script src="app/js/macros.js"></script>
+<script src="app/js/live.js"></script>
+<script src="app/js/session.js"></script>
+<script src="app/js/app.js"></script>
+<script src="app/js/wizards-core.js"></script>
+<script src="app/js/wizards-radio.js"></script>
+<script src="app/js/wizards-services.js"></script>
+<script src="app/js/init.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+# Info de red SIM7600 (MDM9x07)
+AT+CPSI?
+AT+CREG?
+AT+CEREG?
+AT+COPS?
+AT+CNMP?

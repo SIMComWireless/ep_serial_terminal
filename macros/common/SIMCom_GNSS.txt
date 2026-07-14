@@ -1,0 +1,30 @@
+# SIMCom - GNSS ------------------------
+
+# Power status
+AT+CGNSSPWR?
+# GNSS Power OFF
+AT+CGNSSPWR=0
+# GNSS Power ON
+AT+CGNSSPWR=1,1,1
+# When first used, loss ephemeris, or move receiver 200 Km
+AT+CGPSCOLD
+# Boot more than 2 hours from last location
+AT+CGPSWARM
+# Boot less than 2 hours from last location
+AT+CGPSHOT
+# Get location info (GPS or GNSS) on USB AT each N time (0 to 255 seconds)
+AT+CGPSINFO=1
+AT+CGNSSINFO=1
+# Change output port
+AT+CGNSSPORTSWITCH?
+# Get raw NMEA data by USB NMEA port
+AT+CGNSSPORTSWITCH=0,0
+# Get raw NMEA data by UART port
+AT+CGNSSPORTSWITCH=0,1
+AT+CGPSNMEARATE?
+AT+CGNSSMODE?
+# Sending data received from UART3 to NMEA port
+AT+CGNSSNMEA?
+AT+CGNSSTST=0
+# Get GNSS Chipsert and Firmware
+AT+CGNSSPROD

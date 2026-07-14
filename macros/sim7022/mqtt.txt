@@ -1,0 +1,7 @@
+# MQTT (SIM7022 / familia SIM7020) — stack CMQ, payload en hex
+AT+CMQNEW="test.mosquitto.org","1883",12000,1024
+@1000
+AT+CMQCON=0,3,"simcom-demo",600,0,0
+@1000
+# publicar "hello" = hex 68656C6C6F en dev/test
+AT+CMQPUB=0,"dev/test",1,0,0,5,"68656C6C6F"

@@ -1,0 +1,39 @@
+# SIM7600 & EC21 - Laser ---------------
+
+# Both modules
+
+AT+CFUN=1
+
+AT+CGACT=1,1
+AT+CGACT?;+CGCONTRDP
+
+AT+CGDCONT?
+
+AT+CPSI?
+AT+CSQ;+CREG?;+CGREG?;+CEREG?;+COPS?
+
+# SIM7600
+
+# Automatic
+AT+CNMP=2
+# GSM+WCDMA+LTE Only
+AT+CNMP=39
+# GSM Only
+AT+CNMP=13
+
+AT+CMCFG="LIST"
+AT+CNAOP=7,3,5,9,11,2,4
+
+AT+CGDCONT=1,"IP","nacionserviciosm2m.personal.com"
+
+# EC21
+
+AT+QGMR
+AT+QCFG="DBGCTL",0
+AT+QCFG="nwscanmode"?
+AT+QCFG="nwscanseq"?
+AT+QCFG="nwscanmode"=0,1
+AT+QCFG="nwscanmode"=1,1
+AT+QPING=1,"8.8.8.8"
+AT+QIACT?
+AT+QIACT=1

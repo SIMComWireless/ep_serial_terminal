@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="168" height="34" viewBox="0 0 168 34">
+  <!-- logo "Serial Terminal": pantalla de terminal con prompt >_ (colores legibles en tema claro y oscuro) -->
+  <rect x="1.5" y="2.5" width="42" height="29" rx="5.5" fill="#1c232e" stroke="#5b6674" stroke-width="1.6"/>
+  <path d="M9.5 11 L17 17 L9.5 23" fill="none" stroke="#F0A23B" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="21.5" y="21.4" width="10" height="2.8" rx="1.4" fill="#c8d2e0"/>
+  <text x="52" y="16" font-family="Consolas, 'Cascadia Mono', 'Courier New', monospace" font-size="12.5" font-weight="700" letter-spacing="1.5" fill="#8a94a3">SERIAL</text>
+  <text x="52" y="29" font-family="Consolas, 'Cascadia Mono', 'Courier New', monospace" font-size="12.5" font-weight="700" letter-spacing="1.5" fill="#F0A23B">TERMINAL</text>
+</svg>

@@ -1,0 +1,16 @@
+# SIMCom - FTP -------------------------
+
+AT+CFTPSSTART
+AT+CFTPSSINGLEIP=1
+AT+CFTPSLOGIN="117.131.85.140",60059,"myuser","mypass",0
+
+AT+CFTPSTYPE=I
+AT+CFTPSTYPE=A
+
+AT+CFTPSSIZE="starline_gen7v2_900-00624.bin"
+AT+CFTPSGET="starline_gen7v2_900-00624.bin",0,3
+
+AT+CFTPSPUT="data.bin",9000
+
+AT+CFTPSLOGOUT
+AT+CFTPSSTOP

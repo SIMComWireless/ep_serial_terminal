@@ -1,0 +1,39 @@
+# SIMCom - Network, Ping & UDP echo ----
+
+AT+SIMCOMATI
+
+ATE0
+#AT+CFUN=0
+AT+CGDCONT=1,"IP","gm2m.movistar"
+#AT+CGDCONT=1,"IP","datos.personal.com"
+#AT+CGDCONT=1,"IP","igprs.claro.com.ar"
+#AT+CGDCONT=1,"IPV4V6","zap.vivo.com.br"
+AT+CGDCONT?
+AT+CGAUTH?
+#AT+CFUN=1
+
+AT+CPIN?
+#AT+CPIN=1234
+
+AT+CNMP?
+AT+CNBP?
+
+AT+CSQ;+CREG?;+CGREG?;+CEREG?;+COPS?
+AT+CPSI?
+AT+CESQ?
+
+AT+CGACT=1,1
+AT+CGACT?;+CGCONTRDP
+
+# Test ping
+AT+CPING="8.8.8.8",1
+AT+CPING="www.google.com",1,4,64,1000,10000,255
+
+# Test UDP Echo Server
+AT+NETOPEN=1
+AT+CIPOPEN=1,"UDP",,,10001
+#AT+CIPOPEN=1,"UDP","52.43.121.77",10001,10001
+AT+CIPSEND=1,,"52.43.121.77",10001
+eric
+1A
+AT+NETCLOSE=1

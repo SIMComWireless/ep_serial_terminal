@@ -1,0 +1,22 @@
+# A76XX - MQTT with EMQX broker --------
+
+# Test Network
+AT+CPIN?;+CSQ;+CREG?;+CGREG?;+CEREG?;+COPS?;+CPSI?
+AT+CGACT?;+CGCONTRDP
+
+# Test ping
+AT+CPING="8.8.8.8",1
+
+# Test MQTT with EMQX broker
+# https://mqttx.app/web-client#/recent_connections/0?oper=create
+AT+CMQTTSTART
+AT+CMQTTACCQ=0,"A7672SA LASA_eric",0
+AT+CMQTTCFG="argtopic",0,1,1
+#AT+CMQTTCFG="argtopic",0,0
+AT+CMQTTCONNECT=0,"tcp://broker.emqx.io:1883",60,1
+AT+CMQTTSUB=0,"testtopic/eric",2,1
+AT+CMQTTPUB=0,"testtopic/eric",1,4
+eric
+AT+CMQTTUNSUB=0,"testtopic/eric",1
+AT+CMQTTDISC=0,120
+AT+CMQTTSTOP

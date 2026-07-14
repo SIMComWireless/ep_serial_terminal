@@ -1,0 +1,4 @@
+# GNSS A76xx (CGNSS*) — encender y leer posición
+AT+CGNSSPWR=1
+@3000
+AT+CGNSSINFO

@@ -1,0 +1,25 @@
+# A76XX - BWS --------------------------
+
+# SDK test TCP with BWS server
+
+# Main menu -------------------
+# 10. TCPIP
+10
+# TCPIP menu -----------------
+# 1. Init
+1
+# 2. TCP client open
+2
+gw-dev.bws-infra.com:6001
+# 3. TCP client send
+3
+
+# BWS Firmware commands
+
+SMDS0
+tx30
+SDMS2
+
+# BWS LoRa commands
+
+AT+CRX=915000000,0,0,1

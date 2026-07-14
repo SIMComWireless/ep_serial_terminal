@@ -1,0 +1,8 @@
+# SIMCom - IMEI ------------------------
+
+AT+GSN
+AT*PROD=0
+AT+SIMEI?
+AT+SIMEI=863427040173388
+AT*PROD=1
+AT+GSN

@@ -1,0 +1,4 @@
+# GNSS SIM7600 (CGPS*) — encender y leer posición
+AT+CGPS=1
+@3000
+AT+CGPSINFO

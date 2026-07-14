@@ -1,0 +1,6 @@
+# NB-IoT attach + contexto (SIM7022)
+AT+CGATT=1
+@2000
+AT+CGACT=1,1
+@1000
+AT+CGCONTRDP

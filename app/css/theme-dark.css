@@ -1,0 +1,21 @@
+/* AT Console — DARK theme (default).
+   "Bench instrument" palette: charcoal-blue + signal amber. */
+:root {
+  --bg:        #0e1219;
+  --surface:   #161c26;
+  --surface-2: #1c2430;
+  --line:      #29333f;
+  --line-soft: #202a36;
+  --ink:       #d6dde7;
+  --ink-dim:   #828d9c;
+  --ink-faint: #56616f;
+  --amber:     #f0a23b;   /* accent / brand (RF signal) */
+  --amber-dim: #8a6228;
+  --amber-hi:  #f5b257;   /* amber hover */
+  --hover:     #20293550; /* subtle hover background */
+  --tx:        #58b6ff;   /* comandos enviados */
+  --ok:        #56c98a;   /* OK */
+  --err:       #f4626e;   /* ERROR / CME / CMS */
+  --urc:       #f2c14e;   /* URC (unsolicited) */
+  --body:      #aab3c0;   /* response body */
+}

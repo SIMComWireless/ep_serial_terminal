@@ -1,0 +1,9 @@
+# SIM7600 - ADB & Fastboot -------------
+
+# ADB status, deactivate, activate
+AT+CUSBADB?
+AT+CUSBADB=0
+AT+CUSBADB=1
+
+# For fastboot, open ADB only
+AT+BOOTLDR

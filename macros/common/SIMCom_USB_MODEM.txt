@@ -1,0 +1,15 @@
+# SIMCom - MODEM -----------------------
+
+AT+DIALMODE=?
+AT+DIALMODE?
+
+# RNDIS is with DIALMODE=0
+AT+DIALMODE=0
+AT+DIALMODE=1
+
+AT$MYCONFIG=?
+AT$MYCONFIG?
+AT$MYCONFIG="usbnetmode",0,1
+AT$MYCONFIG="usbnetmode",1
+
+ATD*99#
