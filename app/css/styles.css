@@ -379,6 +379,13 @@
   .sgm-rng { color: var(--ink-faint); font-size: 10px; margin-left: auto; }
   .sgm-svg { width: 100%; height: 46px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; }
 
+  /* "Fork me on GitHub" pill, fixed at the bottom-left corner */
+  #fork-github { position: fixed; left: 10px; bottom: 10px; z-index: 60; display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px 5px 9px;
+    color: var(--ink-dim); text-decoration: none; font-size: 11px; box-shadow: 0 4px 14px rgba(0,0,0,.3); }
+  #fork-github svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+  #fork-github:hover { color: var(--amber); border-color: var(--amber-dim); }
+
   /* SMS PDU-mode badge (SIM7022 NB-IoT): marks that the inbox/send use PDU, not text mode */
   .sms-pdubadge { font-family: var(--mono); font-size: 9px; letter-spacing: .5px; color: var(--amber);
     border: 1px solid var(--amber-dim); border-radius: 4px; padding: 1px 5px; cursor: help; }
@@ -753,6 +760,9 @@
   @media (max-width: 720px) {
     aside { position: absolute; z-index: 10; height: 100%; transform: translateX(-100%); transition: transform .2s; border-right: 1px solid var(--line); }
     aside.open { transform: none; }
+    /* GitHub pill: icon-only on narrow screens (don't cover the cmdbar) */
+    #fork-github span { display: none; }
+    #fork-github { padding: 6px; }
     .hdr-inst .dcell, .hdr-inst .sig-cell { padding: 3px 9px; }
     /* Stack vertically: wizard on top (bounded), AT console below always visible */
     main { flex-direction: column; }
