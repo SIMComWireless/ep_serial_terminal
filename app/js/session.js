@@ -18,6 +18,9 @@ const App = {
     open: [],                //   [{ id, el, cleanup, details }]
     cleanup: null,           //   teardown each render sets; buildWizardCard captures it per card
   },
+  editors: [],               // text-editor panes (CodeMirror) sharing the console grid — see editor.js
+  edSeq: 0,                  //   counter for "untitled-N" names
+  searchTarget: null,        // last-focused pane the shared search bar acts on: {kind:'term',s} | {kind:'editor',ed}
   macro: {                   // macro editor
     delay: 400,              //   default pause between commands (ms, used by runMacro)
     delayVal: 400,           //   numeric value shown, in the chosen unit

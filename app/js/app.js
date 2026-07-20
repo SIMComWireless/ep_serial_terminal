@@ -98,9 +98,11 @@ function startRename(sess) {
   };
   el.addEventListener('blur', commit); el.addEventListener('keydown', onKey);
 }
-const MAX_SESS = 8;   // max number of terminals (4 rows of 2)
+const MAX_SESS = 8;   // max number of panes in the console grid (terminals + editors, 4 rows of 2)
+// Panes sharing the grid: terminals (UI.sessions) + text editors (App.editors, see editor.js).
+function paneCount() { return UI.sessions.length + App.editors.length; }
 function layoutPanes() {
-  const n = UI.sessions.length, c = $('consoles');
+  const n = paneCount(), c = $('consoles');
   c.dataset.n = String(n);
   if (n >= 3 && n % 2 === 1) c.dataset.odd = '1'; else c.removeAttribute('data-odd');   // odd ≥3 → the last one spans the whole row
   if (n >= 5) c.dataset.scroll = '1'; else c.removeAttribute('data-scroll');             // 5th on (3rd row) → scroll, rows sized at 2-rows height
@@ -117,7 +119,7 @@ function focusSession(sess) {
   syncSettingsUI();
   refreshSidebar();
   $('cmd-target').textContent = sess.label;
-  if (!$('searchbar').hidden) qSyncBar();   // the search bar reflects the newly focused terminal's state
+  setSearchTarget({ kind: 'term', s: sess });   // the shared search bar now acts on this terminal
 }
 // Touch device (no physical keyboard)? → on mobile, focus the box to raise the on-screen keyboard.
 function isTouchDevice() { return !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches); }
@@ -161,7 +163,7 @@ document.addEventListener('mousedown', (e) => {
 });
 function resetStrip() { drawSignal(null); drawReg(null); for (const id of DASH_IDS) drawSet(id, '—'); }
 function setLinkUI() {
-  const full = UI.sessions.length >= MAX_SESS;
+  const full = paneCount() >= MAX_SESS;   // the grid is shared with the editor panes
   $('connect').disabled = full; $('virtual').disabled = full;
   $('connect').textContent = t('open_serial'); $('connect').classList.add('primary'); $('connect').classList.remove('danger');
   $('virtual').textContent = t('open_sim'); $('virtual').classList.remove('danger');
@@ -235,7 +237,7 @@ function refreshDynamic() {
 }
 
 async function addRealPort() {
-  if (UI.sessions.length >= MAX_SESS) return;
+  if (paneCount() >= MAX_SESS) return;
   const base = defaultSettings;  // "New Serial Terminal" template (does not inherit the focused one)
   const sess = new Session(false);
   sess.settings = { ...base };                    // own copy of the defaults template
@@ -253,7 +255,7 @@ async function addRealPort() {
   setLinkUI();
 }
 function addVirtualPort() {
-  if (UI.sessions.length >= MAX_SESS) return;
+  if (paneCount() >= MAX_SESS) return;
   const base = defaultSettings;  // "New Serial Terminal" template (does not inherit the focused one)
   const sess = new Session(true);
   sess.settings = { ...base };
@@ -379,49 +381,73 @@ window.addEventListener('resize', acHide);
    so incoming lines get highlighted too. TX/RX/URC hide by direction via
    flt-no-* classes on the log (they survive re-renders). Closing restores the neutral view. */
 let qHits = [], qIdx = -1;
+// The single bar acts on the last-focused pane: a terminal (log rows + direction filters) or an
+// editor (CodeMirror matches, filters hidden). setSearchTarget() is called on every pane focus.
+function qTarget() {
+  const t = App.searchTarget;
+  if (t && t.kind === 'editor' && App.editors.includes(t.ed)) return t;
+  if (UI.focused) return { kind: 'term', s: UI.focused };
+  return null;
+}
+function setSearchTarget(t) { App.searchTarget = t; if (!$('searchbar').hidden) qSyncBar(); }
 function qRecount() {
-  const s = UI.focused;
-  qHits = (s && s.logEl) ? [...s.logEl.querySelectorAll('.ln.q-hit')] : [];
-  qIdx = -1;
-  $('q-count').textContent = (s && s.searchQ) ? String(qHits.length) : '';
+  const t = qTarget();
+  if (t && t.kind === 'term') { qHits = t.s.logEl ? [...t.s.logEl.querySelectorAll('.ln.q-hit')] : []; qIdx = -1; $('q-count').textContent = t.s.searchQ ? String(qHits.length) : ''; }
+  else { qHits = []; qIdx = -1; }
 }
 function qApply() {
-  const s = UI.focused; if (!s) return;
-  s.searchQ = $('log-q').value.trim() || null;
-  rerenderLog(s);
+  const t = qTarget(); if (!t) return;
+  const q = $('log-q').value.trim() || null;
+  if (t.kind === 'editor') { const n = editorSearchApply(t.ed, q); $('q-count').textContent = q ? String(n) : ''; if (n) editorSearchNav(t.ed, 1, $('q-count')); return; }
+  t.s.searchQ = q;
+  rerenderLog(t.s);
   qRecount();
   if (qHits.length) qNav(1);   // jump to the first match
 }
 function qNav(d) {
+  const t = qTarget(); if (!t) return;
+  if (t.kind === 'editor') { editorSearchNav(t.ed, d, $('q-count')); return; }
   if (!qHits.length) return;
   qIdx = qIdx < 0 ? (d > 0 ? 0 : qHits.length - 1) : (qIdx + d + qHits.length) % qHits.length;
   qHits.forEach((r, i) => r.classList.toggle('q-cur', i === qIdx));
   qHits[qIdx].scrollIntoView({ block: 'center' });
   $('q-count').textContent = (qIdx + 1) + '/' + qHits.length;
 }
-// Pours the focused session's state into the bar (when terminal focus changes).
+// Pours the focused pane's state into the bar (on pane focus / target change).
 function qSyncBar() {
-  const s = UI.focused;
-  $('log-q').value = (s && s.searchQ) || '';
-  for (const k of ['tx', 'rx', 'urc', 'err']) $('f-' + k).classList.toggle('active', !s || s.logFilters[k]);
-  qRecount();
+  const t = qTarget();
+  const isEd = !!(t && t.kind === 'editor');
+  const open = !$('searchbar').hidden;
+  $('searchbar').classList.toggle('for-editor', isEd);   // hides the TX/RX/URC/ERROR filters
+  App.editors.forEach((ed) => ed.findBtn && ed.findBtn.classList.toggle('active', open && isEd && t.ed === ed));   // latch the searched editor's 🔍
+  if (isEd) { $('log-q').value = t.ed.searchQ || ''; $('q-count').textContent = ''; }
+  else {
+    const s = t && t.s;
+    $('log-q').value = (s && s.searchQ) || '';
+    for (const k of ['tx', 'rx', 'urc', 'err']) $('f-' + k).classList.toggle('active', !s || s.logFilters[k]);
+    qRecount();
+  }
 }
-function qOpen() { $('searchbar').hidden = false; $('b-search').classList.add('active'); qSyncBar(); $('log-q').focus(); }
+function qOpen() { $('searchbar').hidden = false; $('b-search').classList.add('active'); qSyncBar(); $('log-q').focus(); $('log-q').select(); }
 function qClose() {
-  const s = UI.focused;
-  if (s) {   // neutral view: no highlighting and all types visible
+  const t = qTarget();
+  if (t && t.kind === 'term') {   // neutral view: no highlighting and all types visible
+    const s = t.s;
     s.searchQ = null;
     s.logFilters = { tx: true, rx: true, urc: true, err: true };
     if (s.logEl) { s.logEl.classList.remove('flt-no-tx', 'flt-no-rx', 'flt-no-urc', 'flt-no-err'); rerenderLog(s); }
-  }
+  } else if (t && t.kind === 'editor') { editorSearchClear(t.ed); }
   $('log-q').value = ''; $('q-count').textContent = '';
   qHits = []; qIdx = -1;
   $('searchbar').hidden = true;
+  $('searchbar').classList.remove('for-editor');
   $('b-search').classList.remove('active');
+  App.editors.forEach((ed) => ed.findBtn && ed.findBtn.classList.remove('active'));
   $('cmd').focus();
 }
 function qToggleFlt(k) {
-  const s = UI.focused; if (!s || !s.logEl) return;
+  const t = qTarget(); if (!t || t.kind !== 'term' || !t.s.logEl) return;
+  const s = t.s;
   s.logFilters[k] = !s.logFilters[k];
   s.logEl.classList.toggle('flt-no-' + k, !s.logFilters[k]);
   $('f-' + k).classList.toggle('active', s.logFilters[k]);
@@ -439,6 +465,12 @@ $('log-q').addEventListener('keydown', (e) => {
 document.addEventListener('keydown', (e) => {
   if (!(e.ctrlKey || e.metaKey) || (e.key !== 'f' && e.key !== 'F')) return;
   const ae = document.activeElement;
+  const epane = ae && ae.closest && ae.closest('.epane');
+  if (epane) {   // inside an editor: the shared bar searches THAT editor (CodeMirror also binds Ctrl-F)
+    const ed = App.editors.find((x) => x.el === epane);
+    if (ed) { e.preventDefault(); openSharedSearchForEditor(ed); }
+    return;
+  }
   const inField = ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable);
   if (App.kbdCapture && App.kbdCapture.connected && !inField) return;   // live capture: Ctrl+F goes to the terminal (0x06)
   e.preventDefault();

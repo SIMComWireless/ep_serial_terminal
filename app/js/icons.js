@@ -52,3 +52,21 @@ const SIDEBAR_ICONS = (() => {
       '<circle cx="6.5" cy="9.5" r="0.5" fill="currentColor" stroke="none"/>'),
   };
 })();
+
+/* UI icons for the header buttons and the editor pane toolbar (same monochrome style:
+   stroke/fill = currentColor, so they inherit the button color). */
+const UI_ICONS = (() => {
+  const svg = (inner, sw) =>
+    `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="${sw || 1.4}" ` +
+    `stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+  return {
+    // terminal window: frame + prompt caret + input line
+    terminal: svg('<rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M4 6.5 L6.2 8.5 L4 10.5"/><path d="M8 10.8 H11.8"/>'),
+    // file: sheet with a folded corner
+    file: svg('<path d="M4 1.8 h5.2 L12.2 4.8 V14.2 H4 Z"/><path d="M9.2 1.8 V5 h3"/>'),
+    // open: folder with an arrow coming in
+    open: svg('<path d="M2 5 V12.2 a1 1 0 0 0 1 1 h10 a1 1 0 0 0 1 -1 V6 a1 1 0 0 0 -1 -1 H8 L6.5 3.5 H3 A1 1 0 0 0 2 4.5 Z"/><path d="M8 11.6 V7.4 M6.4 9 L8 7.4 9.6 9"/>'),
+    // save: sheet with an arrow pointing down to a baseline
+    save: svg('<path d="M8 2.5 V9.6 M5.6 7.4 L8 9.8 10.4 7.4"/><path d="M3 12.2 V13 h10 v-0.8"/>'),
+  };
+})();

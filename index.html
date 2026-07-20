@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AT Console · SIMCom</title>
 <link rel="stylesheet" href="app/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="app/vendor/codemirror/codemirror.css">
 <link rel="stylesheet" href="app/css/styles.css">
 <link id="theme-css" rel="stylesheet" href="app/css/theme-dark.css">
 </head>
@@ -15,6 +16,7 @@
   <div class="brand">
     <img class="logo" src="app/img/serial_term.svg" alt="Serial Terminal">
   </div>
+
   <!-- module info dashboard -->
   <div class="hdr-inst" id="hdr-inst" style="display:none">
     <div class="dcell sim-cell cell-only">
@@ -59,18 +61,23 @@
     <div class="dcell esp-only"><span class="dk">MAC</span><span class="dv" id="g-mac">—</span></div>
     <button class="iconbtn" id="dash-refresh" title="Query module">↻</button>
   </div>
-  <!-- App control panel: New Serial Terminal, Language, Theme -->
+  <!-- App control panel: label-above columns (Terminal · File · Language · Theme) to stay
+       horizontally compact. Icon buttons get their SVG from UI_ICONS in init.js. -->
   <div class="ctl">
-    <button id="settings-btn" class="btn">＋ <span data-i18n="new_terminal">New Serial Terminal</span></button>
-    <span class="ctl-lbl" data-i18n="g_language">Language</span>
-    <select id="lang" title="Language / Idioma"></select>
-    <span class="ctl-lbl" data-i18n="g_theme">Theme</span>
-    <div class="seg" id="theme-toggle" title="Theme">
-      <button data-theme="light" aria-label="Light">☀</button>
-      <button data-theme="dark" aria-label="Dark">☾</button>
-    </div>
+    <div class="ctl-item"><span class="ctl-lbl" data-i18n="g_terminal">Terminal</span>
+      <button id="settings-btn" class="btn btn-ico" data-i18n-title="new_terminal" title="New Serial Terminal"></button></div>
+    <div class="ctl-item"><span class="ctl-lbl" data-i18n="g_file">File</span>
+      <button id="new-file" class="btn btn-ico" data-i18n-title="new_file" title="New File"></button></div>
+    <div class="ctl-item"><span class="ctl-lbl" data-i18n="g_language">Language</span>
+      <select id="lang" title="Language / Idioma"></select></div>
+    <div class="ctl-item"><span class="ctl-lbl" data-i18n="g_theme">Theme</span>
+      <div class="seg" id="theme-toggle" title="Theme">
+        <button data-theme="light" aria-label="Light">☀</button>
+        <button data-theme="dark" aria-label="Dark">☾</button>
+      </div></div>
   </div>
 </header>
+
 
 <!-- New Serial Terminal menu -->
 <div id="settings-pop" hidden>
@@ -218,6 +225,12 @@
 <script src="app/lang/de.js"></script>
 <script src="app/lang/ru.js"></script>
 <script src="app/vendor/leaflet/leaflet.js"></script>
+<script src="app/vendor/codemirror/codemirror.js"></script>
+<script src="app/vendor/codemirror/mode-simple.js"></script>
+<script src="app/vendor/codemirror/active-line.js"></script>
+<script src="app/vendor/codemirror/matchbrackets.js"></script>
+<!-- searchcursor only: the search UI is ours (same look as the terminal's), see editor.js -->
+<script src="app/vendor/codemirror/searchcursor.js"></script>
 <script src="app/js/serial.js"></script>
 <script src="app/js/emulator.js"></script>
 <script src="app/js/drivers.js"></script>
@@ -227,6 +240,7 @@
 <script src="app/js/live.js"></script>
 <script src="app/js/session.js"></script>
 <script src="app/js/app.js"></script>
+<script src="app/js/editor.js"></script>
 <script src="app/js/wizards-core.js"></script>
 <script src="app/js/wizards-radio.js"></script>
 <script src="app/js/wizards-services.js"></script>

@@ -16,6 +16,8 @@ function applyI18n() {
     if (v.indexOf('<') !== -1) el.innerHTML = v; else el.textContent = v;
   });
   document.querySelectorAll('[data-i18n-ph]').forEach((el) => { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+  // icon-only buttons keep a translated tooltip (no visible label to translate)
+  document.querySelectorAll('[data-i18n-title]').forEach((el) => { el.title = t(el.getAttribute('data-i18n-title')); });
 }
 function populateLangSelect() {
   const sel = document.getElementById('lang'); if (!sel) return;

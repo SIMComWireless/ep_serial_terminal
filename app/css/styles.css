@@ -52,7 +52,9 @@
   .seg button:hover { color: var(--ink); }
   .seg button.on { background: var(--amber); color: #1a1206; }
 
-  .ctl { display: flex; align-items: center; gap: 7px; margin-left: auto; flex-shrink: 0; }   /* doesn't shrink: the info area (which wraps) absorbs the shortfall */
+  .ctl { display: flex; align-items: flex-end; gap: 10px; margin-left: auto; flex-shrink: 0; }   /* doesn't shrink: the info area (which wraps) absorbs the shortfall */
+  /* label-above column per control (Terminal · File · Language · Theme): horizontally compact */
+  .ctl-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
   .ctl .seg { flex-wrap: nowrap; flex-shrink: 0; }   /* the theme toggle never wraps */
   #settings-btn { padding: 6px 11px; letter-spacing: 0; white-space: nowrap; }   /* more compact so everything fits */
   label.field { display: flex; align-items: center; gap: 6px; color: var(--ink-dim);
@@ -385,6 +387,33 @@
     color: var(--ink-dim); text-decoration: none; font-size: 11px; box-shadow: 0 4px 14px rgba(0,0,0,.3); }
   #fork-github svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
   #fork-github:hover { color: var(--amber); border-color: var(--amber-dim); }
+
+  /* icon-only header buttons (New Serial Terminal / New File): the label lives in the tooltip */
+  .btn-ico { display: inline-flex; align-items: center; justify-content: center; padding: 6px 9px; }
+  .btn-ico svg { width: 16px; height: 16px; display: block; }
+
+  /* ---------- Editor panes (CodeMirror) sharing the console grid — see editor.js ---------- */
+  .epane .cpdot { background: var(--amber); box-shadow: 0 0 7px var(--amber); }   /* file pane: amber dot */
+  /* editor toolbar: icon-only open/save + a bare ▶ run; .edsp pushes the ✕ to the far right */
+  .edbtn { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+    background: transparent; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-faint);
+    cursor: pointer; padding: 2px 6px; line-height: 1; }
+  .edbtn svg { width: 14px; height: 14px; display: block; }
+  .edbtn:hover { color: var(--amber); border-color: var(--amber-dim); background: var(--line-soft); }
+  .edbtn.run { color: var(--ok); border-color: var(--ok); font-size: 11px; }
+  .edbtn.run:hover { color: var(--ok); border-color: var(--ok); background: var(--line-soft); }
+  .edfind { font-size: 11px; }
+  /* the editor 🔍 latches while the shared bar is searching this editor (set in editor.js) */
+  .edfind.active { color: var(--amber); border-color: var(--amber); background: var(--line-soft);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,.35); transform: translateY(1px); }
+  .edsp { flex: 1 1 auto; }
+  /* one shared search bar at the foot: hide the TX/RX/URC/ERROR filters when it targets an editor */
+  .searchbar.for-editor .qflt { display: none; }
+  .edbody { flex: 1; min-height: 0; overflow: hidden; display: flex; }
+  .edfallback { flex: 1; resize: none; border: none; outline: none; padding: 8px;
+    background: var(--bg); color: var(--ink); font-family: var(--mono); font-size: 12px; }
+  /* NOTE: the CodeMirror theme itself lives OUTSIDE the layers, at the end of this file —
+     vendor CSS is unlayered and unlayered rules always beat layered ones. */
 
   /* SMS PDU-mode badge (SIM7022 NB-IoT): marks that the inbox/send use PDU, not text mode */
   .sms-pdubadge { font-family: var(--mono); font-size: 9px; letter-spacing: .5px; color: var(--amber);
@@ -791,3 +820,31 @@
   .hw-seg button { padding: 5px 9px; }
 }
 }
+
+/* ============================================================================
+   CodeMirror theme "atconsole" — DELIBERATELY OUTSIDE @layer.
+   app/vendor/codemirror/codemirror.css is unlayered, and in the CSS cascade an
+   unlayered rule beats ANY layered rule regardless of specificity. Putting this
+   inside @layer base would let the vendor's `.CodeMirror { background: white }`
+   win and the editor would stay white in both themes.
+   Colors come from the theme variables, so it follows light/dark automatically.
+   ========================================================================== */
+.edbody > .CodeMirror { flex: 1; height: auto; min-height: 0; font-family: var(--mono); font-size: 12px; }
+.cm-s-atconsole { background: var(--bg); color: var(--ink); }
+.cm-s-atconsole .CodeMirror-gutters { background: var(--surface); border-right: 1px solid var(--line); }
+.cm-s-atconsole .CodeMirror-linenumber { color: var(--ink-faint); }
+.cm-s-atconsole .CodeMirror-cursor { border-left: 1px solid var(--amber); }
+.cm-s-atconsole .CodeMirror-activeline-background { background: var(--hover); }
+.cm-s-atconsole .CodeMirror-selected { background: var(--line-soft); }
+.cm-s-atconsole.CodeMirror-focused .CodeMirror-selected { background: var(--line); }
+.cm-s-atconsole .CodeMirror-matchingbracket { color: var(--amber); font-weight: 700; }
+.cm-s-atconsole .cm-comment    { color: var(--ink-faint); font-style: italic; }   /* # comment */
+.cm-s-atconsole .cm-keyword    { color: var(--urc); font-weight: 700; }           /* ?URC · @loop */
+.cm-s-atconsole .cm-number     { color: var(--amber); }                           /* @500 · counts */
+.cm-s-atconsole .cm-atom       { color: var(--err); font-weight: 700; }           /* ^Z · ^[ */
+.cm-s-atconsole .cm-variable-2 { color: var(--ok); }                              /* ${var} */
+.cm-s-atconsole .cm-string     { color: var(--body); }                            /* "quoted" */
+.cm-s-atconsole .cm-def        { color: var(--tx); font-weight: 600; }            /* AT+CMD */
+/* editor search hits: every match in amber (like the log's <mark>), the current one inverted */
+.cm-s-atconsole .cm-searching { background: var(--amber); color: var(--bg); border-radius: 2px; }
+.cm-s-atconsole .cm-searching-cur { outline: 1px solid var(--ink); border-radius: 2px; }

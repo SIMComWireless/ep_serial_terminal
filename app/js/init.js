@@ -106,6 +106,9 @@ refreshDynamic();
 setupResizers();
 // version + build stamp in the ⚙ popover: "v1.0.0 · build 2026-07-12 15:04" (standalone) or "v1.0.0 · dev"
 if ($('setpop-ver')) $('setpop-ver').textContent = 'AT Console v' + APP_BUILD.version + (APP_BUILD.stamp ? ' · build ' + APP_BUILD.stamp : ' · dev');
+// icon-only header buttons: new terminal / new file (tooltips come from data-i18n-title)
+if ($('settings-btn')) $('settings-btn').innerHTML = UI_ICONS.terminal;
+if ($('new-file')) $('new-file').innerHTML = UI_ICONS.file;
 
 /* ---- soporte ---- */
 if (!('serial' in navigator)) {
