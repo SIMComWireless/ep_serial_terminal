@@ -4,7 +4,7 @@ Browser-based Serial Terminal to test communications modules, using AT commands 
 
 ## License
 
-3-Clause BSD License, see LICENSE.txt
+3-Clause BSD License, see LICENSE text file.
 
 ## Usage
 

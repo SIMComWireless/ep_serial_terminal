@@ -272,16 +272,26 @@ const TCP_A76XX = {
   open(v) {
     const link = v['wz-link'] || '0', host = v['wz-host'] || '', port = v['wz-port'] || '80', mode = v['wz-mode'];
     if (v['wz-ssl'] && mode === 'TCP') return `AT+CCHSTART\n@1000\nAT+CCHOPEN=${link},"${host}",${port},2`;
-    const lp = (mode === 'UDP' && v['wz-lport']) ? `,${v['wz-lport']}` : '';
-    return `AT+NETOPEN\n@1500\nAT+CIPRXGET=1\nAT+CIPOPEN=${link},"${mode}","${host}",${port}${lp}`;
+    // UDP: AT+NETOPEN=1 + local-port-only socket (AT+CIPOPEN=<link>,"UDP",,,<port>) — no fixed
+    // peer; the destination travels in each addressed CIPSEND. Local port field wins, else port.
+    if (mode === 'UDP') return `AT+NETOPEN=1\n@1500\nAT+CIPRXGET=1\nAT+CIPOPEN=${link},"UDP",,,${v['wz-lport'] || port}`;
+    return `AT+NETOPEN\n@1500\nAT+CIPRXGET=1\nAT+CIPOPEN=${link},"${mode}","${host}",${port}`;
   },
   send(v) {
     const link = v['wz-link'] || '0', data = v['wz-data'] || '', len = byteLen(data);
+    // UDP: addressed, variable-length send — AT+CIPSEND=<link>,,"<host>",<port> → '>' prompt,
+    // then the datagram closed with Ctrl+Z (the length form doesn't carry the destination).
+    if (v['wz-mode'] === 'UDP') return `AT+CIPSEND=${link},,"${v['wz-host'] || ''}",${v['wz-port'] || '80'}\n@300\n${data}\n^Z`;
     const cmd = (v['wz-ssl'] && v['wz-mode'] === 'TCP') ? `AT+CCHSEND=${link},${len}` : `AT+CIPSEND=${link},${len}`;
     return `${cmd}\n@300\n${data}`;
   },
   read(v) { const link = v['wz-link'] || '0'; return (v['wz-ssl'] && v['wz-mode'] === 'TCP') ? `AT+CCHRECV=${link}` : `AT+CIPRXGET=2,${link},1460`; },
-  close(v) { const link = v['wz-link'] || '0'; return (v['wz-ssl'] && v['wz-mode'] === 'TCP') ? `AT+CCHCLOSE=${link}\n@500\nAT+CCHSTOP` : `AT+CIPCLOSE=${link}\n@500\nAT+NETCLOSE`; },
+  close(v) {
+    const link = v['wz-link'] || '0';
+    if (v['wz-ssl'] && v['wz-mode'] === 'TCP') return `AT+CCHCLOSE=${link}\n@500\nAT+CCHSTOP`;
+    if (v['wz-mode'] === 'UDP') return 'AT+NETCLOSE=1';   // tears down the stack (and its sockets), mirroring AT+NETOPEN=1
+    return `AT+CIPCLOSE=${link}\n@500\nAT+NETCLOSE`;
+  },
 };
 /** @type {TcpDriver} */
 const TCP_SIM70X0 = {   // CNACT (PDP) + CA* (sockets)
