@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AT Console — redirecting…</title>
+<!-- Minimal root redirect: GitHub Pages (and any static host) serves index.html at the root,
+     but the real app lives in ep_serial_terminal.html. The JS replace() redirects instantly and
+     preserves ?query/#hash (and leaves no extra history entry); the meta refresh is the no-JS
+     fallback. The page is only a hop. -->
+<meta http-equiv="refresh" content="0; url=ep_serial_terminal.html">
+<script>location.replace('ep_serial_terminal.html' + location.search + location.hash);</script>
+</head>
+<body>
+<p><a href="ep_serial_terminal.html">Open EP Serial Terminal (ep_serial_terminal.html)</a></p>
+</body>
+</html>

@@ -37,7 +37,7 @@ bower_components
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
 
-# Dependency directories
+# Dependency directories (jsdom for the test harness)
 node_modules/
 jspm_packages/
 
@@ -124,6 +124,7 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+.vscode/
 
 # pnpm
 .pnpm-store
@@ -141,3 +142,8 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# OS noise
+.vscode/
+Thumbs.db
+.DS_Store
