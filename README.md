@@ -8,7 +8,9 @@ Browser-based Serial Terminal to test communications modules, using AT commands 
 
 ## Usage
 
-Download the code as .zip or clone, and open `index.html`, you will see the "EP Serial Terminal":
+Download the code as .zip or clone the repository.
+If you download as zip, unzip it.
+Open `ep_serial_terminal.html`, you will see the "EP Serial Terminal":
 
 ![EP Serial Terminal](docs/img/ep_serial_terminal.png)
 
@@ -19,3 +21,7 @@ You can open up to 8 serial terminals connected to phisical serial ports (COM or
 As example we use a simulated port, with selected SIMCom A76XX module:
 
 ![SIMCom A76XX module](docs/img/simcom_a76xx.png)
+
+It also exist a standalone version (all program in a single html file) named `ep_serial_terminal-standalone.html`.
+You can share this version without any extra files, or use in a smartphone or tablet as example.
+The only difference is that the other version is modularizated in several files, so is more easy to mantain the code.

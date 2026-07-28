@@ -1,5 +1,5 @@
 /* ES — to add a language: copy this file, translate the values,
-   and add <script src="app/lang/<code>.js"> to index.html. */
+   and add <script src="app/lang/<code>.js"> to ep_serial_terminal.html. */
 registerLang("es", "ES", {
   "baud": "Baud",
   "eol": "End",

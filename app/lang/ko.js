@@ -1,5 +1,5 @@
 /* 한국어 — to add a language: copy this file, translate the values,
-   and add <script src="app/lang/<code>.js"> to index.html. */
+   and add <script src="app/lang/<code>.js"> to ep_serial_terminal.html. */
 registerLang("ko", "한국어", {
   "baud": "Baud",
   "eol": "End",
