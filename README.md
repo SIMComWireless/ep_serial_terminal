@@ -8,6 +8,14 @@ Browser-based Serial Terminal to test communications modules, using AT commands 
 
 ## Usage
 
+## Online
+
+You can use it online on this 2 sites:
+ - [SIMCom EP Serial Terminal GitHub page](https://simcomwireless.github.io/ep_serial_terminal/)
+ - [Eric Pernia EP Serial Terminal GitHub page](https://epernia.github.io/ep_serial_terminal/) - 
+
+## Local
+
 Download the code as .zip or clone the repository.
 If you download as zip, unzip it.
 Open `ep_serial_terminal.html`, you will see the "EP Serial Terminal":
