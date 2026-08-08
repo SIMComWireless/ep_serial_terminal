@@ -1,7 +1,14 @@
-/* Data: quick commands (QUICK), macros and wizards (WIZARDS) — they use i18n keys */
-const QUICK = [
-  { nameKey:'macros', open:true, wiz:'macros', items:[] },
-  { nameKey:'grp0', wiz:'basics', cap:'cellular', items:[   // Basics / Network unified (includes the old grp2)
+/* quick-simcom.js — SIMCom quick-command catalog: the AT commands each sidebar group offers
+   (the "AT Commands" combo inside every wizard, and the per-group list).
+   Keyed by wizard id, in the same shape as any other quick table: [label, command, edit?] —
+   a 1 in the third field means the command has __PARAMS__ to fill in before sending.
+   Attached to the SIMCom profiles (profiles-simcom.js); the divergent families override just
+   the groups that change (QUICK_SIM70X0 / QUICK_SIM7022).
+   (part of the AT console · classic script, shared global scope — concatenated in order) */
+
+/** @type {QuickTable} */
+const QUICK_SIMCOM = {
+  basics: [
     ['i0_0', "AT"],
     ['i0_1', "ATI"],
     ['i0_2', "AT+SIMCOMATI"],
@@ -25,8 +32,8 @@ const QUICK = [
     ['i2_11', "AT+CNBP?"],
     ['i2_12', "AT+CNSMOD?"],
     ['i2_13', "AT+CGAUTH=1,1,\"__USER__\",\"__PASS__\"", 1],
-  ]},
-  { nameKey:'grp1', wiz:'sim', cap:'cellular', items:[
+  ],
+  sim: [
     ['i1_6', "AT+CPIN?"],
     ['i1_0', "AT+CICCID"],
     ['i1_1', "AT+CIMI"],
@@ -34,12 +41,12 @@ const QUICK = [
     ['i1_3', "AT+CLCK=\"SC\",2"],
     ['i1_4', "AT+CPWD=\"SC\",\"__OLD__\",\"__NEW__\"", 1],
     ['i1_5', "AT+SPIC"],
-  ]},
-  { nameKey:'grp24', wiz:'ping', cap:'tcpip', items:[   // Ping (CPING) — its own wizard, separate from TCP/UDP
+  ],
+  ping: [
     ['i4_9', "AT+CPING=\"8.8.8.8\",1,4"],
     ['i4_10', "AT+CPING=\"__HOST__\",1,4", 1],
-  ]},
-  { nameKey:'grp4', wiz:"tcpudp", cap:'tcpip', items:[   // (absorbs IPADDR from the old Data group; the rest was duplicated)
+  ],
+  tcpudp: [
     ['i4_0', "AT+NETOPEN"],
     ['i3_1', "AT+IPADDR"],
     ['i4_1', "AT+CIPRXGET=1"],
@@ -56,8 +63,8 @@ const QUICK = [
     ['i4_14', "AT+CIPMODE=0"],
     ['i4_15', "AT+SERVERSTART=__PORT__,0", 1],
     ['i4_16', "AT+SERVERSTOP=0"],
-  ]},
-  { nameKey:'grp5', wiz:"http", cap:'http', items:[
+  ],
+  http: [
     ['i5_0', "AT+HTTPINIT"],
     ['i5_1', "AT+HTTPPARA=\"URL\",\"__URL__\"", 1],
     ['i5_2', "AT+HTTPACTION=0"],
@@ -67,8 +74,8 @@ const QUICK = [
     ['i5_6', "AT+HTTPTERM"],
     ['i5_7', "AT+HTTPREADFILE=\"__PATH__\"", 1],
     ['i5_8', "AT+HTTPPOSTFILE=\"__PATH__\",1", 1],
-  ]},
-  { nameKey:'grp6', wiz:"ftp", cap:'ftp', items:[
+  ],
+  ftp: [
     ['i6_0', "AT+CFTPSSTART"],
     ['i6_1', "AT+CFTPSLOGIN=\"__HOST__\",21,\"__USER__\",\"__PASS__\",0", 1],
     ['i6_2', "AT+CFTPSLIST=\"/\""],
@@ -83,8 +90,8 @@ const QUICK = [
     ['i6_11', "AT+CFTPSSIZE=\"__FILE__\"", 1],
     ['i6_12', "AT+CFTPSTYPE=I"],
     ['i6_13', "AT+CFTPSSLCFG=__CTX__", 1],
-  ]},
-  { nameKey:'grp7', wiz:"mqtt", cap:'mqtt', items:[
+  ],
+  mqtt: [
     ['i7_0', "AT+CMQTTSTART"],
     ['i7_1', "AT+CMQTTACCQ=0,\"__CLIENTID__\",0", 1],
     ['i7_2', "AT+CMQTTCONNECT=0,\"tcp://__HOST__:1883\",60,1", 1],
@@ -99,8 +106,8 @@ const QUICK = [
     ['i7_11', "AT+CMQTTUNSUB=0,0"],
     ['i7_12', "AT+CMQTTWILLTOPIC=0,__LEN__", 1],
     ['i7_13', "AT+CMQTTWILLMSG=0,__LEN__,1", 1],
-  ]},
-  { nameKey:'grp22', wiz:'lwm2m', cap:'lwm2m', items:[   // LwM2M (AT+LW*, A76xx only) — literal technical labels
+  ],
+  lwm2m: [
     ['Start service', "AT+LWSTART"],
     ['Config server', "AT+LWCNF=0,\"server\",\"__HOST__\"", 1],
     ['Config port', "AT+LWCNF=0,\"serverport\",\"__PORT__\"", 1],
@@ -114,8 +121,8 @@ const QUICK = [
     ['Send', "AT+LWSEND=0,7"],
     ['Deregister', "AT+LWCLOSE=0"],
     ['Stop service', "AT+LWSTOP"],
-  ]},
-  { nameKey:'grp23', wiz:'coap', cap:'coap', items:[   // CoAP (AT+COAP*, A76xx only)
+  ],
+  coap: [
     ['Start (PDP)', "AT+COAPSTART"],
     ['Open session', "AT+COAPOPEN=\"__HOST__\",__PORT__", 1],
     ['Config head', "AT+COAPHEAD=0,__MSGID__,1,\"1\"", 1],
@@ -124,8 +131,8 @@ const QUICK = [
     ['Send transparent', "AT+COAPSENDTX=0,\"con\",\"post\",__LEN__", 1],
     ['Close session', "AT+COAPCLOSE=0"],
     ['Stop (PDP)', "AT+COAPSTOP"],
-  ]},
-  { nameKey:'grp8', wiz:'fs', cap:'fs', items:[
+  ],
+  fs: [
     ['i8_0', "AT+FSCD?"],
     ['i8_1', "AT+FSCD=__DIR__", 1],
     ['i8_2', "AT+FSLS"],
@@ -142,8 +149,8 @@ const QUICK = [
     ['i8_13', "AT+FSREAD=__HANDLE__,__LEN__", 1],
     ['i8_14', "AT+FSWRITE=__HANDLE__,__LEN__", 1],
     ['i8_15', "AT+FSCLOSE=__HANDLE__", 1],
-  ]},
-  { nameKey:'grp9', wiz:'gnss', cap:'gnss', items:[
+  ],
+  gnss: [
     ['i9_0', "AT+CGNSSPWR=1"],
     ['i9_1', "AT+CGNSSINFO"],
     ['i9_2', "AT+CGNSSPWR=0"],
@@ -154,12 +161,12 @@ const QUICK = [
     ['i9_7', "AT+CGNSSNMEA=__MASK__", 1],
     ['i9_8', "AT+CGNSSPORTSWITCH=1,1"],
     ['i9_9', "AT+CAGPS"],
-  ]},
-  { nameKey:'grp10', wiz:'lbs', cap:'lbs', items:[
+  ],
+  lbs: [
     ['i10_0', "AT+CLBS=1,1"],
     ['i10_1', "AT+CLBSCFG=0,1"],
-  ]},
-  { nameKey:'grp11', wiz:'sms', cap:'sms', items:[
+  ],
+  sms: [
     ['i11_0', "AT+CMGF=1"],
     ['i11_1', "AT+CMGL=\"ALL\""],
     ['i11_2', "AT+CMGS=\"__NUMERO__\"", 1],
@@ -171,8 +178,8 @@ const QUICK = [
     ['i11_8', "AT+CMSS=__INDEX__", 1],
     ['i11_9', "AT+CSCA?"],
     ['i11_10', "AT+CSMP=17,167,0,0"],
-  ]},
-  { nameKey:'grp12', wiz:'tls', cap:'ssl', items:[
+  ],
+  tls: [
     ['i12_0', "AT+CCERTLIST"],
     ['i12_1', "AT+CSSLCFG?"],
     ['i12_2', "AT+CCERTDOWN=\"__NAME__\",__LEN__", 1],
@@ -180,15 +187,15 @@ const QUICK = [
     ['i12_4', "AT+CCHSSLCFG=__SESSION__,__CTX__", 1],
     ['i12_5', "AT+CCHSET=1,1"],
     ['i12_6', "AT+CCHADDR=__SESSION__", 1],
-  ]},
-  { nameKey:'grp13', wiz:'time', cap:'cellular', items:[
+  ],
+  time: [
     ['i13_0', "AT+CCLK?"],
     ['i13_1', "AT+CNTP"],
     ['i13_2', "AT+CDNSGIP=\"__HOST__\"", 1],
     ['i13_3', "AT+CTZU=1"],
     ['i13_4', "AT+CTZR=1"],
-  ]},
-  { nameKey:'grp15', wiz:'hw', cap:'cellular', items:[   // Hardware unificado (incluye Serial/UART, antes grp14)
+  ],
+  hw: [
     ['i15_0', "AT+CBC"],
     ['i15_1', "AT+CPMUTEMP"],
     ['i15_2', "AT+CFUN=1,1"],
@@ -202,49 +209,48 @@ const QUICK = [
     ['i14_2', "AT+IFC=2,2"],
     ['i14_3', "AT+CSCLK=__MODE__", 1],
     ['i14_4', "AT+CMUX=0"],
-  ]},
-  { nameKey:'grp16', wiz:'wifi', cap:'wifi', items:[
+  ],
+  wifi: [
     ['i16_0', "AT+CWSTASCAN"],
     ['i16_1', "AT+CWSTASCAN=1"],
     ['i16_2', "AT+CWSTASCAN?"],
     ['i16_3', "AT+CWSTASCANEX=1,1,10,30,0"],
     ['i16_4', "AT+CWSTASCANEX"],
     ['i16_5', "AT+CWSTASCAN=?"],
-  ]},
-  { nameKey:'grp17', wiz:'jam', cap:'cellular', items:[
+  ],
+  jam: [
     ['i17_0', "AT+SJDR=1"],
     ['i17_1', "AT+SJDR=0"],
     ['i17_2', "AT+SJDR?"],
     ['i17_3', "AT+SJDCFG?"],
     ['i17_4', "AT+SJDCFG=\"period\",5"],
     ['i17_5', "AT+SJDCFG=\"detecstat\",1"],
-  ]},
-  { nameKey:'grp18', wiz:'mail', cap:'mail', items:[
+  ],
+  mail: [
     ['i18_0', "AT+CSMTPSSRV?"],
     ['i18_1', "AT+CSMTPSAUTH?"],
     ['i18_2', "AT+CSMTPSRCPT?"],
     ['i18_3', "AT+CSMTPSSEND"],
     ['i18_4', "AT+CSMTPSSTOP"],
     ['i18_5', "AT+CSMTPSCLEAN"],
-  ]},
-  { nameKey:'grp19', wiz:'pb', cap:'voice', items:[
+  ],
+  pb: [
     ['i19_0', "AT+CPBS?"],
     ['i19_1', "AT+CPBR=1,250"],
     ['i19_2', "AT+CPBF=\"__TEXT__\"", 1],
     ['i19_3', "AT+CPBW=,\"__NUM__\",145,\"__NAME__\"", 1],
     ['i19_4', "AT+CNUM"],
     ['i19_5', "AT+CPBS=?"],
-  ]},
-  { nameKey:'grp20', wiz:'voice', cap:'voice', items:[
+  ],
+  voice: [
     ['i20_0', "ATD__NUM__;", 1],
     ['i20_1', "ATA"],
     ['i20_2', "AT+CHUP"],
     ['i20_3', "AT+CLCC"],
     ['i20_4', "AT+CLIP=1"],
     ['i20_5', "AT+VTS=__D__", 1],
-  ]},
-  { nameKey:'grp25', wiz:'sig', items:[] },   // Signal monitor: no loose commands (the wizard polls on its own)
-  { nameKey:'grp21', wiz:'ble', cap:'ble', items:[
+  ],
+  ble: [
     ['i21_0', "AT+BLEPOWER=1"],
     ['i21_1', "AT+BLEPOWER=0"],
     ['i21_2', "AT+BLESTATUS?"],
@@ -255,105 +261,5 @@ const QUICK = [
     ['i21_7', "AT+BLESREG"],
     ['i21_8', "AT+BLESLSTART=0"],
     ['i21_9', "AT+BLECCON=__IDX__", 1],
-  ]},
-];
-
-/* Sidebar layout: order and grouping into categories (decoupled from QUICK, which only
-   defines the commands). Each entry is a loose item { wiz } or a category { cat, items }
-   whose children are indented. Item names come from their QUICK group's nameKey. */
-const SIDEBAR = [
-  { wiz: 'macros' },
-  { cat: 'cat_cellular', items: ['sim', 'basics', 'sig', 'sms', 'voice', 'pb'] },   // Signal monitor between Network and SMS
-  { cat: 'cat_protocols', items: ['ping', 'tcpudp', 'http', 'mail', 'ftp', 'mqtt', 'lwm2m', 'coap'] },
-  { cat: 'cat_security', items: ['tls'] },
-  { cat: 'cat_wifi', items: ['wifi'] },
-  { wiz: 'ble' },
-  { cat: 'cat_location', items: ['lbs', 'gnss'] },
-  { wiz: 'fs' },
-  { wiz: 'time' },
-  { wiz: 'hw' },
-  { wiz: 'jam' },
-];
-
-// Sidebar layout for Espressif modules: Macros · Signal monitor · Wi-Fi · Protocols · Bluetooth.
-// (buildSidebar picks this layout when the family is ESP; the single-child Wi-Fi category is flattened.)
-const SIDEBAR_ESP = [
-  { wiz: 'macros' },
-  { wiz: 'sig' },   // charts the RSSI of the associated AP
-  { cat: 'cat_wifi', items: ['wifi'] },
-  { cat: 'cat_protocols', items: ['ping', 'tcpudp', 'http', 'mail', 'ftp', 'mqtt', 'lwm2m', 'coap'] },
-  { wiz: 'ble' },
-];
-
-const MACROS = [
-  { name:'Module health check', text:"# Module health check\nAT\n@100\nAT+GMR" },
-  // { name:'Module health check', text:"# Module health check\nAT\n@100\nAT+GMR" }, 
-  // add more macros...
-];
-
-const wt = (k) => t('wz_' + k);
-const WIZARDS = [
-  { id:'ping', title:'ICMP (PING)', render: (host) => renderTcpExtras(host) },   // Red/IP + Ping configurable
-  { id:'tcpudp', title:'TCP / UDP', formTitle:'Socket',
-    extra:(host) => renderTcpServer(host),        // TCP/UDP server BELOW the Socket form
-    fields:[
-      { key:'mode', id:'wz-mode', type:'select', opts:['TCP','UDP'], val:'TCP' },
-      { key:'link', id:'wz-link', type:'number', val:'0' },
-      { key:'host', id:'wz-host', type:'text', ph:'example.com' },
-      { key:'port', id:'wz-port', type:'number', val:'80' },
-      { key:'localport', id:'wz-lport', type:'number', ph:'auto' },
-      { key:'ssl', id:'wz-ssl', type:'checkbox' },
-      { key:'data', id:'wz-data', type:'text', ph:'hello', full:true },
-    ], actions:[
-      { key:'open', go:true, build:(v) => pdrv('tcp').open(v) },
-      { key:'send', build:(v) => pdrv('tcp').send(v) },
-      { key:'read', build:(v) => pdrv('tcp').read(v) },
-      { key:'close', build:(v) => pdrv('tcp').close(v) },
-    ] },
-  { id:'mqtt', title:'MQTT', fields:[
-      { key:'broker', id:'wz-broker', type:'text', ph:'test.mosquitto.org' },
-      { key:'port', id:'wz-mport', type:'number', val:'1883' },
-      { key:'clientid', id:'wz-cid', type:'text', ph:'simcom-demo' },
-      { key:'ssl', id:'wz-mssl', type:'checkbox' },
-      { key:'user', id:'wz-muser', type:'text', ph:'—' },
-      { key:'pass', id:'wz-mpass', type:'text', ph:'—' },
-      { key:'topic', id:'wz-mtopic', type:'text', ph:'dev/test' },
-      { key:'qos', id:'wz-mqos', type:'select', opts:['0','1','2'], val:'1' },
-      { key:'payload', id:'wz-mpayload', type:'text', ph:'hello', full:true },
-    ], actions:[
-      { key:'connect', go:true, build:(v) => pdrv('mqtt').connect(v) },
-      { key:'subscribe', build:(v) => pdrv('mqtt').subscribe(v) },
-      { key:'publish', build:(v) => pdrv('mqtt').publish(v) },
-      { key:'disconnect', build:(v) => pdrv('mqtt').disconnect(v) },
-    ] },
-  { id:'http', title:'HTTP', fields:[
-      { key:'url', id:'wz-url', type:'text', ph:'http://example.com', full:true },
-      { key:'method', id:'wz-method', type:'select', opts:['GET','POST'], val:'GET' },
-      { key:'ctype', id:'wz-ctype', type:'select', opts:['application/json','text/plain','application/x-www-form-urlencoded'], val:'application/json' },
-      { key:'ssl', id:'wz-hssl', type:'checkbox' },
-      { key:'postdata', id:'wz-hpost', type:'text', ph:'{"k":1}', full:true },
-    ], actions:[
-      { key:'get', go:true, build:(v) => pdrv('http').get(v) },
-      { key:'post', build:(v) => pdrv('http').post(v) },
-    ] },
-  { id:'lwm2m', title:'LwM2M', cap:'lwm2m', render: (host) => renderLwm2m(host) },
-  { id:'coap', title:'CoAP', cap:'coap', render: (host) => renderCoap(host) },
-  { id:'ftp', title:'FTP', cap:'ftp', render: (host) => renderFtp(host) },
-  { id:'macros', title:'Macros', render: (host) => renderMacros(host) },
-  { id:'fs', title:'File System', render: (host) => renderFsBrowser(host) },
-  { id:'gnss', title:'GNSS', render: (host) => renderGnss(host) },
-  { id:'lbs', title:'LBS', render: (host) => renderLbs(host) },
-  { id:'sms', title:'SMS', render: (host) => renderSms(host) },
-  { id:'wifi', title:'Wi-Fi scan', render: (host) => renderWifi(host) },
-  { id:'ble', title:'Bluetooth', render: (host) => renderBle(host) },
-  { id:'sig', title:'Signal monitor', render: (host) => renderSigMon(host) },
-  { id:'hw', title:'Hardware', render: (host) => renderHw(host) },
-  { id:'basics', title:'Network', render: (host) => renderBasics(host) },
-  { id:'sim', title:'SIM card', render: (host) => renderSim(host) },
-  { id:'time', title:'Date and time', render: (host) => renderTime(host) },
-  { id:'tls', title:'SSL', render: (host) => renderTls(host) },
-  { id:'jam', title:'Jamming detection', render: (host) => renderJam(host) },
-  { id:'mail', title:'SMTP (E-MAIL)', render: (host) => renderMail(host) },
-  { id:'pb', title:'Phonebook', render: (host) => renderPhonebook(host) },
-  { id:'voice', title:'Voice calls', render: (host) => renderVoice(host) },
-];
+  ],
+};

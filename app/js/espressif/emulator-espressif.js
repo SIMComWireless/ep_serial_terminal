@@ -1,11 +1,10 @@
 /* emulator-espressif.js — Espressif ESP command set of the virtual modem (factory AT firmware):
    Wi-Fi (CW*), TCP/IP (CIP*), MQTT (MQTT*), HTTP (HTTPCLIENT) and BLE (BLE*, incl. GATT client).
-   ATEmulator._handle (emulator.js) delegates here; a branch that matches performs its action and
-   returns anything BUT the ESP_EMU_PASS sentinel, which means "not an ESP command, keep going".
+   Plugged into the core through registerEmuHandler(); a branch that matches performs its action
+   and returns anything BUT the EMU_PASS sentinel, which means "not mine, keep walking the chain".
    The Simu Ctrl Wi-Fi controls (ctlWifi/ctlWifiRssi) are attached to the class from here too.
    (part of the AT console · classic script, shared global scope — concatenated in order) */
 
-const ESP_EMU_PASS = Symbol('esp-emu-pass');   // returned when the command is not handled here
 
 function espEmuHandle(emu, cmd, api) {
   const { ok, err, reply } = api;
@@ -102,8 +101,11 @@ function espEmuHandle(emu, cmd, api) {
   if (/^AT\+BLEADVSTART/i.test(cmd)) { if (!s.espBle) return err(); s.espBleAdv = true; return ok(); }
   if (/^AT\+BLEADVSTOP/i.test(cmd)) { if (!s.espBle) return err(); s.espBleAdv = false; return ok(); }
   if (/^AT\+BLE/i.test(cmd)) return s.espBle ? ok() : err();   // remaining ESP BLE commands (ADVDATAEX, etc.) → OK if BLE initialized
-  return ESP_EMU_PASS;
+  return EMU_PASS;
 }
+
+// Only for ESP emulators (a SIMCom module must not answer Espressif commands).
+registerEmuHandler((emu, cmd, api) => (emu.isEsp ? espEmuHandle(emu, cmd, api) : EMU_PASS));
 
 /* ---- Simu Ctrl panel: ESP Wi-Fi controls, attached to the emulator class from the ESP module ---- */
 // ESP: associate/disassociate the station to a simulated AP

@@ -40,6 +40,15 @@ const SIDEBAR_ICONS = (() => {
     tls: svg('<rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7 V5 a2.5 2.5 0 0 1 5 0 V7"/><path d="M8 9.6 V11.5"/>'),   // padlock (SSL)
     wifi: wifi,
     lbs: svg('<path d="M8 14 C5 10 3 8 3 5.5 a5 5 0 0 1 10 0 C13 8 11 10 8 14 Z"/><circle cx="8" cy="5.5" r="1.8"/>'),   // map pin
+    // gear (GNSS receiver configuration): 8 teeth every 45°, drawn as a stroked star-ish
+    // outline plus the hub — same 16x16 grid and stroke width as the rest of the set
+    gnsschip: svg(
+      '<path d="M8 1.6 L9.15 3.05 A5 5 0 0 1 10.5 3.6 L12.25 3.05 L13.65 4.45 L12.95 6.15 ' +
+      'A5 5 0 0 1 13.4 7.5 L14.9 8.5 L14.4 10.4 L12.6 10.6 A5 5 0 0 1 11.85 11.85 ' +
+      'L12.15 13.65 L10.4 14.4 L9.2 13 A5 5 0 0 1 7.6 13 L6.4 14.4 L4.65 13.65 ' +
+      'L4.95 11.85 A5 5 0 0 1 4.2 10.6 L2.4 10.4 L1.9 8.5 L3.4 7.5 ' +
+      'A5 5 0 0 1 3.85 6.15 L3.15 4.45 L4.55 3.05 L6.3 3.6 A5 5 0 0 1 7.65 3.05 Z"/>' +
+      '<circle cx="8.4" cy="8.4" r="2.2"/>'),
     gnss: svg(   // satellite: 2 diagonal solar panels + body + signal waves (SW)
       '<path d="M3.35 1.65 L5.85 4.15 L4.15 5.85 L1.65 3.35 Z"/>' +      // NW panel
       '<path d="M4.18 2.48 L2.48 4.18"/><path d="M5.02 3.32 L3.32 5.02"/>' +   // NW panel grid

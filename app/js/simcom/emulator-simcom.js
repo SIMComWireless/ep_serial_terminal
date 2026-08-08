@@ -1,16 +1,10 @@
-/* emulator.js — ATEmulator: virtual modem (answers AT commands, simulated filesystem/FTP)
+/* emulator-simcom.js — SIMCom command set of the virtual modem: identity, SIM/network,
+   SMS, GNSS (with the simulated route), file system, FTP, TLS certs, jamming, voice,
+   phonebook, LwM2M/CoAP and the TCP/HTTP/MQTT stacks of every family (A76XX / SIM7600,
+   SIM70x0, SIM7022). Also the cellular Simu Ctrl controls (signal, registration, SIM, RING).
+   Plugged into the core through registerEmuHandler() / registerEmuState().
    (part of the AT console · classic script, shared global scope — concatenated in order) */
 
-/* ============================================================
-   3b) Virtual modem — inline AT emulator (mirror of src/at-emulator.js)
-       Lets you use the console without a physical port (COM/tty).
-   ============================================================ */
-const _CZ = '\x1a', _ESC = '\x1b';
-// Default identity (A7672SA-FASE). Each profile can pass its own when opening the simulator.
-const DEFAULT_IDENTITY = {
-  manufacturer: 'SIMCOM INCORPORATED', model: 'A7672SA-FASE', revision: 'A011B02A7672M7_V1.0',
-  imei: '860123040567890', band: 'EUTRAN-BAND4', ati: ['SIMCOM_A7672SA-FASE', 'A7672SA-FASE-V1.0'],
-};
 // Simulated GNSS route: Andrés Baranda & Rodolfo López → Av. Lamadrid → crosses the tracks
 // → Lebensohn → Universidad Nacional de Quilmes (Quilmes/Bernal, Argentina). Covered in 10 min.
 const GNSS_ROUTE = [
@@ -39,15 +33,9 @@ function gnssRoutePos(t0) {
 // Decimal degrees → NMEA ddmm.mmmmmm (for +CGPSINFO).
 const _toNmea = (deg, isLat) => { const a = Math.abs(deg), d = Math.floor(a), m = (a - d) * 60; return (d * 100 + m).toFixed(6).padStart(isLat ? 9 : 10, '0'); };
 
-class ATEmulator {
-  constructor(opts = {}) {
-    this.output = opts.output ?? (() => {});
-    this.outputRaw = opts.outputRaw ?? ((u8) => { let s = ''; for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); this.output(s); });   // raw bytes for downloads
-    this.identity = opts.identity || DEFAULT_IDENTITY;
-    this.isEsp = /espressif/i.test(this.identity.manufacturer || '');   // ESP family → uses the Espressif BLE/Wi-Fi block, not the SIMCom one
-    this.buf = ''; this.expecting = null;
-    this.state = {
-      echo: opts.echo ?? false, simReady: true, reg: { creg: 1, cgreg: 1, cereg: 1 }, rssi: 24, rsrp: -95, sinr: 14, rsrq: -12,
+/* ---- default state of a SIMCom module (merged into emu.state by the core) ---- */
+registerEmuState(() => ({
+      simReady: true, reg: { creg: 1, cgreg: 1, cereg: 1 }, rssi: 24, rsrp: -95, sinr: 14, rsrq: -12,
       operator: 'Movistar AR', mccmnc: '722-310', apn: 'internet.movil', pdpType: 'IP',
       auth: { type: 0, user: '' },
       // band preference (CNBP): <GSM/WCDMA pos>,<LTE pos>,<TDS pos> — LTE with B1/3/5/7/8/20/28/38/40/41/66
@@ -78,45 +66,12 @@ class ATEmulator {
       ftpcwd: '/',
       ftpdirs: { '/': ['pub'], '/pub/': [] },
       ftpfiles: { '/readme.txt': new TextEncoder().encode('Servidor FTP virtual - archivo de ejemplo.\r\n') },
-    };
-  }
-  // Changing a virtual terminal's module (edit) reuses the emulator: it adopts the new identity and recomputes the family.
-  setIdentity(identity) { this.identity = identity || DEFAULT_IDENTITY; this.isEsp = /espressif/i.test(this.identity.manufacturer || ''); }
-  feed(chunk) {
-    this.buf += chunk;
-    for (;;) {
-      if (this.expecting) {
-        const exp = this.expecting;
-        if (exp.len != null) {            // length-based download (cert, mail subject/body, file to EFS)
-          if (this.buf.length < exp.len) return;
-          const payload = this.buf.slice(0, exp.len);
-          this.buf = this.buf.slice(exp.len); this.expecting = null;
-          if (exp.kind === 'cert' && exp.name && !this.state.certs.includes(exp.name)) this.state.certs.push(exp.name);
-          if (exp.kind === 'fsrx' && exp.path) this._storeFile(exp.path, payload);   // host → EFS (CFTRANRX)
-          if (exp.kind === 'fswrite' && exp.path) {   // FSWRITE on an open fd (0 overwrites · 1 appends)
-            const prev = exp.append ? this._u8ToBin(this._readFile(exp.path) || new Uint8Array(0)) : '';
-            this._storeFile(exp.path, prev + payload);
-          }
-          this._send(['OK']); continue;
-        }
-        const zi = this.buf.indexOf(_CZ), ei = this.buf.indexOf(_ESC);
-        if (ei !== -1 && (zi === -1 || ei < zi)) { this.buf = this.buf.slice(ei + 1); this.expecting = null; this._send(['OK']); continue; }
-        if (zi === -1 && !/\r\n?$/.test(this.buf)) return;
-        const sent = zi !== -1 ? zi : this.buf.replace(/\r\n?$/, '').length;   // payload bytes before the Ctrl+Z
-        this.buf = zi !== -1 ? this.buf.slice(zi + 1) : '';
-        const kind = exp.kind; this.expecting = null;   // `exp` is the block-scoped alias declared above
-        this._send(kind === 'cmgs' ? [`+CMGS: ${this.state.mr++}`, 'OK']
-          : kind === 'cipsend' ? [`+CIPSEND: ${exp.link},${sent},${sent}`, 'OK']   // addressed UDP send (variable length)
-          : ['OK']);
-        continue;
-      }
-      const i = this.buf.search(/[\r\n]/); if (i === -1) return;
-      const line = this.buf.slice(0, i);
-      const adv = (this.buf[i] === '\r' && this.buf[i + 1] === '\n') ? i + 2 : i + 1;   // consume \r\n as a unit (don't leave a residual \n)
-      this.buf = this.buf.slice(adv);
-      if (line.trim()) this._handle(line.trim());
-    }
-  }
+}));
+
+/* ---- Simu Ctrl (cellular) and internal helpers, attached to the emulator class ---- */
+// A class body keeps the methods verbatim (no commas needed); the descriptors are then
+// copied onto the emulator prototype — getters included.
+class SimcomEmuMixin {
   injectSms(from = '+5491100000000', text = 'Mensaje de prueba') {
     const index = this.state.sms.length + 1;
     this.state.sms.push({ stat: 'REC UNREAD', from, ts: this._cclk(), text });
@@ -147,7 +102,6 @@ class ATEmulator {
     this._ringTimer = setInterval(ring, 3000);
   }
   // (the ESP Wi-Fi Simu Ctrl methods — ctlWifi / ctlWifiRssi — are attached in emulator-espressif.js)
-  _send(l) { this.output('\r\n' + l.join('\r\n') + '\r\n'); }
   _normPath(p) { return String(p || '').replace(/\\/g, '/').replace(/^c:/i, 'C:').replace(/^d:/i, 'D:'); }
   _u8ToBin(u8) { let s = ''; for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return s; }
   _storeFile(path, binStr) {   // stores bytes (binStr = string of bytes 0-255) in EFS and lists them in the tree
@@ -169,7 +123,6 @@ class ATEmulator {
     if (demo[name] != null) return new TextEncoder().encode(demo[name]);
     return null;
   }
-  _later(ms, fn) { setTimeout(fn, ms); }
   // Schedules fix acquisition and starts the route stopwatch (once).
   _gnssFix(delay) { this._later(delay, () => { if (this.state.gnss !== 'off') { this.state.gnss = 'fix'; if (!this._gnssT0) this._gnssT0 = Date.now(); } }); }
   _gnssOff() { this.state.gnss = 'off'; this._gnssT0 = null; }
@@ -208,16 +161,39 @@ class ATEmulator {
     this._jamTimer = setInterval(tick, p * 1000);
   }
   _stopJam() { if (this._jamTimer) { clearInterval(this._jamTimer); this._jamTimer = null; } }
-  _handle(cmd) {
-    if (this.state.echo) this.output(cmd + '\r');
-    const ok = () => this._send(['OK']), err = () => this._send(['ERROR']), reply = (l) => this._send([...l, 'OK']);
-    const s = this.state;
-    if (/^AT$/i.test(cmd)) return ok();
-    if (/^ATE0$/i.test(cmd)) { s.echo = false; return ok(); }
-    if (/^ATE1?$/i.test(cmd)) { s.echo = true; return ok(); }
-    const id = this.identity;
-    if (/^ATI$/i.test(cmd)) return reply(id.ati.slice());
+  _cclk() { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${p(d.getFullYear() % 100)}/${p(d.getMonth() + 1)}/${p(d.getDate())},${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}-12`; }
+  _d() { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${p(d.getDate())}${p(d.getMonth() + 1)}${p(d.getFullYear() % 100)}`; }
+  _u() { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}.0`; }
+  _ts7080() { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}.000`; }
+  _bleScan() {
+    this._bleDevs = { 0: '1f:50:24:38:96:20', 1: '7e:c3:ed:71:e5:55', 2: '2b:3c:42:10:23:58' };
+    const devs = [
+      [0, '1f:50:24:38:96:20', 197, '02011A020A080BFF4C0010063A'],
+      [1, '7e:c3:ed:71:e5:55', 180, '0201060303AAFE0CFF4C001005'],
+      [2, '2b:3c:42:10:23:58', 165, '02010612094D79204265616B6F6E'],
+    ];
+    let i = 0;
+    const tick = () => {
+      if (!this.state.ble.scanning) return;
+      const d = devs[i % devs.length];
+      const rssi = Math.max(150, Math.min(210, d[2] + Math.floor((Math.random() - 0.5) * 8)));
+      this.output(`\r\n+BLESCANRST: 0,${d[0]},"${d[1]}",${rssi},"${d[3]}"\r\n`);
+      i++; this._later(900, tick);
+    };
+    this._later(500, tick);
+  }
+}
+const _simcomMix = Object.getOwnPropertyDescriptors(SimcomEmuMixin.prototype);
+delete _simcomMix.constructor;
+Object.defineProperties(ATEmulator.prototype, _simcomMix);
+
+/* ---- command set ---- */
+ATEmulator.prototype._handleSimcom = function (cmd, api) {
+  const { ok, err, reply } = api;
+  const s = this.state;
+  const id = this.identity;
     if (/^AT\+SIMCOMATI/i.test(cmd)) return reply(['Manufacturer: ' + id.manufacturer, 'Model: ' + id.model, 'Revision: ' + id.revision, id.ati[1], 'QCN: ', 'IMEI: ' + id.imei, 'MEID: ', '+GCAP: +CGSM', 'DeviceInfo: 173,170']);
+    if (/^AT\+GMR/i.test(cmd)) return reply(['Revision: ' + id.revision]);   // firmware revision (V.250)
     if (/^AT\+CMEE=/i.test(cmd)) return ok();
     if (/^AT\+CGMI/i.test(cmd)) return reply([id.manufacturer]);
     if (/^AT\+CGMM/i.test(cmd)) return reply([id.model]);
@@ -321,7 +297,7 @@ class ATEmulator {
     }
     if (/^AT\+CMGF=/i.test(cmd)) { s.cmgf = Number(cmd.split('=')[1]) || 0; return ok(); }   // 0 = PDU · 1 = text
     if (/^AT\+CSCS=/i.test(cmd) || /^AT\+CNMI=/i.test(cmd)) return ok();
-    if (/^AT\+CMGS=/i.test(cmd)) { this.expecting = { kind: 'cmgs' }; return this.output('\r\n> '); }
+    if (/^AT\+CMGS=/i.test(cmd)) { this.expecting = { onDone: () => [`+CMGS: ${s.mr++}`, 'OK'] }; return this.output('\r\n> '); }
     if (/^AT\+CMGL/i.test(cmd)) {
       const l = []; const STAT = { 'REC UNREAD': 0, 'REC READ': 1, 'STO UNSENT': 2, 'STO SENT': 3 };
       if (s.cmgf === 0) s.sms.forEach((m, i) => { const pdu = buildDeliverPdu(m.from, m.text, m.ts); l.push(`+CMGL: ${i + 1},${STAT[m.stat] ?? 1},,${(pdu.length - 2) / 2}`, pdu); });   // PDU: len excludes the SMSC octet
@@ -352,7 +328,12 @@ class ATEmulator {
       return this._later(1500, () => this._send([...lines, 'OK']));
     }
     if (/^AT\+CCERTLIST/i.test(cmd)) return reply(s.certs.map((c) => `+CCERTLIST: "${c}"`));
-    if (/^AT\+CCERTDOWN=/i.test(cmd)) { const m = cmd.match(/CCERTDOWN="([^"]*)",(\d+)/i); this.expecting = { kind: 'cert', name: m ? m[1] : null, len: m ? Number(m[2]) : 0 }; return this.output('\r\n> '); }
+    if (/^AT\+CCERTDOWN=/i.test(cmd)) {   // the cert is listed once its bytes arrive
+      const m = cmd.match(/CCERTDOWN="([^"]*)",(\d+)/i);
+      const name = m ? m[1] : null;
+      this.expecting = { len: m ? Number(m[2]) : 0, onDone: () => { if (name && !s.certs.includes(name)) s.certs.push(name); } };
+      return this.output('\r\n> ');
+    }
     if (/^AT\+CCERTDELE=/i.test(cmd)) { const m = cmd.match(/"([^"]*)"/); if (m) s.certs = s.certs.filter((c) => c !== m[1]); return ok(); }
     if (/^AT\+CSSLCFG\?/i.test(cmd)) return reply(['+CSSLCFG: "sslversion",0,4', '+CSSLCFG: "authmode",0,0', '+CSSLCFG: "cacert",0,""', '+CSSLCFG: "ignorelocaltime",0,1']);
     if (/^AT\+CSSLCFG=/i.test(cmd)) return ok();
@@ -370,8 +351,6 @@ class ATEmulator {
     if (/^AT\+SJDCFG=\?/i.test(cmd)) return reply(['+SJDCFG: "period",(0-120)', '+SJDCFG: "mnl",(0-31)', '+SJDCFG: "minch",(0-254)', '+SJDCFG: "detecstat",(0-1)', '+SJDCFG: "sinr",(-50~30)', '+SJDCFG: "rsrp",(-140~-44)', '+SJDCFG: "rsrq",(-19~-1)']);
     if (/^AT\+SJDCFG\?/i.test(cmd)) { const c = s.sjdcfg; return reply([`+SJDCFG: "period",${c.period}`, `+SJDCFG: "mnl",${c.mnl}`, `+SJDCFG: "minch",${c.minch}`, `+SJDCFG: "detecstat",${c.detecstat}`, `+SJDCFG: "sinr",${c.sinr}`, `+SJDCFG: "rsrp",${c.rsrp}`, `+SJDCFG: "rsrq",${c.rsrq}`]); }
     if (/^AT\+SJDCFG=/i.test(cmd)) { const m = cmd.match(/SJDCFG="(\w+)",(-?\d+)/i); if (m && (m[1] in s.sjdcfg)) { s.sjdcfg[m[1]] = Number(m[2]); if (s.sjdr) this._startJam(); } return ok(); }
-    // ===== Espressif ESP (factory AT firmware) — extracted to emulator-espressif.js =====
-    { const r = espEmuHandle(this, cmd, { ok, err, reply }); if (r !== ESP_EMU_PASS) return r; }
 
     // ===== LwM2M (AT+LW*) and CoAP (AT+COAP*) — ch. 29/30 of the A76XX manual =====
     if (/^AT\+LWSTART/i.test(cmd) || /^AT\+LWSTOP/i.test(cmd)) return ok();
@@ -470,7 +449,8 @@ class ATEmulator {
     }
     if (/^AT\+CFTRANRX=/i.test(cmd)) {   // host → EFS: stores the bytes at the given path
       const m = cmd.match(/CFTRANRX="([^"]*)",(\d+)/i);
-      this.expecting = { kind: 'fsrx', len: m ? parseInt(m[2], 10) : 0, path: m ? m[1] : null };
+      const path = m ? m[1] : null;
+      this.expecting = { len: m ? parseInt(m[2], 10) : 0, onDone: (payload) => { if (path) this._storeFile(path, payload); } };
       return this.output('\r\n> ');
     }
     if (/^AT\+CFTRANTX=/i.test(cmd)) {   // EFS → host: cabecera + bytes crudos + OK
@@ -599,7 +579,11 @@ class ATEmulator {
       const [fds, mode, lens] = cmd.split('=')[1].split(',');
       const h = (s.fsfd || {})[Number(fds)], n = Number(lens) || 0;
       if (!h || !n) return err();
-      this.expecting = { kind: 'fswrite', len: n, path: h.path, append: mode === '1' };
+      const append = mode === '1';   // FSWRITE on an open fd (0 overwrites · 1 appends)
+      this.expecting = { len: n, onDone: (payload) => {
+        const prev = append ? this._u8ToBin(this._readFile(h.path) || new Uint8Array(0)) : '';
+        this._storeFile(h.path, prev + payload);
+      } };
       return this.output('\r\n> ');
     }
     if (/^AT\+FSCLOSE=/i.test(cmd)) {
@@ -627,7 +611,12 @@ class ATEmulator {
     if (/^AT\+CIPOPEN=\d+,"(TCP|UDP)"/i.test(cmd)) { const m = cmd.match(/CIPOPEN=(\d+)/i); s.caOpen = true; ok(); return this._later(500, () => this.output(`\r\n+CIPOPEN: ${m[1]},0\r\n`)); }
     if (/^AT\+CIPSEND=\d+,\d+/i.test(cmd)) { const n = Number(cmd.split(',')[1]); s.caSent += n; this.expecting = { kind: 'len', len: n }; return this.output('\r\n> '); }
     // addressed variable-length send (UDP): AT+CIPSEND=<link>,,"<host>",<port> → '>' prompt, closed with Ctrl+Z
-    if (/^AT\+CIPSEND=\d+,,"/i.test(cmd)) { if (!s.netOpen) return err(); this.expecting = { kind: 'cipsend', link: cmd.match(/=(\d+)/)[1] }; return this.output('\r\n> '); }
+    if (/^AT\+CIPSEND=\d+,,"/i.test(cmd)) {   // addressed UDP send (variable length, closed with Ctrl+Z)
+      if (!s.netOpen) return err();
+      const link = cmd.match(/=(\d+)/)[1];
+      this.expecting = { onDone: (sent) => [`+CIPSEND: ${link},${sent},${sent}`, 'OK'] };
+      return this.output('\r\n> ');
+    }
     if (/^AT\+CIPCLOSE=/i.test(cmd)) { s.caOpen = false; const m = cmd.match(/=(\d+)/); ok(); return this._later(200, () => this.output(`\r\n+CIPCLOSE: ${m ? m[1] : 0},0\r\n`)); }
     if (/^AT\+CIPRXGET=2/i.test(cmd)) { const p = 'HELLO'; return reply([`+CIPRXGET: 2,0,${p.length},0`, p]); }
     if (/^AT\+CIPRXGET=/i.test(cmd)) return ok();
@@ -700,29 +689,7 @@ class ATEmulator {
     if (/^AT\+CMQUNSUB=/i.test(cmd)) return ok();
     if (/^AT\+CMQDISCON=/i.test(cmd)) { s.cmqOn = false; return ok(); }
 
-    if (/^AT\+\w+=/i.test(cmd)) return ok();
-    return err();
-  }
-  _cclk() { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${p(d.getFullYear() % 100)}/${p(d.getMonth() + 1)}/${p(d.getDate())},${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}-12`; }
-  _d() { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${p(d.getDate())}${p(d.getMonth() + 1)}${p(d.getFullYear() % 100)}`; }
-  _u() { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}.0`; }
-  _ts7080() { const d = new Date(), p = (n) => String(n).padStart(2, '0'); return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}.000`; }
-  _bleScan() {
-    this._bleDevs = { 0: '1f:50:24:38:96:20', 1: '7e:c3:ed:71:e5:55', 2: '2b:3c:42:10:23:58' };
-    const devs = [
-      [0, '1f:50:24:38:96:20', 197, '02011A020A080BFF4C0010063A'],
-      [1, '7e:c3:ed:71:e5:55', 180, '0201060303AAFE0CFF4C001005'],
-      [2, '2b:3c:42:10:23:58', 165, '02010612094D79204265616B6F6E'],
-    ];
-    let i = 0;
-    const tick = () => {
-      if (!this.state.ble.scanning) return;
-      const d = devs[i % devs.length];
-      const rssi = Math.max(150, Math.min(210, d[2] + Math.floor((Math.random() - 0.5) * 8)));
-      this.output(`\r\n+BLESCANRST: 0,${d[0]},"${d[1]}",${rssi},"${d[3]}"\r\n`);
-      i++; this._later(900, tick);
-    };
-    this._later(500, tick);
-  }
-}
-
+  return EMU_PASS;
+};
+// Only for non-ESP emulators (an ESP module must not answer SIMCom commands).
+registerEmuHandler((emu, cmd, api) => (emu.isEsp ? EMU_PASS : emu._handleSimcom(cmd, api)));

@@ -547,9 +547,29 @@ document.addEventListener('mousedown', (e) => { const pop = $('settings-pop'); i
 syncSettingsUI();
 
 /* ---- module selector (command/parser profile per session) ---- */
+/* Grouped by module maker and, inside it, by family: the profile brings `vendor` (SIMCom,
+   Espressif…) and `category` (Cellular, GNSS, Wi-Fi, Wi-Fi + BLE). A profile without a vendor
+   (the "None - raw serial" one) stays loose at the top, outside any group. */
 function buildModuleSelect() {
   const sel = $('module'); sel.innerHTML = '';
-  Profiles.list().forEach((p) => { const o = document.createElement('option'); o.value = p.id; o.textContent = p.name; if (p.chip) o.title = p.chip + (p.bands ? ' · ' + p.bands : ''); sel.appendChild(o); });
+  const mkOpt = (p) => {
+    const o = document.createElement('option');
+    o.value = p.id; o.textContent = p.name;
+    if (p.chip) o.title = p.chip + (p.bands ? ' · ' + p.bands : '');
+    return o;
+  };
+  const groups = new Map();   // 'SIMCom › Cellular' → option[], in registration order
+  Profiles.list().forEach((p) => {
+    if (!p.vendor) { sel.appendChild(mkOpt(p)); return; }
+    const key = p.vendor + ' · ' + (p.category || p.family);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(mkOpt(p));
+  });
+  groups.forEach((opts, label) => {
+    const g = document.createElement('optgroup'); g.label = label;
+    opts.forEach((o) => g.appendChild(o));
+    sel.appendChild(g);
+  });
   sel.value = App.defaultModule;
 }
 $('module').addEventListener('change', () => {
@@ -602,7 +622,8 @@ function buildSidebar() {
     return true;
   };
   const visibleInCat = (entry) => entry.items.filter((id) => { const g = QUICK.find((x) => x.wiz === id); return g && (!g.cap || profHasCap(prof, g.cap)); });
-  const layout = prof.family === 'ESP' ? SIDEBAR_ESP : SIDEBAR;   // ESP: Macros · Signal monitor · Wi-Fi · Protocols · Bluetooth
+  // ESP: Macros · Signal monitor · Wi-Fi · Protocols · Bluetooth · GNSS receiver: NMEA + chip config
+  const layout = prof.family === 'ESP' ? SIDEBAR_ESP : (prof.family === 'GNSS' ? SIDEBAR_GNSS : SIDEBAR);
   for (const entry of layout) {
     if (onlyMacros) { if (entry.wiz === 'macros') addItem('macros', false); continue; }   // Macros only
     if (entry.cat) {
@@ -827,6 +848,68 @@ function buildEmuPop(sess) {
   };
   const mkBtn = (txt, fn) => { const b = document.createElement('button'); b.className = 'fs-btn'; b.textContent = txt; b.addEventListener('click', fn); return b; };
 
+  // ---- standalone GNSS receiver: nothing to register or dial, what matters is what the
+  //      antenna sees and where the module thinks it is ----
+  if (sess.profile.family === 'GNSS') {
+    const chk = (label, val, onchange) => {
+      const d = row('');
+      const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!val;
+      const lb = document.createElement('label'); lb.className = 'toggle'; lb.append(cb, document.createTextNode(' ' + label));
+      cb.addEventListener('change', () => onchange(cb.checked));
+      d.appendChild(lb);
+      return cb;
+    };
+    const numField = (label, val, step, onchange) => {
+      const d = row(label);
+      const i = document.createElement('input'); i.type = 'number'; i.className = 'mac-delay'; i.step = String(step); i.value = String(val); i.style.flex = '1';
+      i.addEventListener('change', () => onchange(Number(i.value)));
+      d.appendChild(i);
+      return i;
+    };
+
+    sec(t('emu_gnss_rx'));
+    chk(t('emu_gnss_tx'), s.gnssOn, (v) => emu.ctlGnssPower(v));
+    chk(t('emu_gnss_fix'), s.gnssFix !== false, (v) => emu.ctlGnssFix(v));
+
+    sec(t('emu_gnss_pos'));
+    // A few reference points so testing a route doesn't start by typing coordinates.
+    const places = [
+      ['Buenos Aires', -34.60373, -58.38159, 25],
+      ['São Paulo', -23.55052, -46.63331, 760],
+      ['Ciudad de México', 19.43261, -99.13321, 2240],
+      ['Madrid', 40.41678, -3.70379, 667],
+      ['Shanghai', 31.23042, 121.47370, 4],
+    ];
+    const pr = row(t('emu_gnss_place'));
+    const psel = document.createElement('select'); psel.className = 'hw-sel'; psel.style.flex = '1';
+    places.forEach(([n], i) => { const o = document.createElement('option'); o.value = String(i); o.textContent = n; psel.appendChild(o); });
+    pr.appendChild(psel);
+    const latI = numField('Lat', s.gnssLat.toFixed(5), 0.0001, (v) => emu.ctlGnssPos(v, NaN));
+    const lonI = numField('Lon', s.gnssLon.toFixed(5), 0.0001, (v) => emu.ctlGnssPos(NaN, v));
+    const altI = numField(t('emu_gnss_alt'), s.gnssAlt, 1, (v) => emu.ctlGnssAlt(v));
+    psel.addEventListener('change', () => {
+      const [, lat, lon, alt] = places[Number(psel.value)];
+      emu.ctlGnssPos(lat, lon); emu.ctlGnssAlt(alt);
+      latI.value = lat.toFixed(5); lonI.value = lon.toFixed(5); altI.value = String(alt);
+    });
+
+    sec(t('emu_gnss_motion'));
+    slider(t('emu_gnss_speed'), 0, 60, Math.round(s.gnssSpeed), (v) => (v === 0 ? t('emu_gnss_static') : v + ' kn'), (v) => emu.ctlGnssSpeed(v));
+
+    sec(t('emu_gnss_sky'));
+    // Shifting every C/N0: below four usable satellites the receiver loses the fix on its own.
+    slider(t('emu_gnss_quality'), -30, 10, s.gnssSnrAdj || 0, (v) => (v > 0 ? '+' : '') + v + ' dB', (v) => emu.ctlGnssQuality(v));
+    const cr = row(t('emu_gnss_cons'));
+    cr.classList.add('emu-stack');   // long label: it takes its own line and the four fit below
+    [['GP', 'GPS'], ['GL', 'GLONASS'], ['GA', 'Galileo'], ['GB', 'BeiDou']].forEach(([talker, name]) => {
+      const lb = document.createElement('label'); lb.className = 'toggle';
+      const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = s.gnssCons[talker] !== false;
+      cb.addEventListener('change', () => emu.ctlGnssCons(talker, cb.checked));
+      lb.append(cb, document.createTextNode(' ' + name));
+      cr.appendChild(lb);
+    });
+    return;
+  }
   if (sess.profile.family === 'ESP') {   // ---- ESP: Wi-Fi link + AP RSSI ----
     sec(t('emu_wifi'));
     const d = row('');

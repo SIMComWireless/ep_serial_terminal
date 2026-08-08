@@ -114,9 +114,13 @@
   .bars i:nth-child(5){ height: 16px; }
   .bars i.lit { background: var(--amber); }
 
-  /* header dashboard per family: cellular cells (cell-only) vs Espressif (esp-only) */
-  #hdr-inst.esp .cell-only { display: none; }
+  /* Header dashboard per family: cellular cells (cell-only), Espressif (esp-only) and GNSS
+     receiver (gnss-only). `gnss-hide` is for the few cells shared by cellular and Wi-Fi that
+     make no sense on a receiver (RSSI, IP). No class = shown for every family. */
+  #hdr-inst.esp .cell-only, #hdr-inst.gnss .cell-only { display: none; }
   #hdr-inst:not(.esp) .esp-only { display: none; }
+  #hdr-inst:not(.gnss) .gnss-only { display: none; }
+  #hdr-inst.gnss .gnss-hide { display: none; }
 
   /* SIM icon (SVG): follows the CPIN state (green READY · amber asks PIN/PUK · red no SIM) */
   .sim-ico { height: 18px; width: auto; color: var(--ink-dim); margin: 1px 0; transition: color .2s; }
@@ -441,16 +445,25 @@
   .macvar-row input { flex: 1; }
 
   /* simulator control panel (🎛) */
-  #emu-pop { position: fixed; z-index: 85; width: 280px; background: var(--surface); border: 1px solid var(--line);
-    border-radius: 10px; padding: 10px 12px; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+  /* The GNSS receiver panel is the tallest one (position + motion + sky), so it scrolls inside
+     itself instead of running past the bottom of the window. */
+  #emu-pop { position: fixed; z-index: 85; width: 300px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px 12px; box-shadow: 0 10px 30px rgba(0,0,0,.45);
+    max-height: calc(100vh - 90px); overflow-y: auto; overscroll-behavior: contain; }
   .emu-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
   .emu-head b { font-size: 13px; color: var(--ink); }
   .emu-sec { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-faint);
     margin: 10px 0 4px; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
-  .emu-row { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
-  .emu-lbl { font-family: var(--mono); font-size: 11px; color: var(--ink-dim); min-width: 38px; }
-  .emu-row input[type="range"] { flex: 1; min-width: 0; accent-color: var(--amber); }
-  .emu-val { font-family: var(--mono); font-size: 11px; color: var(--ink); min-width: 62px; text-align: right; }
+  /* wrap: a row with more controls than fit (the constellations) flows to the next line
+     instead of overflowing the panel */
+  .emu-row { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 6px 0; }
+  .emu-lbl { font-family: var(--mono); font-size: 11px; color: var(--ink-dim); min-width: 52px; }
+  /* long label (e.g. "Constellations"): it takes its own line and the controls go underneath */
+  .emu-row.emu-stack > .emu-lbl { flex-basis: 100%; }
+  .emu-row .toggle { white-space: nowrap; }
+  .emu-row input[type="range"] { flex: 1; min-width: 90px; accent-color: var(--amber); }
+  .emu-row input[type="number"], .emu-row select { min-width: 0; }
+  .emu-val { font-family: var(--mono); font-size: 11px; color: var(--ink); min-width: 56px; text-align: right; }
   /* header "Simu Ctrl" button (virtual terminals only): opens the right group, to the left of ⌨ */
   .cpemu { flex-shrink: 0; margin-left: auto; font-size: 10px; line-height: 1; cursor: pointer; padding: 2px 7px;
     border-radius: 4px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-dim); }
@@ -561,6 +574,12 @@
   .gn-cell { background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 6px; padding: 7px 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .gn-lab { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-faint); }
   .gn-val { font-family: var(--mono); font-size: 14px; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+  /* The GNSS card's three views (map · satellites · deviation), in that order. Flexigrid like
+     .gn-grid: as many columns as fit at 260px, the rest wraps, and a single column when the
+     card is narrow. auto-fit collapses the tracks nobody uses, so two panes still fill the
+     row. No breakpoint: it follows the card's own width, whatever the window is doing. */
+  .gn-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px 14px; align-items: start; }
+  .gn-pane { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
   .gn-map { position: relative; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; height: 300px; background: var(--surface-2); }
   .gn-frame { width: 100%; height: 100%; border: 0; }
   .gn-leaflet { width: 100%; height: 100%; }
@@ -574,7 +593,7 @@
   .gn-leg { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 11px; color: var(--ink-dim); }
   .gn-lg { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); }
   .gn-lg i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
-  .gn-satbox { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 12px 14px;
+  .gn-satbox { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px 14px;
     background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 8px; padding: 10px 12px; align-items: start; }
   .gn-col { min-width: 0; }
   .gn-skywrap { display: flex; justify-content: center; }
@@ -776,13 +795,12 @@
     main.wiz-max #gutter-wiz::after { width: 34px; height: 5px; }
     main.wiz-max #wiz-panel { grid-area: wiz; flex: initial; max-width: none; width: auto; }
     main.wiz-max .panel { grid-area: console; min-height: 0; }
-    main.wiz-max .gn-satbox { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
     main.wiz-max .gn-sky { max-width: 340px; }
   }
 
 
-  /* on very narrow viewports (mobile) they stack */
-  @media (max-width: 560px) { .gn-satbox { grid-template-columns: 1fr; } }
+  /* the sky view and the signal bars stack on their own (auto-fit) when the column they
+     land in is narrower than two 200px tracks — no viewport breakpoint needed */
 
 
 

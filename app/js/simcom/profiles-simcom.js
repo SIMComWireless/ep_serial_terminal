@@ -81,12 +81,29 @@ const QUICK_SIM7022 = {   // SIM7022 (NB-IoT, SIM7020 family): stack CSOC + CHTT
   ],
 };
 
+/* ---- command lists the generic UI asks the profile for (core never hardcodes AT commands) ----
+   dashboard: what the header ↻ queries · signalPoll: what the Signal monitor polls. */
+const DASH_SIMCOM = ['AT+CPIN?', 'AT+COPS?', 'AT+CREG?', 'AT+CGREG?', 'AT+CEREG?', 'AT+CSQ', 'AT+CESQ', 'AT+CPSI?', 'AT+CGDCONT?', 'AT+CGPADDR'];
+const SIGPOLL_SIMCOM = ['AT+CSQ', 'AT+CPSI?'];   // CSQ = RSSI · CPSI = serving cell (RSRP/SINR/RSRQ)
+
+/* Incoming server (bottom section of the TCP/UDP wizard). TCP: AT+SERVERSTART (a real
+   server). UDP has no server: a socket is opened listening on the local port with
+   CIPOPEN and no remote host. Only the A76XX/MDM families expose it. */
+function tcpServerMacro(mode, port) {
+  return mode === 'udp'
+    ? `AT+NETOPEN\n@1500\nAT+CIPRXGET=1\nAT+CIPOPEN=0,"UDP",,,${port}`
+    : `AT+NETOPEN\n@1500\nAT+SERVERSTART=${port},0`;
+}
+function tcpServerStopCmd(mode) { return mode === 'udp' ? 'AT+CIPCLOSE=0' : 'AT+SERVERSTOP=0'; }
+/** @type {ServerDriver} */
+const SRV_SIMCOM = { modes: ['tcp', 'udp'], start: tcpServerMacro, stop: tcpServerStopCmd };
+
 // Driver bundles per family (what several profiles share). Extracting
 // this avoids repeating the same driver line in every Profiles.register().
 /** @type {ProfileStack} */
-const STACK_A76XX   = { gnss: GNSS_A76XX,   tcp: TCP_A76XX,   http: HTTP_A76XX,   mqtt: MQTT_A76XX,   data: DATA_A76XX,   fs: FS_FSCD };
+const STACK_A76XX   = { gnss: GNSS_A76XX,   tcp: TCP_A76XX,   http: HTTP_A76XX,   mqtt: MQTT_A76XX,   data: DATA_A76XX,   fs: FS_FSCD, ping: PING_CPING, tcpServer: SRV_SIMCOM, quick: QUICK_SIMCOM, dashboard: DASH_SIMCOM, signalPoll: SIGPOLL_SIMCOM };
 /** @type {ProfileStack} */
-const STACK_SIM70X0 = { gnss: GNSS_SIM70X0, tcp: TCP_SIM70X0, http: HTTP_SIM70X0, mqtt: MQTT_SIM70X0, data: DATA_SIM70X0, fs: FS_CFS, quick: QUICK_SIM70X0 };
+const STACK_SIM70X0 = { gnss: GNSS_SIM70X0, tcp: TCP_SIM70X0, http: HTTP_SIM70X0, mqtt: MQTT_SIM70X0, data: DATA_SIM70X0, fs: FS_CFS, ping: PING_SNPING4, quick: { ...QUICK_SIMCOM, ...QUICK_SIM70X0 }, dashboard: DASH_SIMCOM, signalPoll: SIGPOLL_SIMCOM };
 
 // SIM7600 / A7600 family = Qualcomm MDM9x07 (MDM9607 Cat-4 / MDM9207 Cat-1). At the AT level it shares
 // the A76XX network stack (NETOPEN/CIP*/HTTP*/CMQTT*), but its GNSS is CGPS* (not CGNSS*).
@@ -95,19 +112,19 @@ const MDM9X07 = { ...STACK_A76XX, gnss: GNSS_SIM7600 };
 const MDM_CAPS = ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ftp', 'ssl', 'voice', 'lbs', 'sms', 'fs'];
 function regMdm9x07(id, name, model, band, bands, chip) {
   Profiles.register(Object.assign({
-    id, name, family: 'mdm9x07', chip: chip || 'MDM9607', bands, caps: MDM_CAPS,
+    id, name, family: 'mdm9x07', vendor: 'SIMCom', category: 'Cellular', chip: chip || 'MDM9607', bands, caps: MDM_CAPS,
     identity: mkId(model, 'LE20B04SIM7600M22', band, [model, 'LE20B04SIM7600M22']),
   }, MDM9X07));
 }
 
 Profiles.register({
-  id: 'A76XX', name: 'SIMCom A76XX (LTE Cat-1 bis + 2G + GNSS)', family: 'A76XX', chip: 'ASR1603',
+  id: 'A76XX', name: 'SIMCom A76XX (LTE Cat-1 bis + 2G + GNSS)', family: 'A76XX', vendor: 'SIMCom', category: 'Cellular', chip: 'ASR1603',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ftp', 'ssl', 'voice', 'wifi', 'lbs', 'sms', 'fs', 'mail', 'lwm2m', 'coap'],
   identity: mkId('A7672E', 'A011B02A7672M7_V1.0', 'EUTRAN-BAND3'),
   ...STACK_A76XX,
 });
 Profiles.register({
-  id: 'A7672SA-FASE', name: 'SIMCom A7672SA-FASE (A76XX + BLE, LATAM Bands)', family: 'A76XX', chip: 'ASR1603',
+  id: 'A7672SA-FASE', name: 'SIMCom A7672SA-FASE (A76XX + BLE, LATAM Bands)', family: 'A76XX', vendor: 'SIMCom', category: 'Cellular', chip: 'ASR1603',
   caps: ['cellular', 'gnss', 'ble', 'tcpip', 'http', 'mqtt', 'ftp', 'ssl', 'voice', 'lbs', 'sms', 'fs', 'mail', 'lwm2m', 'coap'],
   identity: mkId('A7672SA-FASE', 'A011B02A7672M7_V1.0', 'EUTRAN-BAND4', ['SIMCOM_A7672SA-FASE', 'A7672SA-FASE-V1.0']),
   ...STACK_A76XX,   // A76XX family + BLE
@@ -122,27 +139,28 @@ regMdm9x07('SIM7600CE', 'SIMCom SIM7600CE (China)', 'SIM7600CE-H', 'EUTRAN-BAND1
 regMdm9x07('A7600', 'SIMCom A7600C1', 'A7600C1', 'EUTRAN-BAND1', 'LTE B1/3/5/8 · WCDMA B1/8 (China)');
 
 Profiles.register({
-  id: 'SIM7070G', name: 'SIMCom SIM7070 (Cat-M/NB/GPRS)', family: 'SIM70x0', chip: 'MDM9205',
+  id: 'SIM7070G', name: 'SIMCom SIM7070 (Cat-M/NB/GPRS)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', chip: 'MDM9205',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ssl', 'lbs', 'sms', 'fs'],
   identity: mkId('SIM7070G', '1951B11SIM7070', 'EUTRAN-BAND8'),
   ...STACK_SIM70X0,
 });
 Profiles.register({
-  id: 'SIM7080G', name: 'SIMCom SIM7080 (Cat-M/NB)', family: 'SIM70x0', chip: 'MDM9205',
+  id: 'SIM7080G', name: 'SIMCom SIM7080 (Cat-M/NB)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', chip: 'MDM9205',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ssl', 'lbs', 'sms', 'fs'],
   identity: mkId('SIM7080G', '1951B11SIM7080', 'EUTRAN-BAND8'),
   ...STACK_SIM70X0,
 });
 Profiles.register({
-  id: 'SIM7090G', name: 'SIMCom SIM7090 (Cat-M/NB)', family: 'SIM70x0', chip: 'MDM9205',
+  id: 'SIM7090G', name: 'SIMCom SIM7090 (Cat-M/NB)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', chip: 'MDM9205',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ssl', 'lbs', 'sms', 'fs'],
   identity: mkId('SIM7090G', '1951B11SIM7090', 'EUTRAN-BAND8'),
   ...STACK_SIM70X0,
 });
 Profiles.register({
-  id: 'SIM7022', name: 'SIMCom SIM7022 (NB-IoT)', family: 'SIM7022', chip: 'NB-IoT',
+  id: 'SIM7022', name: 'SIMCom SIM7022 (NB-IoT)', family: 'SIM7022', vendor: 'SIMCom', category: 'Cellular', chip: 'NB-IoT',
   caps: ['cellular', 'tcpip', 'http', 'mqtt', 'ssl', 'sms'],   // no GNSS or voice
   identity: mkId('SIM7022', 'SIM7022_V1.0', 'NBIOT-BAND8'),
   smsPdu: true,   // NB-IoT firmware usually ships without SMS text mode → the wizard uses PDU (CMGF=0)
-  gnss: GNSS_NONE, quick: QUICK_SIM7022, tcp: TCP_SIM7022, http: HTTP_SIM7022, mqtt: MQTT_SIM7022, data: DATA_SIM7022,
+  gnss: GNSS_NONE, quick: { ...QUICK_SIMCOM, ...QUICK_SIM7022 }, tcp: TCP_SIM7022, http: HTTP_SIM7022, mqtt: MQTT_SIM7022, data: DATA_SIM7022,
+  dashboard: DASH_SIMCOM, signalPoll: SIGPOLL_SIMCOM,
 });

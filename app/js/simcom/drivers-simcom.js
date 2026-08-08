@@ -1,147 +1,10 @@
 // @ts-check
-/* drivers.js — contracts (JSDoc), GNSS parsers and per-family drivers (GNSS/TCP/HTTP/MQTT/DATA/FS)
+/* drivers-simcom.js — SIMCom driver IMPLEMENTATIONS: the GNSS response parsers
+   (+CGNSSINFO / +CGNSINF / +CGPSINFO) and the per-family GNSS / TCP / HTTP / MQTT / DATA / FS
+   drivers used by the wizards (A76XX · SIM7600-MDM9x07 · SIM70x0 · SIM7022).
+   The contracts they fulfil are in core/drivers.js; the profiles that bundle them, in
+   simcom/profiles-simcom.js.
    (part of the AT console · classic script, shared global scope — concatenated in order) */
-
-/* ============================================================================
- * CONTRACTS (JSDoc) for profiles and drivers.
- * They document the shape each driver must fulfill so a new module
- * "plugs" into the wizards. They are comments only: they provide autocompletion and checking
- * in the editor (VS Code) without a build or TypeScript. This file and profiles.js are
- * validan estrictos (`// @ts-check` + jsconfig.json); chequeo manual:
- *   npx -y -p typescript tsc -p jsconfig.json
- * ========================================================================== */
-
-/**
- * Wizard form values: field-id → value (string).
- * E.g. v['wz-host'], v['wz-port'], v['wz-mode'] ('TCP'|'UDP'), v['wz-ssl'] (bool-ish).
- * @typedef {Object<string, string>} FormValues
- */
-/**
- * AT command macro returned by a driver. Commands separated by '\n';
- * `@NNN` = wait NNN ms; with the module's '> ' prompt active, the line goes raw (no EOL).
- * @typedef {string} Macro
- */
-/**
- * @typedef {{ ok: boolean, lines: string[] }} SendResult
- * @typedef {(cmd: string) => Promise<SendResult>} SendFn
- */
-/**
- * Parsed GNSS position/state (shape shared by all modules).
- * @typedef {Object} GnssFix
- * @property {string} mode              Fix type ('2'|'3'…)
- * @property {number} sats              Satellites in use
- * @property {number} [svSum]           Sum of satellites in view per constellation
- * @property {number|null} lat
- * @property {number|null} lon
- * @property {string} [date]            Date (ddmmyy or YYYYMMDD depending on module)
- * @property {string} utc               Hora UTC (hhmmss)
- * @property {number|null} [alt]
- * @property {number|null} [speed]
- * @property {number|null} [course]
- * @property {number|null} [pdop]
- * @property {number|null} [hdop]
- * @property {number|null} [vdop]
- */
-/**
- * GNSS driver of a family. If `supported` is false, the rest is optional.
- * @typedef {Object} GnssDriver
- * @property {boolean} supported
- * @property {boolean} [satStream]                        Is there an NMEA sky-view?
- * @property {string} [queryPower]
- * @property {(line: string) => (number|null)} [parsePower]
- * @property {(on: boolean) => Macro} [power]
- * @property {string} [info]
- * @property {RegExp} [infoRe]
- * @property {(line: string) => (GnssFix|null)} [parseInfo]
- * @property {string} [cold]
- * @property {string} [warm]
- * @property {string} [hot]
- * @property {string|null} [satStart]
- * @property {string|null} [satStop]
- */
-/**
- * @typedef {Object} TcpDriver
- * @property {(v: FormValues) => Macro} open
- * @property {(v: FormValues) => Macro} send
- * @property {(v: FormValues) => Macro} read
- * @property {(v: FormValues) => Macro} close
- */
-/**
- * @typedef {Object} HttpDriver
- * @property {(v: FormValues) => Macro} get
- * @property {(v: FormValues) => Macro} post
- */
-/**
- * @typedef {Object} MqttDriver
- * @property {(v: FormValues) => Macro} connect
- * @property {(v: FormValues) => Macro} subscribe
- * @property {(v: FormValues) => Macro} publish
- * @property {() => Macro} disconnect
- */
-/**
- * Data/PDP driver (status panel): commands + refresh that queries the module.
- * @typedef {Object} DataDriver
- * @property {string} openCmd
- * @property {string} closeCmd
- * @property {(send: SendFn) => Promise<{ open: (boolean|null), ip: (string|null) }>} refresh
- */
-/**
- * File System driver. 'fscd' = tree navigation (FSCD/FSLS).
- * 'cfs' = by directory index + name (SIM7080/7070).
- * @typedef {Object} FsDriver
- * @property {'fscd'|'cfs'} model
- * @property {Array<[string, string]>} [dirs]                 (cfs) [index, path]
- * @property {(dir: string, name: string) => Macro} [size]    (cfs)
- * @property {(dir: string, name: string) => Macro} [read]    (cfs)
- * @property {(dir: string, name: string) => Macro} [del]     (cfs)
- */
-/**
- * Quick command item: [label, command, editable?]. The __VARS__ are edited if the flag is 1.
- * @typedef {[string, string, (0|1)?]} QuickItem
- * Quick-command overrides per sidebar group: key = wizard id (tcpudp, http, wifi, ble, ping…).
- * @typedef {Object<string, QuickItem[]>} QuickTable
- */
-/**
- * @typedef {Object} Identity
- * @property {string} manufacturer
- * @property {string} model
- * @property {string} revision
- * @property {string} imei
- * @property {string} band
- * @property {string[]} ati
- */
-/**
- * Driver bundle of a family (what several profiles share).
- * @typedef {Object} ProfileStack
- * @property {GnssDriver} [gnss]
- * @property {TcpDriver} [tcp]
- * @property {HttpDriver} [http]
- * @property {MqttDriver} [mqtt]
- * @property {DataDriver} [data]
- * @property {FsDriver} [fs]
- * @property {QuickTable} [quick]
- */
-/**
- * Module profile. Drivers are OPTIONAL: when missing, the wizard uses the
- * default A76XX driver (see data.js / pdrv()).
- * @typedef {Object} Profile
- * @property {string} id
- * @property {string} name
- * @property {string} family
- * @property {string} [chip]
- * @property {boolean} [raw]           None = raw serial, no AT list
- * @property {boolean} [smsPdu]        SMS in PDU mode (CMGF=0) — module without text mode (e.g. SIM7022)
- * @property {string[]} caps           Capabilities ('gnss','tcpip','mqtt','voice',…)
- * @property {string} [bands]
- * @property {Identity} identity
- * @property {GnssDriver} [gnss]
- * @property {TcpDriver} [tcp]
- * @property {HttpDriver} [http]
- * @property {MqttDriver} [mqtt]
- * @property {DataDriver} [data]
- * @property {FsDriver} [fs]
- * @property {QuickTable} [quick]
- */
 
 /* ---- shared GNSS parsers (IIFE: private helpers, only the parsers are exposed) ---- */
 const GnssParse = (() => {
@@ -396,6 +259,36 @@ const DATA_SIM7022 = {
     let ip = null;
     if (open) { const a = await send('AT+CGPADDR=1'); const im = (a.lines.find((l) => /\+CGPADDR:/i.test(l)) || '').match(/\+CGPADDR:\s*1,"?([\d.]+)"?/i); ip = im ? im[1] : null; }
     return { open, ip };
+  },
+};
+
+// ===== Ping =====
+/* A76xx / SIM7600: one AT+CPING and the replies arrive as +CPING URCs
+   (1 = each reply · 2 = timeout · 3 = final summary). */
+/** @type {PingDriver} */
+const PING_CPING = {
+  start: (o) => `AT+CPING="${o.host}",1,${o.count},${o.size},${o.interval},${o.timeout},${o.ttl}`,
+  parse(line) {
+    let m = line.match(/\+CPING:\s*1,\s*"?([^",]*)"?,(\d+),(\d+),(\d+)/i);
+    if (m) return { text: `${m[1]}  ${m[2]} B  rtt ${m[3]} ms  TTL ${m[4]}` };
+    if (/\+CPING:\s*2\b/.test(line)) return { text: 'timeout' };
+    m = line.match(/\+CPING:\s*3,(\d+),(\d+),(\d+),(\d+),(\d+),(\d+)/i);
+    if (m) {
+      return { raw: true, done: true,
+        text: t('png_summary').replace('{tx}', m[1]).replace('{rx}', m[2]).replace('{lost}', m[3])
+          .replace('{min}', m[4]).replace('{avg}', m[6]).replace('{max}', m[5]) };
+    }
+    return null;
+  },
+};
+/* SIM7070/7080/7090: SNPING4 (IPv4 only), one +SNPING4 per reply, numbered by the module. */
+/** @type {PingDriver} */
+const PING_SNPING4 = {
+  start: (o) => `AT+SNPING4="${o.host}",${o.count},${o.size},${o.timeout}`,
+  parse(line, o) {
+    const m = line.match(/\+SNPING4:\s*(\d+),\s*"?([^",]*)"?,\s*(-?\d+)/i);
+    if (!m) return null;
+    return { seq: Number(m[1]), text: `${m[2]}  rtt ${m[3]} ms`, done: Number(m[1]) >= o.count };
   },
 };
 

@@ -39,15 +39,19 @@
     <div class="dcell esp-only"><span class="dk" data-i18n="g_wmode">Wi-Fi mode</span><span class="dv" id="g-wmode">—</span></div>
     <div class="dcell esp-only"><span class="dk" data-i18n="g_wstate">State</span><span class="dv" id="g-wstate">—</span></div>
     <div class="dcell esp-only"><span class="dk">SSID</span><span class="dv" id="g-ssid">—</span></div>
+    <!-- GNSS receiver cells: fix quality and satellites, fed by the NMEA stream (live-nmea.js) -->
+    <div class="dcell gnss-only"><span class="dk" data-i18n="gn_fix">Fix</span><span class="dv" id="g-fix">—</span></div>
+    <div class="dcell gnss-only"><span class="dk" data-i18n="gn_sats">Satellites</span><span class="dv" id="g-gsats">—</span></div>
     <div class="sig-cell">
       <span class="dk" data-i18n="g_signal">Signal</span>
       <div class="sig-row">
         <span class="bars" id="g-bars"><i></i><i></i><i></i><i></i><i></i></span>
         <div class="dcell mini cell-only"><span class="dk">CSQ</span><span class="dv" id="g-csq">—</span></div>
-        <div class="dcell mini"><span class="dk">RSSI</span><span class="dv" id="g-rssi">—</span></div>
+        <div class="dcell mini gnss-hide"><span class="dk">RSSI</span><span class="dv" id="g-rssi">—</span></div>
         <div class="dcell mini cell-only"><span class="dk">RS-SNR</span><span class="dv" id="g-rssnr">—</span></div>
         <div class="dcell mini cell-only"><span class="dk">RSRP</span><span class="dv" id="g-rsrp">—</span></div>
         <div class="dcell mini esp-only"><span class="dk">CH</span><span class="dv" id="g-chan">—</span></div>
+        <div class="dcell mini gnss-only"><span class="dk">C/N0</span><span class="dv" id="g-cn0">—</span></div>
       </div>
     </div>
     <div class="dcell cell-only"><span class="dk" data-i18n="g_mode">Net mode</span><span class="dv" id="g-mode">—</span></div>
@@ -55,9 +59,15 @@
     <div class="dcell cell-only"><span class="dk" data-i18n="g_oper">Operator</span><span class="dv dim" id="g-oper">—</span></div>
     <div class="dcell cell-only"><span class="dk">APN</span><span class="dv" id="g-apn">—</span></div>
     <div class="dcell cell-only"><span class="dk" data-i18n="g_iptype">IP type</span><span class="dv" id="g-iptype">—</span></div>
-    <div class="dcell"><span class="dk">IP</span><span class="dv" id="g-ip">—</span></div>
+    <div class="dcell gnss-hide"><span class="dk">IP</span><span class="dv" id="g-ip">—</span></div>
     <div class="dcell esp-only"><span class="dk" data-i18n="g_gw">Gateway</span><span class="dv" id="g-gw">—</span></div>
     <div class="dcell esp-only"><span class="dk">MAC</span><span class="dv" id="g-mac">—</span></div>
+    <div class="dcell gnss-only"><span class="dk">Lat</span><span class="dv" id="g-lat">—</span></div>
+    <div class="dcell gnss-only"><span class="dk">Lon</span><span class="dv" id="g-lon">—</span></div>
+    <div class="dcell gnss-only"><span class="dk" data-i18n="gn_alt">Altitude</span><span class="dv" id="g-galt">—</span></div>
+    <div class="dcell gnss-only"><span class="dk" data-i18n="gn_speed">Speed</span><span class="dv" id="g-gspd">—</span></div>
+    <div class="dcell gnss-only"><span class="dk">HDOP</span><span class="dv" id="g-hdop">—</span></div>
+    <div class="dcell gnss-only"><span class="dk">UTC</span><span class="dv" id="g-gutc">—</span></div>
     <button class="iconbtn" id="dash-refresh" title="Query module">↻</button>
   </div>
   <!-- App control panel: label-above columns (Terminal · File · Language · Theme) to stay
@@ -209,9 +219,10 @@
 </a>
 
 <!-- Scripts -->
-<script src="app/js/util.js"></script>
-<script src="app/js/icons.js"></script>
-<script src="app/js/i18n.js"></script>
+<!-- core: generic app + AT protocol (vendor-agnostic) -->
+<script src="app/js/core/util.js"></script>
+<script src="app/js/core/icons.js"></script>
+<script src="app/js/core/i18n.js"></script>
 <script src="app/lang/en.js"></script>
 <script src="app/lang/es.js"></script>
 <script src="app/lang/pt.js"></script>
@@ -227,27 +238,47 @@
 <script src="app/vendor/codemirror/mode-simple.js"></script>
 <script src="app/vendor/codemirror/active-line.js"></script>
 <script src="app/vendor/codemirror/matchbrackets.js"></script>
-<!-- searchcursor only: the search UI is ours (same look as the terminal's), see editor.js -->
 <script src="app/vendor/codemirror/searchcursor.js"></script>
-<script src="app/js/serial.js"></script>
-<script src="app/js/emulator.js"></script>
-<script src="app/js/emulator-espressif.js"></script>
-<script src="app/js/drivers.js"></script>
-<script src="app/js/profiles.js"></script>
-<script src="app/js/profiles-simcom.js"></script>
-<script src="app/js/profiles-espressif.js"></script>
-<script src="app/js/data.js"></script>
-<script src="app/js/macros.js"></script>
-<script src="app/js/live.js"></script>
-<script src="app/js/live-espressif.js"></script>
-<script src="app/js/session.js"></script>
-<script src="app/js/app.js"></script>
-<script src="app/js/editor.js"></script>
-<script src="app/js/wizards-core.js"></script>
-<script src="app/js/wizards-radio.js"></script>
-<script src="app/js/wizards-espressif.js"></script>
-<script src="app/js/wizards-services.js"></script>
-<script src="app/js/init.js"></script>
+<!-- AT protocol: generic parser + the URC prefixes of each vendor -->
+<script src="app/js/core/at-parser.js"></script>
+<script src="app/js/core/nmea.js"></script>
+<script src="app/js/simcom/at-parser-simcom.js"></script>
+<script src="app/js/espressif/at-parser-espressif.js"></script>
+<!-- transport + virtual modem (core) and its per-vendor command sets -->
+<script src="app/js/core/serial.js"></script>
+<script src="app/js/core/emulator-core.js"></script>
+<script src="app/js/core/emulator-nmea.js"></script>
+<script src="app/js/simcom/emulator-simcom.js"></script>
+<script src="app/js/espressif/emulator-espressif.js"></script>
+<script src="app/js/airoha/emulator-airoha.js"></script>
+<script src="app/js/icoe/emulator-icoe.js"></script>
+<!-- driver contracts + profile registry, then the implementations per vendor -->
+<script src="app/js/core/drivers.js"></script>
+<script src="app/js/core/profiles.js"></script>
+<script src="app/js/simcom/drivers-simcom.js"></script>
+<script src="app/js/airoha/gnss-airoha.js"></script>
+<script src="app/js/icoe/gnss-icoe.js"></script>
+<script src="app/js/simcom/quick-simcom.js"></script>
+<script src="app/js/simcom/profiles-simcom.js"></script>
+<script src="app/js/simcom/profiles-gnss-simcom.js"></script>
+<script src="app/js/espressif/profiles-espressif.js"></script>
+<!-- app -->
+<script src="app/js/core/data.js"></script>
+<script src="app/js/core/macros.js"></script>
+<script src="app/js/core/live.js"></script>
+<script src="app/js/core/live-nmea.js"></script>
+<script src="app/js/simcom/live-simcom.js"></script>
+<script src="app/js/espressif/live-espressif.js"></script>
+<script src="app/js/core/session.js"></script>
+<script src="app/js/core/app.js"></script>
+<script src="app/js/core/editor.js"></script>
+<script src="app/js/core/wizards-core.js"></script>
+<script src="app/js/core/wizards-radio.js"></script>
+<script src="app/js/simcom/wizards-simcom.js"></script>
+<script src="app/js/espressif/wizards-espressif.js"></script>
+<script src="app/js/core/wizards-services.js"></script>
+<script src="app/js/simcom/wizards-services-simcom.js"></script>
+<script src="app/js/core/init.js"></script>
 
 </body>
 </html>

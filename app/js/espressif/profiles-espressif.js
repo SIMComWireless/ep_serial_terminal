@@ -35,6 +35,31 @@ const DATA_ESP = {   // a "data session" on ESP = being associated to an AP with
     return { open: !!ip, ip };
   },
 };
+/* Espressif ping: AT+PING="host" answers a single +PING per command, so the wizard
+   repeats the command once per probe (perProbe). */
+/** @type {PingDriver} */
+const PING_ESP = {
+  perProbe: true,
+  start: (o) => `AT+PING="${o.host}"`,
+  parse(line, o) {
+    const m = line.match(/^\+PING:(\d+)/i);
+    if (m) return { text: `${o.host}  rtt ${m[1]} ms` };
+    if (/^\+PING:TIMEOUT/i.test(line)) return { text: 'timeout' };
+    return null;
+  },
+};
+/* ---- command lists the generic UI asks the profile for (see the Profile contract) ---- */
+const DASH_ESP = ['AT+CWMODE?', 'AT+CWJAP?', 'AT+CIPSTA?', 'AT+CIPSTAMAC?'];
+const DASH_ESP_V3 = [...DASH_ESP, 'AT+CWSTATE?'];   // CWSTATE only on AT v3 (C3 / C6)
+const SIGPOLL_ESP = ['AT+CWJAP?'];                  // the RSSI of the associated AP
+/* Incoming server: CIPSERVER, TCP only and it requires multi-connection mode (CIPMUX=1). */
+/** @type {ServerDriver} */
+const SRV_ESP = {
+  modes: ['tcp'],
+  start: (mode, port) => `AT+CIPMUX=1\n@300\nAT+CIPSERVER=1,${port}`,
+  stop: () => 'AT+CIPSERVER=0',
+};
+
 /** @type {QuickTable} */
 const QUICK_ESP_BASE = {
   wifi: [
@@ -90,20 +115,20 @@ const QUICK_ESP32C6 = { ...QUICK_ESP_BASE,
 };
 
 Profiles.register({
-  id: 'ESP8266', name: 'Espressif ESP8266 (Wi-Fi AT)', family: 'ESP', chip: 'ESP8266EX',
+  id: 'ESP8266', name: 'Espressif ESP8266 (Wi-Fi AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi', chip: 'ESP8266EX',
   caps: ['wifi', 'tcpip'],
   identity: { manufacturer: 'Espressif', model: 'ESP8266', revision: 'AT 2.2.1', imei: '', band: 'Wi-Fi 2.4 GHz b/g/n', ati: ['ESP8266 AT firmware'] },
-  gnss: GNSS_NONE, tcp: TCP_ESP, data: DATA_ESP, quick: QUICK_ESP_BASE,
+  gnss: GNSS_NONE, tcp: TCP_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP_BASE, dashboard: DASH_ESP, signalPoll: SIGPOLL_ESP,
 });
 Profiles.register({
-  id: 'ESP32-C3', name: 'Espressif ESP32-C3 (Wi-Fi 4 + BLE AT)', family: 'ESP', chip: 'ESP32-C3',
+  id: 'ESP32-C3', name: 'Espressif ESP32-C3 (Wi-Fi 4 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', chip: 'ESP32-C3',
   caps: ['wifi', 'ble', 'tcpip', 'http', 'mqtt'],
   identity: { manufacturer: 'Espressif', model: 'ESP32-C3', revision: 'AT 3.2.0', imei: '', band: 'Wi-Fi 4 2.4 GHz + BLE 5', ati: ['ESP32-C3 AT firmware'] },
-  gnss: GNSS_NONE, tcp: TCP_ESP, http: HTTP_ESP, mqtt: MQTT_ESP, data: DATA_ESP, quick: QUICK_ESP32C6,
+  gnss: GNSS_NONE, tcp: TCP_ESP, http: HTTP_ESP, mqtt: MQTT_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP32C6, dashboard: DASH_ESP_V3, signalPoll: SIGPOLL_ESP,
 });
 Profiles.register({
-  id: 'ESP32-C6', name: 'Espressif ESP32-C6 (Wi-Fi 6 + BLE AT)', family: 'ESP', chip: 'ESP32-C6',
+  id: 'ESP32-C6', name: 'Espressif ESP32-C6 (Wi-Fi 6 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', chip: 'ESP32-C6',
   caps: ['wifi', 'ble', 'tcpip', 'http', 'mqtt'],
   identity: { manufacturer: 'Espressif', model: 'ESP32-C6', revision: 'AT 3.4.0', imei: '', band: 'Wi-Fi 6 2.4 GHz + BLE 5', ati: ['ESP32-C6 AT firmware'] },
-  gnss: GNSS_NONE, tcp: TCP_ESP, http: HTTP_ESP, mqtt: MQTT_ESP, data: DATA_ESP, quick: QUICK_ESP32C6,
+  gnss: GNSS_NONE, tcp: TCP_ESP, http: HTTP_ESP, mqtt: MQTT_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP32C6, dashboard: DASH_ESP_V3, signalPoll: SIGPOLL_ESP,
 });

@@ -90,18 +90,22 @@ function drawReg(reg) {
 // The ESP family shows its own cells (Wi-Fi mode/SSID/channel/MAC) and the Espressif logo.
 function updateInstVisibility() {
   const f = UI.focused, show = !!(f && f.profile && !f.profile.raw);
-  const esp = !!(f && f.profile && f.profile.family === 'ESP');
+  const fam = (f && f.profile && f.profile.family) || '';
   const hi = $('hdr-inst'), dh = $('dash');
-  if (hi) { hi.style.display = show ? '' : 'none'; hi.classList.toggle('esp', esp); }
+  if (hi) {
+    hi.style.display = show ? '' : 'none';
+    hi.classList.toggle('esp', fam === 'ESP');
+    hi.classList.toggle('gnss', fam === 'GNSS');   // receiver: fix and satellites, no network
+  }
   if (dh) dh.style.display = show ? '' : 'none';
   syncBrand();
 }
 // Logos per brand/state. In the standalone, build-standalone.cjs replaces these paths with data URIs.
 const LOGOS = {
   serial: 'app/img/serial_term.svg',              // startup / None module (raw)
-  simcom: 'app/img/simcom-logo.svg',              // familias SIMCom  (simcom_logo.png, simcom-logo.svg)
-  espLight: 'app/img/espressif-logo-black.svg',    // Espressif · light theme
-  espDark: 'app/img/espressif-logo-wite.svg',    // Espressif · dark theme
+  simcom: 'app/img/simcom/simcom-logo.svg',                // SIMCom families
+  espLight: 'app/img/espressif/espressif-logo-black.svg',  // Espressif · light theme
+  espDark: 'app/img/espressif/espressif-logo-wite.svg',    // Espressif · dark theme
 };
 // Header logo per focused module and theme: serial (startup/None), Espressif (per theme) or SIMCom.
 function syncBrand() {
@@ -119,11 +123,16 @@ function refreshDashboard() {
   const f = UI.focused;
   if (!f || !f.connected || f.profile.raw) return;
   f.clearInst();   // stale data out: whatever the module doesn't re-answer (ERROR / NO SERVICE) stays "—"
-  if (f.profile.family === 'ESP') {
-    runMacro('AT+CWMODE?\nAT+CWJAP?\nAT+CIPSTA?\nAT+CIPSTAMAC?' + (profHasCap(f.profile, 'ble') ? '\nAT+CWSTATE?' : ''), 180);   // CWSTATE only on AT v3 (C6)
-  } else {
-    runMacro('AT+CPIN?\nAT+COPS?\nAT+CREG?\nAT+CGREG?\nAT+CEREG?\nAT+CSQ\nAT+CESQ\nAT+CPSI?\nAT+CGDCONT?\nAT+CGPADDR', 180);
-  }
+  const fam = f.profile.family;
+  const cmds = f.profile.dashboard || [];   // the command list belongs to the profile (see the vendor's profiles-*.js)
+  // Queried on THIS session (not on whatever is focused later) and aborted if the terminal is
+  // closed or its module changes mid-flight — a cellular query must never land on an ESP, and vice versa.
+  (async () => {
+    for (const c of cmds) {
+      if (!f.connected || f.profile.family !== fam) return;
+      await f.sendCollect(c, { timeout: 3000 });
+    }
+  })();
 }
 // Since the Web Serial API does NOT expose the driver name or COM port (only VID:PID),
 // we map known VID:PIDs to a readable name. The exact name (e.g. the one
@@ -252,6 +261,9 @@ class Session {
     // per-command latency: the closing OK/ERROR carries the ms since the last TX
     if ((kind === 'ok' || kind === 'err') && this._txAt) { this._lat = Date.now() - this._txAt; this._txAt = null; }
     this.log(kind === 'echo' ? 'sys' : kind, line, false, term);
+    // NMEA is comma-separated, so it cannot be matched by the "+PREFIX:" registry below:
+    // a receiver's telemetry is fed straight from the stream (see live-nmea.js).
+    if (line[0] === '$' && liveNmea(line, this)) return;
     for (const p of Object.keys(Live)) {   // one telemetry parser per prefix (see live.js)
       if (line.startsWith(p + ':') || line.startsWith(p + ' ') || line === p) {
         try { Live[p](line, this, p); } catch (_) {}
@@ -410,11 +422,13 @@ class Session {
     this.inst.signal = null;
     this.inst.vals = {};
     this.inst.reg = { creg: null, cgreg: null, cereg: null };
+    this.nmea = null;   // the receiver rebuilds its fix from the next sentences
     if (this.isFocused) this.refreshStrip();
   }
 }
 const DASH_IDS = ['g-oper', 'g-sim', 'g-csq', 'g-mode', 'g-band', 'g-rsrp', 'g-rssi', 'g-rssnr', 'g-apn', 'g-iptype', 'g-ip',
-  'g-wmode', 'g-wstate', 'g-ssid', 'g-chan', 'g-gw', 'g-mac'];   // celdas ESP (Espressif)
+  'g-wmode', 'g-wstate', 'g-ssid', 'g-chan', 'g-gw', 'g-mac',   // Espressif cells
+  'g-fix', 'g-gsats', 'g-lat', 'g-lon', 'g-galt', 'g-gspd', 'g-hdop', 'g-gutc', 'g-cn0'];   // GNSS receiver cells
 
 /* === UI facade: delegates to the focused session (commands go to the focused terminal) === */
 /* ============================================================================

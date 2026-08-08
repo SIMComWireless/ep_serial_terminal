@@ -1,40 +1,12 @@
-/* live.js — "live" parsers for the instrument strip: each key of `Live` is a
-   response/URC prefix and its handler updates the session telemetry (see
-   Session.onLine, which dispatches by iterating this object's keys).
+/* live-simcom.js — 3GPP / SIMCom telemetry parsers for the instrument strip: signal (+CSQ,
+   +CESQ), serving cell (+CPSI), operator (+COPS), registration (+CREG/+CGREG/+CEREG), SIM
+   (+CPIN, +SIMCARD) and the data context (+CGDCONT, +CGPADDR, +CNACT, +IPADDR).
+   They join the shared `Live` map of core/live.js.
    (part of the AT console · classic script, shared global scope — concatenated in order) */
 
-// Signal sample for the "Signal monitor" wizard: appends {t, rssi, rsrp, sinr, rsrq} to the
-// session history (merges when it arrives along another metric, e.g. CSQ + CPSI of the same refresh) and notifies the
-// wizard if it is open (global hook sigMonOnSample, defined in wizards-radio.js).
-function sigPush(sess, patch) {
-  const h = sess.sigHist || (sess.sigHist = []);
-  const now = Date.now();
-  const last = h[h.length - 1];
-  // 400 ms: groups the metrics of one round (CSQ→CPSI) without eating samples from fast
-  // polling (the wizard poll has a 500 ms floor, so each round becomes its own point)
-  if (last && now - last.t < 400) Object.assign(last, patch);
-  else h.push({ t: now, ...patch });
-  if (h.length > 900) h.splice(0, h.length - 900);   // ~30 min polling every 2 s
-  if (typeof sigMonOnSample === 'function') { try { sigMonOnSample(sess); } catch (_) {} }
-}
-
-const Live = (() => {
-  // Splits the fields of a "+PREF: a,b,c" response (module-private).
-  function splitFields(line, prefix) {
-    let s = line.startsWith(prefix) ? line.slice(prefix.length).replace(/^:\s*/, '') : line;
-    return s.split(',').map(x => x.trim());
-  }
-  // CREG / CGREG / CEREG share the format (module-private).
-  function regParser(line, ui, prefix) {
-    const f = splitFields(line, prefix);
-    // a query carries <n>,<stat> (e.g. +CEREG: 2,1,...) → stat = f[1]; a URC carries <stat> directly
-    const stat = Number(f.length >= 2 && f[0].length <= 1 && Number(f[0]) <= 4 ? f[1] : f[0]);
-    const which = prefix === '+CREG' ? 'creg' : prefix === '+CGREG' ? 'cgreg' : 'cereg';
-    ui.setReg(which, stat);
-  }
-  return {
+Object.assign(Live, {
     '+CSQ': (line, ui) => {
-      const [r] = splitFields(line, '+CSQ');
+      const [r] = liveSplitFields(line, '+CSQ');
       const rssi = Number(r);
       if (rssi === 99 || isNaN(rssi)) { ui.set('g-csq', '99'); ui.set('g-rssi', '—'); return ui.signal(null); }   // 99 = no measurement: stale RSSI out
       ui.set('g-csq', String(rssi));
@@ -43,7 +15,7 @@ const Live = (() => {
       sigPush(ui, { rssi: -113 + 2 * rssi });
     },
     '+CESQ': (line, ui) => {
-      const f = splitFields(line, '+CESQ').map(Number);
+      const f = liveSplitFields(line, '+CESQ').map(Number);
       const rsrp = f[5];
       if (rsrp == null || rsrp > 97) return;
       const dbm = -141 + rsrp;
@@ -52,13 +24,13 @@ const Live = (() => {
       sigPush(ui, { rsrp: dbm });
     },
     '+COPS': (line, ui) => {
-      const f = splitFields(line, '+COPS');
+      const f = liveSplitFields(line, '+COPS');
       const op = f[2] ? f[2].replace(/"/g, '') : null;
       if (op) ui.set('g-oper', op);
     },
     // +CPSI: <mode>,<status>,<mcc-mnc>,<tac>,<scell>,<pcell>,<band>,<earfcn>,<dlbw>,<ulbw>,<rsrq>,<rsrp>,<rssi>,<rssnr>
     '+CPSI': (line, ui) => {
-      const f = splitFields(line, '+CPSI');
+      const f = liveSplitFields(line, '+CPSI');
       if (!f.length || /^no service/i.test(f[0] || '')) {
         ui.set('g-mode', f[0] || '—');
         // with no service there is no cell: stale band and signal metrics out
@@ -87,24 +59,23 @@ const Live = (() => {
       if (/NOT AVAILABLE/i.test(line)) ui.set('g-sim', 'NOT AVAILABLE', 'err');
     },
     '+CGDCONT': (line, ui) => {
-      const f = splitFields(line, '+CGDCONT');
+      const f = liveSplitFields(line, '+CGDCONT');
       const type = (f[1] || '').replace(/"/g, ''), apn = (f[2] || '').replace(/"/g, '');
       if (type) ui.set('g-iptype', type);
       if (apn) ui.set('g-apn', apn);
     },
     '+CGPADDR': (line, ui) => {
-      const ip = (splitFields(line, '+CGPADDR')[1] || '').replace(/"/g, '');
+      const ip = (liveSplitFields(line, '+CGPADDR')[1] || '').replace(/"/g, '');
       if (ip && ip !== '0.0.0.0') ui.set('g-ip', ip);
     },
     '+CNACT': (line, ui) => {
-      const ip = (splitFields(line, '+CNACT')[2] || '').replace(/"/g, '');
+      const ip = (liveSplitFields(line, '+CNACT')[2] || '').replace(/"/g, '');
       if (ip && ip !== '0.0.0.0') ui.set('g-ip', ip);
     },
     '+IPADDR': (line, ui) => {
       const ip = line.replace(/^\+IPADDR:\s*/i, '').trim();
       if (/\d+\.\d+\.\d+\.\d+/.test(ip)) ui.set('g-ip', ip);
     },
-    '+CREG': regParser, '+CGREG': regParser, '+CEREG': regParser,
+    '+CREG': liveRegParser, '+CGREG': liveRegParser, '+CEREG': liveRegParser,
     // (the Espressif ESP parsers — CWMODE/CWJAP/CWSTATE/CIPSTA/WIFI * — join Live from live-espressif.js)
-  };
-})();
+});
