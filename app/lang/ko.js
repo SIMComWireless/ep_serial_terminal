@@ -603,6 +603,7 @@ registerLang("ko", "한국어", {
   "emu_reg5": "등록됨(로밍)",
   "grp25": "신호 모니터",
   "grp26": "설정",
+  "dash_refresh": "모듈 조회",
   "emu_gnss_rx": "수신기",
   "emu_gnss_tx": "NMEA 송신 중",
   "emu_gnss_fix": "측위 유효",

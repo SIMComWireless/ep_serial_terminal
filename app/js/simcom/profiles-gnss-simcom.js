@@ -53,7 +53,7 @@ const mkGnssId = (model, chip) => ({
 const GNSS_CAPS = ['gnss', 'nmea'];
 function regGnss(id, name, chip, gnss, note) {
   Profiles.register({
-    id, name, family: 'GNSS', vendor: 'SIMCom', category: 'GNSS',
+    id, name, family: 'GNSS', vendor: 'SIMCom', category: 'GNSS', instruments: 'gnss',
     chip: chip.name, bands: note, caps: GNSS_CAPS,
     identity: mkGnssId(id, chip),
     gnss, quick: quickGnss(chip),

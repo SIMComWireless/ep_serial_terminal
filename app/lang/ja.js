@@ -603,6 +603,7 @@ registerLang("ja", "日本語", {
   "emu_reg5": "登録済み（ローミング）",
   "grp25": "信号モニター",
   "grp26": "設定",
+  "dash_refresh": "モジュールを照会",
   "emu_gnss_rx": "受信機",
   "emu_gnss_tx": "NMEA 送信中",
   "emu_gnss_fix": "測位有効",

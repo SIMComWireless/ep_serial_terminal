@@ -130,6 +130,19 @@
  * @property {QuickItem[]} [quick]                             sentences for the "AT Commands" combo
  */
 /**
+ * One cell of the header strip (see core/instruments.js). Default kind = a labelled value;
+ * 'sim' adds the SIM-card icon, 'reg' draws the registration LEDs and 'signal' groups the
+ * bars with its mini cells. `id` is what ui.set(id, …) writes to.
+ * @typedef {Object} InstCell
+ * @property {'sim'|'reg'|'signal'} [kind]
+ * @property {string} [id]
+ * @property {string} [label]                          literal (technical: SSID, HDOP, IP…)
+ * @property {string} [labelKey]                       i18n key when the label is translatable
+ * @property {boolean} [dim]
+ * @property {Array<[string, string]>} [leds]          (reg) [element id, name]
+ * @property {Array<{id: string, label?: string, labelKey?: string}>} [minis]   (signal)
+ */
+/**
  * Ping driver. `start` builds the command from the form values; `parse` is called for every
  * incoming line and returns a row to print (or null if the line isn't part of the ping).
  * `seq` overrides the row number, `raw:true` prints the text as-is (summary), `done:true`
@@ -188,6 +201,8 @@
  * @property {string} family
  * @property {string} [vendor]        Module maker shown as the <optgroup> of the selector (SIMCom, Espressif…)
  * @property {string} [category]      Family inside that maker (Cellular, GNSS, Wi-Fi, Wi-Fi + BLE)
+ * @property {string} [instruments]   Header strip set the module shows: 'cellular' | 'wifi' | 'gnss'
+ *                                   (or one registered with registerInstruments) — see core/instruments.js
  * @property {string} [chip]
  * @property {boolean} [raw]           None = raw serial, no AT list
  * @property {boolean} [smsPdu]        SMS in PDU mode (CMGF=0) — module without text mode (e.g. SIM7022)

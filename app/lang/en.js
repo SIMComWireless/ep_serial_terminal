@@ -603,6 +603,7 @@ registerLang("en", "EN", {
   "emu_reg5": "Registered (roaming)",
   "grp25": "Signal monitor",
   "grp26": "Configuration",
+  "dash_refresh": "Query module",
   "emu_gnss_rx": "Receiver",
   "emu_gnss_tx": "Transmitting NMEA",
   "emu_gnss_fix": "Valid fix",

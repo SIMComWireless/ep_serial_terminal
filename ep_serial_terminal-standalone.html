@@ -1134,13 +1134,8 @@ span.CodeMirror-selectedtext { background: none; }
   .bars i:nth-child(5){ height: 16px; }
   .bars i.lit { background: var(--amber); }
 
-  /* Header dashboard per family: cellular cells (cell-only), Espressif (esp-only) and GNSS
-     receiver (gnss-only). `gnss-hide` is for the few cells shared by cellular and Wi-Fi that
-     make no sense on a receiver (RSSI, IP). No class = shown for every family. */
-  #hdr-inst.esp .cell-only, #hdr-inst.gnss .cell-only { display: none; }
-  #hdr-inst:not(.esp) .esp-only { display: none; }
-  #hdr-inst:not(.gnss) .gnss-only { display: none; }
-  #hdr-inst.gnss .gnss-hide { display: none; }
+  /* The strip cells are built by core/instruments.js from the set the profile declares:
+     there is no per-family show/hide rule here any more. */
 
   /* SIM icon (SVG): follows the CPIN state (green READY · amber asks PIN/PUK · red no SIM) */
   .sim-ico { height: 18px; width: auto; color: var(--ink-dim); margin: 1px 0; transition: color .2s; }
@@ -1989,60 +1984,10 @@ html[data-theme="light"] {
   <div class="brand">
     <img class="logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8IS0tIENyZWF0b3I6IENvcmVsRFJBVyAyMDIwICg2NC1CaXQpIC0tPg0KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSIzMS43MTk0bW0iIGhlaWdodD0iOC4wOTYzbW0iIHZlcnNpb249IjEuMSIgc3R5bGU9InNoYXBlLXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IHRleHQtcmVuZGVyaW5nOmdlb21ldHJpY1ByZWNpc2lvbjsgaW1hZ2UtcmVuZGVyaW5nOm9wdGltaXplUXVhbGl0eTsgZmlsbC1ydWxlOmV2ZW5vZGQ7IGNsaXAtcnVsZTpldmVub2RkIg0Kdmlld0JveD0iMCAwIDMwLjc5IDcuODYiDQogeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiDQogeG1sbnM6eG9kbT0iaHR0cDovL3d3dy5jb3JlbC5jb20vY29yZWxkcmF3L29kbS8yMDAzIj4NCiA8ZGVmcz4NCiAgPGZvbnQgaWQ9IkZvbnRJRDAiIGhvcml6LWFkdi14PSI1NDkiIGZvbnQtdmFyaWFudD0ibm9ybWFsIiBzdHlsZT0iZmlsbC1ydWxlOm5vbnplcm8iIGZvbnQtc3R5bGU9Im5vcm1hbCIgZm9udC13ZWlnaHQ9IjcwMCI+DQoJPGZvbnQtZmFjZSANCgkJZm9udC1mYW1pbHk9IkNvbnNvbGFzIj4NCgkJPGZvbnQtZmFjZS1zcmM+DQoJCQk8Zm9udC1mYWNlLW5hbWUgbmFtZT0iQ29uc29sYXMgQm9sZCIvPg0KCQk8L2ZvbnQtZmFjZS1zcmM+DQoJPC9mb250LWZhY2U+DQogICA8bWlzc2luZy1nbHlwaD48cGF0aCBkPSJNMCAweiIvPjwvbWlzc2luZy1nbHlwaD4NCiAgIDxnbHlwaCB1bmljb2RlPSJBIiBob3Jpei1hZHYteD0iNTQ5IiBkPSJNNDE1LjY1NiAwbC0zNC45ODMyIDEyNS45OTQgLTIyMi45OTIgMCAtMzYuMDExMiAtMTI1Ljk5NCAtMTE5LjE2MSAwIDE4OC44MjUgNjM4LjAxMyAxNjcuOTkyIDAgMTg5LjE4OCAtNjM4LjAxMyAtMTMyLjg1OCAwem0tMTQ1LjE2NCA1MjEuNjY0bC04NC45OTM4IC0yOTcuNjc1IDE2Ny44NDEgMCAtODIuODQ3IDI5Ny42NzV6Ii8+DQogICA8Z2x5cGggdW5pY29kZT0iRSIgaG9yaXotYWR2LXg9IjU0OSIgZD0iTTkwLjAxMyAwbDAgNjM4LjAxMyAzODMuOTk5IDAgMCAtMTAyLjAxNyAtMjYyLjAyNiAwIDAgLTE1Ny45ODQgMjUwLjAyMyAwIDAgLTk5LjAyMzQgLTI1MC4wMjMgMCAwIC0xNzcuMDAyIDI2Mi4wMjYgMCAwIC0xMDEuOTg3IC0zODMuOTk5IDB6Ii8+DQogICA8Z2x5cGggdW5pY29kZT0iSSIgaG9yaXotYWR2LXg9IjU0OSIgZD0iTTcyLjk5MDEgNTM5Ljk4N2wwIDk4LjAyNTYgNDA0LjAxNSAwIDAgLTk4LjAyNTYgLTE0MC45OTEgMCAwIC00NDAuOTk0IDE0MC45OTEgMCAwIC05OC45OTMxIC00MDQuMDE1IDAgMCA5OC45OTMxIDE0MS4wMjEgMCAwIDQ0MC45OTQgLTE0MS4wMjEgMHoiLz4NCiAgIDxnbHlwaCB1bmljb2RlPSJMIiBob3Jpei1hZHYteD0iNTQ5IiBkPSJNOTUuOTk5OCAwbDAgNjM4LjAxMyAxMjIuMDAzIDAgMCAtNTM0Ljk5OCAyNzAuMDA5IDAgMCAtMTAzLjAxNSAtMzkyLjAxMiAweiIvPg0KICAgPGdseXBoIHVuaWNvZGU9Ik0iIGhvcml6LWFkdi14PSI1NDkiIGQ9Ik00MjIuNDkgMGwtMTEuNDg5NyAzNjAuODM4IC00LjMyMzc3IDE0My45ODUgLTMwLjg0MDkgLTk3LjE0ODcgLTcxLjE3NTkgLTIxNy42NyAtNzUuMTY3MSAwIC02My42NDcxIDIxNy42NyAtMjYuODQ5NyA5Ny4xNDg3IC0zLjUwNzM5IC0xNDEuMTQyIC0xMC45NzU3IC0zNjMuNjggLTEwMi4wMTcgMCAzMS41MDYxIDYzOC4wMTMgMTM1LjgyMSAwIDU1Ljg0NjIgLTE4MS41MDggMjYuODE5NSAtMTAyLjM0OSAyNy4wMDA5IDk2LjUxMzggNTkuMzUzNiAxODcuMzQzIDEzOC4xNDkgMCAzMS41MDYxIC02MzguMDEzIC0xMDYuMDA4IDB6Ii8+DQogICA8Z2x5cGggdW5pY29kZT0iTiIgaG9yaXotYWR2LXg9IjU0OSIgZD0iTTM2MS44MzYgMGwtMTcxLjQ5OSAzODAuODI0IC0zNS4zNDYxIDgyLjAwMDQgMCAtMjY0LjY1NyAwIC0xOTguMTY4IC0xMDkuMDAxIDAgMCA2MzguMDEzIDE0Ny4wMDggMCAxNzUuMTU4IC0zODMuMTgzIDMwLjg0MDkgLTc0LjY1MyAwIDI4MS42NSAwIDE3Ni4xODYgMTA5LjAwMSAwIDAgLTYzOC4wMTMgLTE0Ni4xNjIgMHoiLz4NCiAgIDxnbHlwaCB1bmljb2RlPSJQIiBob3Jpei1hZHYteD0iNTQ5IiBkPSJNNTA4Ljk5NSA0MzUuMDA3YzAsLTMzLjM1MDUgLTUuNTAyOTgsLTY0LjAwOTkgLTE2LjY2MDEsLTkyLjE1OTggLTExLjAwNiwtMjguMDI4OSAtMjcuNTE0OSwtNTIuMzM4OCAtNDkuMzQ1NCwtNzIuODM4OSAtMjEuODMwNSwtMjAuNTAwMSAtNDguOTgyNiwtMzYuNDk1IC04MS40ODY0LC00Ny44MzM2IC0zMi42NTUsLTExLjUyIC03MC41MTA3LC0xNy4xNzQxIC0xMTMuNTA2LC0xNy4xNzQxbC02MC45ODYzIDAgMCAtMjA1LjAwMSAtMTIxLjAwNSAwIDAgNjM4LjAxMyAxODYuOTggMGM0MS41MTQyLDAgNzguMDA5MywtNC41MDUxOSAxMDkuNjY2LC0xMy41MTU2IDMxLjgzODcsLTguODI4OTUgNTguNTA2OSwtMjIuMDExOSA4MC4xODYzLC0zOS4xNTU4IDIxLjY0OTEsLTE3LjM1NTUgMzguMDA2OCwtMzguNTIwOCA0OS4zMTUyLC02My44Mjg1IDExLjE4NzQsLTI1LjE4NjcgMTYuODQxNSwtNTQuMDAxOCAxNi44NDE1LC04Ni41MDU2em0tMTI1Ljk5NCAtOC4zNDUxOGMwLDE2Ljg0MTUgLTIuNjYwNzgsMzIuMTcxMyAtOC4wMTI1OCw0NS44MzggLTUuNTAyOTgsMTMuODQ4MiAtMTMuNDg1MywyNS42NzA1IC0yNC40OTEzLDM1LjM0NjEgLTEwLjgyNDUsOS42NDUzMyAtMjQuNjcyNywxNy4xNDM5IC00MS4zMzI4LDIyLjMxNDMgLTE2LjY2MDEsNS4xNzAzOCAtMzYuMzQzOCw3LjgzMTE2IC01OS4xNzIxLDcuODMxMTZsLTYyLjk4MTkgMCAwIC0yMzMgNjcuMDAzMyAwYzIwLjgzMjcsMCAzOS4xNTU4LDIuODQyMiA1NS4xNTA3LDguNDk2MzYgMTUuOTk0OSw1LjY4NDQgMjkuNTEwNSwxMy44NDgyIDQwLjMzNSwyNC41MjE1IDExLjAwNiwxMC44MjQ1IDE5LjE2OTcsMjMuNjQ0NyAyNS4wMDUzLDM4LjQ5MDYgNS42NTQxNiwxNC45OTcxIDguNDk2MzYsMzEuNjU3MiA4LjQ5NjM2LDUwLjE2MTh6Ii8+DQogICA8Z2x5cGggdW5pY29kZT0iUiIgaG9yaXotYWR2LXg9IjU0OSIgZD0iTTM4NC45OTcgMGwtOTAuMTY0MiAyMDUuMDAxYy04LjQ5NjM2LDE5LjUwMjMgLTIwLjMxODcsMzQuMTY2OCAtMzUuNDk3Miw0NC4xNzUgLTE1LjE3ODUsOS44MjY3NSAtMzIuOTg3NiwxNC44MTU3IC01My4zMzY2LDE0LjgxNTdsLTIzLjAwOTcgMCAwIC0yNjMuOTkyIC0xMTkuOTc3IDAgMCA2MzguMDEzIDE4NS45ODMgMGMzNS4xNjQ2LDAgNjcuMTg0NywtMy4wMjM2MSA5NS44NDg2LC05LjAxMDM3IDI4LjQ4MjQsLTYuMDE2OTkgNTMuMDA0LC0xNS45OTQ5IDczLjE3MTUsLTI5Ljk5NDMgMjAuMTM3MywtMTMuOTk5MyAzNS42NDg0LC0zMi4zNTI3IDQ2LjY1NDQsLTU0LjY2NjkgMTAuODI0NSwtMjIuNDk1NyAxNi4zMjc1LC01MC4wMTA2IDE2LjMyNzUsLTgyLjUxNDQgMCwtMjMuNDkzNSAtMy41MDczOSwtNDQuMzI2MiAtMTAuMzQwOCwtNjIuNDk4MSAtNi44MzMzNywtMTguMTcxOSAtMTYuNDc4NywtMzMuOTg1NCAtMjguODE1LC00Ny4xNjg0IC0xMi41MTc4LC0xMy4xNTI3IC0yNy4xODIzLC0yMy44MjYxIC00NC4zMjYyLC0zMS44Mzg3IC0xNy4xNzQxLC04LjE2Mzc2IC0zNS42Nzg3LC0xMy44MTc5IC01Ni4wMjc2LC0xNy4xNDM5IDE1LjY5MjYsLTMuMzU2MjEgMzAuMDI0NSwtMTIuMTg1MiA0My4wMjYsLTI2LjY2ODMgMTMuMDAxNSwtMTQuNTEzMyAyNi4xNTQzLC0zNS40OTcyIDM5LjE1NTgsLTYyLjY3OTVsMTAyLjUwMSAtMjEzLjgzIC0xNDEuMTczIDB6bS0yOS45OTQzIDQ1MC4xNTZjMCwzMS4zNTQ5IC0xMC4wMDgyLDUzLjY2OTIgLTI5Ljg0MzEsNjcuMzM1OSAtMTkuODM0OSwxMy42NjY3IC00OS42NDc3LDIwLjUwMDEgLTg5LjMxNzYsMjAuNTAwMWwtNTIuODUyOCAwIDAgLTE3OS45OTYgNDguODMxNCAwYzE4LjY4NTksMCAzNS41Mjc1LDEuOTk1NTkgNTAuNjc1OCw1LjgzNTU4IDE1LjE3ODUsMy45OTExNyAyNy45OTg3LDkuODI2NzUgMzguODIzMiwxNy41MDY3IDEwLjY3MzQsNy44MzExNiAxOS4wMTg1LDE3LjUwNjcgMjQuODU0MSwyOS4xNDc2IDUuODM1NTgsMTEuNTIgOC44Mjg5NSwyNC42NzI3IDguODI4OTUsMzkuNjY5OHoiLz4NCiAgIDxnbHlwaCB1bmljb2RlPSJTIiBob3Jpei1hZHYteD0iNTQ5IiBkPSJNNDk3Ljk4OSAxOTIuOTk3YzAsLTM0LjgzMiAtNi41MDA3NywtNjUuMDA3NyAtMTkuMzIwOSwtOTAuNjc4MiAtMTIuODIwMSwtMjUuODIxNyAtMzAuODQwOSwtNDYuOTg3IC01My44MjAzLC02My44Mjg1IC0yMy4xOTExLC0xNi42NjAxIC01MC42NzU4LC0yOS4xNDc2IC04Mi41MTQ0LC0zNy4zMTE0IC0zMS45ODk4LC04LjE5NCAtNjYuNjcwNywtMTIuMTg1MiAtMTA0LjQ5NiwtMTIuMTg1MiAtMzMuNTAxNiwwIC02NS44MjQxLDEuOTk1NTkgLTk3LjE3OSw1LjgzNTU4IC0zMS4xNzM1LDMuODM5OTkgLTYxLjk4NDEsMTAuMTU5MyAtOTIuNjQzNSwxOS4xNjk3bDAgMTE5LjAwOWMxNC45OTcxLC01LjM1MTggMzAuNDc4LC0xMC4xODk2IDQ2LjgwNTYsLTE0Ljg0NTkgMTYuMTc2MywtNC41MDUxOSAzMi41MDM5LC04LjY3Nzc3IDQ5LjAxMjgsLTEyLjAwMzcgMTYuNTA4OSwtMy41MDczOSAzMi44MzY1LC02LjE2ODE3IDQ5LjAxMjgsLTguMTYzNzYgMTYuMzI3NSwtMS45OTU1OSAzMS45ODk4LC0yLjk5MzM4IDQ3LjMxOTYsLTIuOTkzMzggMjIuODI4MywwIDQyLjE3OTQsMS45OTU1OSA1Ny45OTI5LDUuODM1NTggMTUuOTk0OSwzLjk5MTE3IDI4Ljk5NjUsOS4zNDI5NyAzOS4wMDQ2LDE2LjMyNzUgMTAuMTU5Myw2LjgzMzM3IDE3LjUwNjcsMTQuOTk3MSAyMi4wMTE5LDI0LjQ5MTMgNC41MDUxOSw5LjUyNDM5IDYuODMzMzcsMjAuMDE2MyA2LjgzMzM3LDMxLjM1NDkgMCwxNS42NjIzIC00LjUwNTE5LDI4LjgxNSAtMTMuNTE1NiwzOS4zMzcyIC04LjgyODk1LDEwLjQ5MTkgLTIwLjY1MTMsMTkuOTg2MSAtMzUuMzE1OCwyNy45OTg3IC0xNC42NjQ1LDguMTYzNzYgLTMxLjM1NDksMTUuNDgwOSAtNTAuMDEwNiwyMS45ODE3IC0xOC44MzcxLDYuNTAwNzcgLTM3LjgyNTQsMTMuNTE1NiAtNTcuMTc2NSwyMS4wMTQxIC0xOS4zMjA5LDcuNDk4NTYgLTM4LjMwOTIsMTUuOTk0OSAtNTcuMTQ2MywyNS40ODkxIC0xOC42ODU5LDkuMzQyOTcgLTM1LjM0NjEsMjEuMDE0MSAtNTAuMDEwNiwzNS4wMTM1IC0xNC42NjQ1LDEzLjk5OTMgLTI2LjQ4NjksMzAuNjU5NSAtMzUuMzQ2MSw1MC4xNjE4IC04Ljk4MDEzLDE5LjMyMDkgLTEzLjQ4NTMsNDIuNjYzMiAtMTMuNDg1Myw2OS45OTY3IDAsMjUuMDA1MyA0LjUwNTE5LDQ4LjgzMTQgMTMuNjY2Nyw3MS4zMjcxIDkuMTYxNTUsMjIuMzQ0NSAyMy40OTM1LDQxLjk5OCA0Mi45OTU4LDU4LjY1ODEgMTkuNTAyMywxNi44NDE1IDQ0LjUwNzYsMzAuMTc1NyA3NS4xNjcxLDQwLjE4MzggMzAuNjU5NSw5LjgyNjc1IDY3LjQ4NzEsMTQuODE1NyAxMTAuODQ2LDE0LjgxNTcgMTIuNjY4OSwwIDI2LjAwMzEsLTAuNDgzNzc4IDM5LjgyMSwtMS42NjI5OSAxMy44NDgyLC0xLjE0ODk3IDI3LjUxNDksLTIuNjYwNzggNDEuMDAwMiwtNC41MDUxOSAxMy41MTU2LC0xLjY2Mjk5IDI2LjQ4NjksLTMuODA5NzUgMzkuMDA0NiwtNi4zMTkzNSAxMi42Njg5LC0yLjMyODE4IDI0LjE1ODcsLTQuODM3NzggMzQuNDk5NCwtNy40OTg1NmwwIC0xMDkuOTk5Yy0xMC4zNDA4LDMuOTkxMTcgLTIxLjgzMDUsNy40OTg1NiAtMzQuMTY2OCwxMC44MjQ1IC0xMi4zMzYzLDMuMTc0OCAtMjUuMTU2NSw2LjE2ODE3IC0zOC4zMzk0LDguNDk2MzYgLTEzLjE1MjcsMi41MDk2IC0yNi40ODY5LDQuMzU0IC0zOS44MjEsNS42ODQ0IC0xMy4zMzQxLDEuMzMwMzkgLTI2LjAwMzEsMS45OTU1OSAtMzguMDA2OCwxLjk5NTU5IC0yMS4xNjUzLDAgLTM5LjAwNDYsLTEuNjYyOTkgLTUzLjY2OTIsLTUuMTcwMzggLTE0LjY2NDUsLTMuMzI1OTggLTI2LjY2ODMsLTguMTYzNzYgLTM2LjE2MjQsLTE0LjE4MDggLTkuNDk0MTUsLTUuOTg2NzYgLTE2LjMyNzUsLTEzLjMzNDEgLTIwLjUwMDEsLTIyLjE2MzEgLTQuMTcyNTksLTguODI4OTUgLTYuMzQ5NTksLTE4LjUwNDUgLTYuMzQ5NTksLTI5LjMyOTEgMCwtMTMuMzM0MSA0LjUwNTE5LC0yNC44MjM5IDEzLjUxNTYsLTM0LjMxOCA4LjgyODk1LC05LjY3NTU3IDIwLjgzMjcsLTE4LjM1MzMgMzUuNDk3MiwtMjUuODUxOSAxNC44NDU5LC03LjY0OTc0IDMxLjY1NzIsLTE0LjgxNTcgNTAuMzQzMiwtMjEuNDk3OSAxOC44MzcxLC02LjY1MTk1IDM3Ljk3NjYsLTEzLjgxNzkgNTcuNjYwMywtMjEuNDk3OSAxOS42NTM1LC03LjY0OTc0IDM4LjgyMzIsLTE2LjMyNzUgNTcuNjYwMywtMjYuMTU0MyAxOC42NTU3LC05LjY3NTU3IDM1LjQ5NzIsLTIxLjY3OTMgNTAuMzQzMiwtMzUuNjc4NyAxNC42NjQ1LC0xMy45OTkzIDI2LjY2ODMsLTMwLjUwODMgMzUuNDk3MiwtNDkuNDk2NiA5LjAxMDM3LC0xOC45ODgzIDEzLjQ4NTMsLTQxLjUxNDIgMTMuNDg1MywtNjcuNjY4NXoiLz4NCiAgIDxnbHlwaCB1bmljb2RlPSJUIiBob3Jpei1hZHYteD0iNTQ5IiBkPSJNMzM2LjAxNCA1MzcuOTkybDAgLTUzNy45OTIgLTEyMy4wMDEgMCAwIDUzNy45OTIgLTE3NS4wMDcgMCAwIDEwMC4wMjEgNDcyLjk4NCAwIDAgLTEwMC4wMjEgLTE3NC45NzcgMHoiLz4NCiAgPC9mb250Pg0KICA8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KICAgPCFbQ0RBVEFbDQogICAgQGZvbnQtZmFjZSB7IGZvbnQtZmFtaWx5OiJDb25zb2xhcyI7Zm9udC12YXJpYW50Om5vcm1hbDtmb250LXN0eWxlOm5vcm1hbDtmb250LXdlaWdodDpib2xkO3NyYzp1cmwoIiNGb250SUQwIikgZm9ybWF0KHN2Zyl9DQogICAgLnN0cjAge3N0cm9rZTojNUI2Njc0O3N0cm9rZS13aWR0aDowLjQxO3N0cm9rZS1taXRlcmxpbWl0OjIyLjkyNTZ9DQogICAgLnN0cjEge3N0cm9rZTojRjBBMjNCO3N0cm9rZS13aWR0aDowLjcyO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoyMi45MjU2fQ0KICAgIC5maWwwIHtmaWxsOm5vbmU7ZmlsbC1ydWxlOm5vbnplcm99DQogICAgLmZpbDIge2ZpbGw6IzhBOTRBM30NCiAgICAuZmlsMyB7ZmlsbDojRjBBMjNCfQ0KICAgIC5maWwxIHtmaWxsOiNDOEQyRTA7ZmlsbC1ydWxlOm5vbnplcm99DQogICAgLmZudDAge2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjMuMjFweDtmb250LWZhbWlseTonQ29uc29sYXMnfQ0KICAgXV0+DQogIDwvc3R5bGU+DQogPC9kZWZzPg0KIDxnIGlkPSJDYW1hZGFfeDAwMjBfMSI+DQogIDxtZXRhZGF0YSBpZD0iQ29yZWxDb3JwSURfMENvcmVsLUxheWVyIi8+DQogIDxnIGlkPSJfMTU4NjMzOTU5NDIwOCI+DQogICA8cGF0aCBjbGFzcz0iZmlsMCBzdHIwIiBkPSJNMS42MiAwLjIxbDcuOTYgMGMwLjc4LDAgMS40MSwwLjYzIDEuNDEsMS40MWwtMCA0LjYyYzAsMC43OCAtMC42MywxLjQxIC0xLjQxLDEuNDFsLTcuOTYgMGMtMC43OCwtMCAtMS40MSwtMC42MyAtMS40MSwtMS40MWwtMCAtNC42MmMwLC0wLjc4IDAuNjMsLTEuNDEgMS40MSwtMS40MXoiLz4NCiAgIDxwb2x5bGluZSBjbGFzcz0iZmlsMCBzdHIxIiBwb2ludHM9IjIuMjYsMi4zOSA0LjE5LDMuOTMgMi4yNiw1LjQ3ICIvPg0KICAgPHBhdGggY2xhc3M9ImZpbDEiIGQ9Ik01LjcgNS4wNmwxLjg1IDBjMC4yLC0wIDAuMzYsMC4xNiAwLjM2LDAuMzZsLTAgMGMwLDAuMiAtMC4xNiwwLjM2IC0wLjM2LDAuMzZsLTEuODUgMGMtMC4yLC0wIC0wLjM2LC0wLjE2IC0wLjM2LC0wLjM2bC0wIDBjMCwtMC4yIDAuMTYsLTAuMzYgMC4zNiwtMC4zNnoiLz4NCiAgIDxnIHRyYW5zZm9ybT0ibWF0cml4KDAuOTk5OTk3IDAgMCAwLjk5OTk5NyAxNTk5LjE0IDcuNTgxOTMpIj4NCiAgICA8dGV4dCB4PSItMTU4NS45NyIgeT0iLTMuOTEiICBjbGFzcz0iZmlsMiBmbnQwIj5FUCA8L3RleHQ+DQogICAgPHRleHQgeD0iLTE1ODAuNjgiIHk9Ii0zLjkxIiAgY2xhc3M9ImZpbDIgZm50MCI+UzwvdGV4dD4NCiAgICA8dGV4dCB4PSItMTU3OC41MiIgeT0iLTMuOTEiICBjbGFzcz0iZmlsMiBmbnQwIj5FPC90ZXh0Pg0KICAgIDx0ZXh0IHg9Ii0xNTc2LjM3IiB5PSItMy45MSIgIGNsYXNzPSJmaWwyIGZudDAiPlI8L3RleHQ+DQogICAgPHRleHQgeD0iLTE1NzQuMjIiIHk9Ii0zLjkxIiAgY2xhc3M9ImZpbDIgZm50MCI+STwvdGV4dD4NCiAgICA8dGV4dCB4PSItMTU3Mi4wNyIgeT0iLTMuOTEiICBjbGFzcz0iZmlsMiBmbnQwIj5BPC90ZXh0Pg0KICAgIDx0ZXh0IHg9Ii0xNTY5LjkyIiB5PSItMy45MSIgIGNsYXNzPSJmaWwyIGZudDAiPkw8L3RleHQ+DQogICA8L2c+DQogICA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgwLjk5OTk5NyAwIDAgMC45OTk5OTcgMTU5OS4xNCAxMC45MjAyKSI+DQogICAgPHRleHQgeD0iLTE1ODUuOTciIHk9Ii0zLjkxIiAgY2xhc3M9ImZpbDMgZm50MCI+VDwvdGV4dD4NCiAgICA8dGV4dCB4PSItMTU4My44MiIgeT0iLTMuOTEiICBjbGFzcz0iZmlsMyBmbnQwIj5FPC90ZXh0Pg0KICAgIDx0ZXh0IHg9Ii0xNTgxLjY3IiB5PSItMy45MSIgIGNsYXNzPSJmaWwzIGZudDAiPlI8L3RleHQ+DQogICAgPHRleHQgeD0iLTE1NzkuNTIiIHk9Ii0zLjkxIiAgY2xhc3M9ImZpbDMgZm50MCI+TTwvdGV4dD4NCiAgICA8dGV4dCB4PSItMTU3Ny4zNyIgeT0iLTMuOTEiICBjbGFzcz0iZmlsMyBmbnQwIj5JPC90ZXh0Pg0KICAgIDx0ZXh0IHg9Ii0xNTc1LjIyIiB5PSItMy45MSIgIGNsYXNzPSJmaWwzIGZudDAiPk48L3RleHQ+DQogICAgPHRleHQgeD0iLTE1NzMuMDciIHk9Ii0zLjkxIiAgY2xhc3M9ImZpbDMgZm50MCI+QTwvdGV4dD4NCiAgICA8dGV4dCB4PSItMTU3MC45MiIgeT0iLTMuOTEiICBjbGFzcz0iZmlsMyBmbnQwIj5MPC90ZXh0Pg0KICAgPC9nPg0KICA8L2c+DQogPC9nPg0KPC9zdmc+DQo=" alt="Serial Terminal">
   </div>
-  <!-- module info dashboard -->
-  <div class="hdr-inst" id="hdr-inst" style="display:none">
-    <div class="dcell sim-cell cell-only">
-      <span class="dk" data-i18n="g_sim">SIM</span>
-      <svg class="sim-ico" viewBox="0 0 22 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M3 1.5 h10.5 L20.5 8.5 V22.5 a2 2 0 0 1 -2 2 H3 a2 2 0 0 1 -2 -2 V3.5 a2 2 0 0 1 2 -2 z" stroke="currentColor" stroke-width="1.6"/>
-        <rect x="6" y="12" width="10" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
-        <path d="M11 12 V21 M6 15.5 H16 M6 18 H16" stroke="currentColor" stroke-width="1"/>
-      </svg>
-      <span class="dv" id="g-sim">—</span>
-    </div>
-    <div class="dcell reg-cell cell-only">
-      <span class="dk" data-i18n="g_reg">Registration</span>
-      <span class="leds">
-        <span class="ledwrap"><i class="led" id="led-creg"></i><b>CREG</b></span>
-        <span class="ledwrap"><i class="led" id="led-cgreg"></i><b>CGREG</b></span>
-        <span class="ledwrap"><i class="led" id="led-cereg"></i><b>CEREG</b></span>
-      </span>
-    </div>
-    <!-- ESP (Espressif) cells: Wi-Fi mode, state and SSID -->
-    <div class="dcell esp-only"><span class="dk" data-i18n="g_wmode">Wi-Fi mode</span><span class="dv" id="g-wmode">—</span></div>
-    <div class="dcell esp-only"><span class="dk" data-i18n="g_wstate">State</span><span class="dv" id="g-wstate">—</span></div>
-    <div class="dcell esp-only"><span class="dk">SSID</span><span class="dv" id="g-ssid">—</span></div>
-    <!-- GNSS receiver cells: fix quality and satellites, fed by the NMEA stream (live-nmea.js) -->
-    <div class="dcell gnss-only"><span class="dk" data-i18n="gn_fix">Fix</span><span class="dv" id="g-fix">—</span></div>
-    <div class="dcell gnss-only"><span class="dk" data-i18n="gn_sats">Satellites</span><span class="dv" id="g-gsats">—</span></div>
-    <div class="sig-cell">
-      <span class="dk" data-i18n="g_signal">Signal</span>
-      <div class="sig-row">
-        <span class="bars" id="g-bars"><i></i><i></i><i></i><i></i><i></i></span>
-        <div class="dcell mini cell-only"><span class="dk">CSQ</span><span class="dv" id="g-csq">—</span></div>
-        <div class="dcell mini gnss-hide"><span class="dk">RSSI</span><span class="dv" id="g-rssi">—</span></div>
-        <div class="dcell mini cell-only"><span class="dk">RS-SNR</span><span class="dv" id="g-rssnr">—</span></div>
-        <div class="dcell mini cell-only"><span class="dk">RSRP</span><span class="dv" id="g-rsrp">—</span></div>
-        <div class="dcell mini esp-only"><span class="dk">CH</span><span class="dv" id="g-chan">—</span></div>
-        <div class="dcell mini gnss-only"><span class="dk">C/N0</span><span class="dv" id="g-cn0">—</span></div>
-      </div>
-    </div>
-    <div class="dcell cell-only"><span class="dk" data-i18n="g_mode">Net mode</span><span class="dv" id="g-mode">—</span></div>
-    <div class="dcell cell-only"><span class="dk" data-i18n="g_band">Band</span><span class="dv" id="g-band">—</span></div>
-    <div class="dcell cell-only"><span class="dk" data-i18n="g_oper">Operator</span><span class="dv dim" id="g-oper">—</span></div>
-    <div class="dcell cell-only"><span class="dk">APN</span><span class="dv" id="g-apn">—</span></div>
-    <div class="dcell cell-only"><span class="dk" data-i18n="g_iptype">IP type</span><span class="dv" id="g-iptype">—</span></div>
-    <div class="dcell gnss-hide"><span class="dk">IP</span><span class="dv" id="g-ip">—</span></div>
-    <div class="dcell esp-only"><span class="dk" data-i18n="g_gw">Gateway</span><span class="dv" id="g-gw">—</span></div>
-    <div class="dcell esp-only"><span class="dk">MAC</span><span class="dv" id="g-mac">—</span></div>
-    <div class="dcell gnss-only"><span class="dk">Lat</span><span class="dv" id="g-lat">—</span></div>
-    <div class="dcell gnss-only"><span class="dk">Lon</span><span class="dv" id="g-lon">—</span></div>
-    <div class="dcell gnss-only"><span class="dk" data-i18n="gn_alt">Altitude</span><span class="dv" id="g-galt">—</span></div>
-    <div class="dcell gnss-only"><span class="dk" data-i18n="gn_speed">Speed</span><span class="dv" id="g-gspd">—</span></div>
-    <div class="dcell gnss-only"><span class="dk">HDOP</span><span class="dv" id="g-hdop">—</span></div>
-    <div class="dcell gnss-only"><span class="dk">UTC</span><span class="dv" id="g-gutc">—</span></div>
-    <button class="iconbtn" id="dash-refresh" title="Query module">↻</button>
-  </div>
+  <!-- Module info dashboard. Deliberately EMPTY: the cells are built by core/instruments.js
+       from the set the focused profile declares (cellular · wifi · gnss), so adding a module
+       family never means touching this file. -->
+  <div class="hdr-inst" id="hdr-inst" style="display:none"></div>
   <!-- App control panel: label-above columns (Terminal · File · Language · Theme) to stay
        horizontally compact. Icon buttons get their SVG from UI_ICONS in init.js. -->
   <div class="ctl">
@@ -2268,7 +2213,7 @@ function fmtBytes(n) {
    build-standalone.cjs replaces `stamp: ''` with the build date/time (and syncs the version
    from package.json), so any standalone in the field can be identified at a glance.
    An empty stamp means "running from the source tree" (dev). */
-const APP_BUILD = { version: '1.0.0', stamp: '2026-08-07 06:33' };
+const APP_BUILD = { version: '1.0.0', stamp: '2026-08-11 01:00' };
 
 /* ---- tiempo ---- */
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -3103,6 +3048,7 @@ registerLang("en", "EN", {
   "emu_reg5": "Registered (roaming)",
   "grp25": "Signal monitor",
   "grp26": "Configuration",
+  "dash_refresh": "Query module",
   "emu_gnss_rx": "Receiver",
   "emu_gnss_tx": "Transmitting NMEA",
   "emu_gnss_fix": "Valid fix",
@@ -3865,6 +3811,7 @@ registerLang("es", "ES", {
   "emu_reg5": "Registrado en Roaming",
   "grp25": "Monitor de señal",
   "grp26": "Configuración",
+  "dash_refresh": "Consultar módulo",
   "emu_gnss_rx": "Receptor",
   "emu_gnss_tx": "Transmitiendo NMEA",
   "emu_gnss_fix": "Fix válido",
@@ -4627,6 +4574,7 @@ registerLang("pt", "PT", {
   "emu_reg5": "Registrado (roaming)",
   "grp25": "Monitor de sinal",
   "grp26": "Configuração",
+  "dash_refresh": "Consultar módulo",
   "emu_gnss_rx": "Receptor",
   "emu_gnss_tx": "Transmitindo NMEA",
   "emu_gnss_fix": "Fix válido",
@@ -5389,6 +5337,7 @@ registerLang("zh", "中文", {
   "emu_reg5": "已注册（漫游）",
   "grp25": "信号监视器",
   "grp26": "配置",
+  "dash_refresh": "查询模块",
   "emu_gnss_rx": "接收机",
   "emu_gnss_tx": "正在输出 NMEA",
   "emu_gnss_fix": "定位有效",
@@ -6151,6 +6100,7 @@ registerLang("it", "IT", {
   "emu_reg5": "Registrato (roaming)",
   "grp25": "Monitor del segnale",
   "grp26": "Configurazione",
+  "dash_refresh": "Interroga il modulo",
   "emu_gnss_rx": "Ricevitore",
   "emu_gnss_tx": "Trasmette NMEA",
   "emu_gnss_fix": "Fix valido",
@@ -6913,6 +6863,7 @@ registerLang("fr", "FR", {
   "emu_reg5": "Enregistré (itinérance)",
   "grp25": "Moniteur de signal",
   "grp26": "Configuration",
+  "dash_refresh": "Interroger le module",
   "emu_gnss_rx": "Récepteur",
   "emu_gnss_tx": "Émission NMEA",
   "emu_gnss_fix": "Fix valide",
@@ -7675,6 +7626,7 @@ registerLang("ja", "日本語", {
   "emu_reg5": "登録済み（ローミング）",
   "grp25": "信号モニター",
   "grp26": "設定",
+  "dash_refresh": "モジュールを照会",
   "emu_gnss_rx": "受信機",
   "emu_gnss_tx": "NMEA 送信中",
   "emu_gnss_fix": "測位有効",
@@ -8437,6 +8389,7 @@ registerLang("ko", "한국어", {
   "emu_reg5": "등록됨(로밍)",
   "grp25": "신호 모니터",
   "grp26": "설정",
+  "dash_refresh": "모듈 조회",
   "emu_gnss_rx": "수신기",
   "emu_gnss_tx": "NMEA 송신 중",
   "emu_gnss_fix": "측위 유효",
@@ -9199,6 +9152,7 @@ registerLang("de", "DE", {
   "emu_reg5": "Registriert (Roaming)",
   "grp25": "Signalmonitor",
   "grp26": "Konfiguration",
+  "dash_refresh": "Modul abfragen",
   "emu_gnss_rx": "Empfänger",
   "emu_gnss_tx": "Sendet NMEA",
   "emu_gnss_fix": "Gültiger Fix",
@@ -9961,6 +9915,7 @@ registerLang("ru", "RU", {
   "emu_reg5": "Зарегистрирован (роуминг)",
   "grp25": "Монитор сигнала",
   "grp26": "Настройка",
+  "dash_refresh": "Опросить модуль",
   "emu_gnss_rx": "Приёмник",
   "emu_gnss_tx": "Передаёт NMEA",
   "emu_gnss_fix": "Есть решение",
@@ -22743,6 +22698,19 @@ registerEmuHandler((emu, cmd) => (
  * @property {QuickItem[]} [quick]                             sentences for the "AT Commands" combo
  */
 /**
+ * One cell of the header strip (see core/instruments.js). Default kind = a labelled value;
+ * 'sim' adds the SIM-card icon, 'reg' draws the registration LEDs and 'signal' groups the
+ * bars with its mini cells. `id` is what ui.set(id, …) writes to.
+ * @typedef {Object} InstCell
+ * @property {'sim'|'reg'|'signal'} [kind]
+ * @property {string} [id]
+ * @property {string} [label]                          literal (technical: SSID, HDOP, IP…)
+ * @property {string} [labelKey]                       i18n key when the label is translatable
+ * @property {boolean} [dim]
+ * @property {Array<[string, string]>} [leds]          (reg) [element id, name]
+ * @property {Array<{id: string, label?: string, labelKey?: string}>} [minis]   (signal)
+ */
+/**
  * Ping driver. `start` builds the command from the form values; `parse` is called for every
  * incoming line and returns a row to print (or null if the line isn't part of the ping).
  * `seq` overrides the row number, `raw:true` prints the text as-is (summary), `done:true`
@@ -22801,6 +22769,8 @@ registerEmuHandler((emu, cmd) => (
  * @property {string} family
  * @property {string} [vendor]        Module maker shown as the <optgroup> of the selector (SIMCom, Espressif…)
  * @property {string} [category]      Family inside that maker (Cellular, GNSS, Wi-Fi, Wi-Fi + BLE)
+ * @property {string} [instruments]   Header strip set the module shows: 'cellular' | 'wifi' | 'gnss'
+ *                                   (or one registered with registerInstruments) — see core/instruments.js
  * @property {string} [chip]
  * @property {boolean} [raw]           None = raw serial, no AT list
  * @property {boolean} [smsPdu]        SMS in PDU mode (CMGF=0) — module without text mode (e.g. SIM7022)
@@ -23785,19 +23755,19 @@ const MDM9X07 = { ...STACK_A76XX, gnss: GNSS_SIM7600 };
 const MDM_CAPS = ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ftp', 'ssl', 'voice', 'lbs', 'sms', 'fs'];
 function regMdm9x07(id, name, model, band, bands, chip) {
   Profiles.register(Object.assign({
-    id, name, family: 'mdm9x07', vendor: 'SIMCom', category: 'Cellular', chip: chip || 'MDM9607', bands, caps: MDM_CAPS,
+    id, name, family: 'mdm9x07', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: chip || 'MDM9607', bands, caps: MDM_CAPS,
     identity: mkId(model, 'LE20B04SIM7600M22', band, [model, 'LE20B04SIM7600M22']),
   }, MDM9X07));
 }
 
 Profiles.register({
-  id: 'A76XX', name: 'SIMCom A76XX (LTE Cat-1 bis + 2G + GNSS)', family: 'A76XX', vendor: 'SIMCom', category: 'Cellular', chip: 'ASR1603',
+  id: 'A76XX', name: 'SIMCom A76XX (LTE Cat-1 bis + 2G + GNSS)', family: 'A76XX', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'ASR1603',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ftp', 'ssl', 'voice', 'wifi', 'lbs', 'sms', 'fs', 'mail', 'lwm2m', 'coap'],
   identity: mkId('A7672E', 'A011B02A7672M7_V1.0', 'EUTRAN-BAND3'),
   ...STACK_A76XX,
 });
 Profiles.register({
-  id: 'A7672SA-FASE', name: 'SIMCom A7672SA-FASE (A76XX + BLE, LATAM Bands)', family: 'A76XX', vendor: 'SIMCom', category: 'Cellular', chip: 'ASR1603',
+  id: 'A7672SA-FASE', name: 'SIMCom A7672SA-FASE (A76XX + BLE, LATAM Bands)', family: 'A76XX', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'ASR1603',
   caps: ['cellular', 'gnss', 'ble', 'tcpip', 'http', 'mqtt', 'ftp', 'ssl', 'voice', 'lbs', 'sms', 'fs', 'mail', 'lwm2m', 'coap'],
   identity: mkId('A7672SA-FASE', 'A011B02A7672M7_V1.0', 'EUTRAN-BAND4', ['SIMCOM_A7672SA-FASE', 'A7672SA-FASE-V1.0']),
   ...STACK_A76XX,   // A76XX family + BLE
@@ -23812,25 +23782,25 @@ regMdm9x07('SIM7600CE', 'SIMCom SIM7600CE (China)', 'SIM7600CE-H', 'EUTRAN-BAND1
 regMdm9x07('A7600', 'SIMCom A7600C1', 'A7600C1', 'EUTRAN-BAND1', 'LTE B1/3/5/8 · WCDMA B1/8 (China)');
 
 Profiles.register({
-  id: 'SIM7070G', name: 'SIMCom SIM7070 (Cat-M/NB/GPRS)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', chip: 'MDM9205',
+  id: 'SIM7070G', name: 'SIMCom SIM7070 (Cat-M/NB/GPRS)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'MDM9205',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ssl', 'lbs', 'sms', 'fs'],
   identity: mkId('SIM7070G', '1951B11SIM7070', 'EUTRAN-BAND8'),
   ...STACK_SIM70X0,
 });
 Profiles.register({
-  id: 'SIM7080G', name: 'SIMCom SIM7080 (Cat-M/NB)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', chip: 'MDM9205',
+  id: 'SIM7080G', name: 'SIMCom SIM7080 (Cat-M/NB)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'MDM9205',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ssl', 'lbs', 'sms', 'fs'],
   identity: mkId('SIM7080G', '1951B11SIM7080', 'EUTRAN-BAND8'),
   ...STACK_SIM70X0,
 });
 Profiles.register({
-  id: 'SIM7090G', name: 'SIMCom SIM7090 (Cat-M/NB)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', chip: 'MDM9205',
+  id: 'SIM7090G', name: 'SIMCom SIM7090 (Cat-M/NB)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'MDM9205',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ssl', 'lbs', 'sms', 'fs'],
   identity: mkId('SIM7090G', '1951B11SIM7090', 'EUTRAN-BAND8'),
   ...STACK_SIM70X0,
 });
 Profiles.register({
-  id: 'SIM7022', name: 'SIMCom SIM7022 (NB-IoT)', family: 'SIM7022', vendor: 'SIMCom', category: 'Cellular', chip: 'NB-IoT',
+  id: 'SIM7022', name: 'SIMCom SIM7022 (NB-IoT)', family: 'SIM7022', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'NB-IoT',
   caps: ['cellular', 'tcpip', 'http', 'mqtt', 'ssl', 'sms'],   // no GNSS or voice
   identity: mkId('SIM7022', 'SIM7022_V1.0', 'NBIOT-BAND8'),
   smsPdu: true,   // NB-IoT firmware usually ships without SMS text mode → the wizard uses PDU (CMGF=0)
@@ -23895,7 +23865,7 @@ const mkGnssId = (model, chip) => ({
 const GNSS_CAPS = ['gnss', 'nmea'];
 function regGnss(id, name, chip, gnss, note) {
   Profiles.register({
-    id, name, family: 'GNSS', vendor: 'SIMCom', category: 'GNSS',
+    id, name, family: 'GNSS', vendor: 'SIMCom', category: 'GNSS', instruments: 'gnss',
     chip: chip.name, bands: note, caps: GNSS_CAPS,
     identity: mkGnssId(id, chip),
     gnss, quick: quickGnss(chip),
@@ -24032,19 +24002,19 @@ const QUICK_ESP32C6 = { ...QUICK_ESP_BASE,
 };
 
 Profiles.register({
-  id: 'ESP8266', name: 'Espressif ESP8266 (Wi-Fi AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi', chip: 'ESP8266EX',
+  id: 'ESP8266', name: 'Espressif ESP8266 (Wi-Fi AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi', instruments: 'wifi', chip: 'ESP8266EX',
   caps: ['wifi', 'tcpip'],
   identity: { manufacturer: 'Espressif', model: 'ESP8266', revision: 'AT 2.2.1', imei: '', band: 'Wi-Fi 2.4 GHz b/g/n', ati: ['ESP8266 AT firmware'] },
   gnss: GNSS_NONE, tcp: TCP_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP_BASE, dashboard: DASH_ESP, signalPoll: SIGPOLL_ESP,
 });
 Profiles.register({
-  id: 'ESP32-C3', name: 'Espressif ESP32-C3 (Wi-Fi 4 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', chip: 'ESP32-C3',
+  id: 'ESP32-C3', name: 'Espressif ESP32-C3 (Wi-Fi 4 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', instruments: 'wifi', chip: 'ESP32-C3',
   caps: ['wifi', 'ble', 'tcpip', 'http', 'mqtt'],
   identity: { manufacturer: 'Espressif', model: 'ESP32-C3', revision: 'AT 3.2.0', imei: '', band: 'Wi-Fi 4 2.4 GHz + BLE 5', ati: ['ESP32-C3 AT firmware'] },
   gnss: GNSS_NONE, tcp: TCP_ESP, http: HTTP_ESP, mqtt: MQTT_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP32C6, dashboard: DASH_ESP_V3, signalPoll: SIGPOLL_ESP,
 });
 Profiles.register({
-  id: 'ESP32-C6', name: 'Espressif ESP32-C6 (Wi-Fi 6 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', chip: 'ESP32-C6',
+  id: 'ESP32-C6', name: 'Espressif ESP32-C6 (Wi-Fi 6 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', instruments: 'wifi', chip: 'ESP32-C6',
   caps: ['wifi', 'ble', 'tcpip', 'http', 'mqtt'],
   identity: { manufacturer: 'Espressif', model: 'ESP32-C6', revision: 'AT 3.4.0', imei: '', band: 'Wi-Fi 6 2.4 GHz + BLE 5', ati: ['ESP32-C6 AT firmware'] },
   gnss: GNSS_NONE, tcp: TCP_ESP, http: HTTP_ESP, mqtt: MQTT_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP32C6, dashboard: DASH_ESP_V3, signalPoll: SIGPOLL_ESP,
@@ -24499,6 +24469,151 @@ function liveNmea(line, sess) {
 }
 
 
+/* === app/js/core/instruments.js === */
+/* instruments.js — the header strip, built from a REGISTRY instead of being written in the HTML.
+   A module shows the instruments of its technology, not of its brand: a cellular module shows
+   SIM/registration/RSRP (3GPP), a Wi-Fi one shows SSID/channel/MAC, a GNSS receiver shows
+   fix/satellites/HDOP (NMEA). None of that is proprietary, so the three standard sets live here
+   next to the registry — the same way at-parser.js carries the base 3GPP URCs and nmea.js the
+   standard sentences.
+
+   Each profile says which set it wants with `instruments` (see the Profile contract). A vendor
+   with a genuinely proprietary readout registers its own set from its folder:
+     registerInstruments('my-set', [ { id: 'g-foo', label: 'FOO' }, … ])
+   and points its profiles at it. Adding a module family no longer means editing the HTML.
+
+   The ids are the contract with the rest of the app: Live parsers call ui.set('g-csq', …) and
+   drawSet()/drawSignal()/drawReg() paint them. Rebuilding the strip does not change them.
+   (part of the AT console · classic script, shared global scope — concatenated in order) */
+
+const INSTRUMENTS = {};
+/** @param {string} id @param {InstCell[]} cells */
+function registerInstruments(id, cells) { INSTRUMENTS[id] = cells; }
+
+/* Every value id of every registered set: what refreshStrip() has to repaint when the focus
+   changes (a cell that is not in the current set simply does not exist and is skipped). */
+function instCellIds() {
+  const ids = [];
+  for (const cells of Object.values(INSTRUMENTS)) {
+    for (const c of cells) {
+      if (c.kind === 'signal') { (c.minis || []).forEach((m) => ids.push(m.id)); continue; }
+      if (c.kind === 'reg') continue;                       // LEDs are painted by drawReg()
+      if (c.id) ids.push(c.id);
+    }
+  }
+  return [...new Set(ids)];
+}
+
+const INST_SIM_SVG =
+  '<svg class="sim-ico" viewBox="0 0 22 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+  '<path d="M3 1.5 h10.5 L20.5 8.5 V22.5 a2 2 0 0 1 -2 2 H3 a2 2 0 0 1 -2 -2 V3.5 a2 2 0 0 1 2 -2 z" stroke="currentColor" stroke-width="1.6"/>' +
+  '<rect x="6" y="12" width="10" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/>' +
+  '<path d="M11 12 V21 M6 15.5 H16 M6 18 H16" stroke="currentColor" stroke-width="1"/></svg>';
+
+/* Renders the strip of a set into #hdr-inst. Returns false if the set is unknown. */
+function buildInstStrip(setId) {
+  const host = $('hdr-inst');
+  if (!host) return false;
+  const cells = INSTRUMENTS[setId];
+  host.innerHTML = '';
+  host.dataset.set = setId || '';
+  if (!cells) return false;
+
+  const key = (c) => (c.labelKey ? t(c.labelKey) : (c.label || ''));
+  const mkKey = (c) => { const s = document.createElement('span'); s.className = 'dk'; s.textContent = key(c); if (c.labelKey) s.dataset.i18n = c.labelKey; return s; };
+  const mkVal = (id, dim) => { const s = document.createElement('span'); s.className = 'dv' + (dim ? ' dim' : ''); s.id = id; s.textContent = '—'; return s; };
+
+  for (const c of cells) {
+    if (c.kind === 'signal') {
+      const wrap = document.createElement('div'); wrap.className = 'sig-cell';
+      const row = document.createElement('div'); row.className = 'sig-row';
+      const bars = document.createElement('span'); bars.className = 'bars'; bars.id = 'g-bars';
+      for (let i = 0; i < 5; i++) bars.appendChild(document.createElement('i'));
+      row.appendChild(bars);
+      (c.minis || []).forEach((m) => {
+        const d = document.createElement('div'); d.className = 'dcell mini';
+        d.append(mkKey(m), mkVal(m.id));
+        row.appendChild(d);
+      });
+      wrap.append(mkKey(c), row);
+      host.appendChild(wrap);
+      continue;
+    }
+    const d = document.createElement('div');
+    d.className = 'dcell' + (c.kind === 'sim' ? ' sim-cell' : '') + (c.kind === 'reg' ? ' reg-cell' : '');
+    d.appendChild(mkKey(c));
+    if (c.kind === 'sim') { d.insertAdjacentHTML('beforeend', INST_SIM_SVG); d.appendChild(mkVal(c.id)); }
+    else if (c.kind === 'reg') {
+      const leds = document.createElement('span'); leds.className = 'leds';
+      (c.leds || []).forEach(([id, name]) => {
+        const w = document.createElement('span'); w.className = 'ledwrap';
+        const i = document.createElement('i'); i.className = 'led'; i.id = id;
+        const b = document.createElement('b'); b.textContent = name;
+        w.append(i, b); leds.appendChild(w);
+      });
+      d.appendChild(leds);
+    } else d.appendChild(mkVal(c.id, c.dim));
+    host.appendChild(d);
+  }
+  // ↻ always closes the strip: it re-queries the module. Whether it is useful depends on the
+  // focused profile, which this function must not read (it also runs at load time, before the
+  // UI facade exists) — updateInstVisibility() shows or hides it.
+  const b = document.createElement('button');
+  b.className = 'iconbtn'; b.id = 'dash-refresh'; b.title = t('dash_refresh');
+  b.textContent = '↻';
+  b.addEventListener('click', () => refreshDashboard());
+  host.appendChild(b);
+  return true;
+}
+
+/* ---- standard sets ---- */
+
+// 3GPP cellular: SIM, registration per domain, signal quality, network and PDP context.
+registerInstruments('cellular', [
+  { kind: 'sim', id: 'g-sim', labelKey: 'g_sim' },
+  { kind: 'reg', labelKey: 'g_reg', leds: [['led-creg', 'CREG'], ['led-cgreg', 'CGREG'], ['led-cereg', 'CEREG']] },
+  { kind: 'signal', labelKey: 'g_signal', minis: [
+    { id: 'g-csq', label: 'CSQ' }, { id: 'g-rssi', label: 'RSSI' },
+    { id: 'g-rssnr', label: 'RS-SNR' }, { id: 'g-rsrp', label: 'RSRP' },
+  ] },
+  { id: 'g-mode', labelKey: 'g_mode' },
+  { id: 'g-band', labelKey: 'g_band' },
+  { id: 'g-oper', labelKey: 'g_oper', dim: true },
+  { id: 'g-apn', label: 'APN' },
+  { id: 'g-iptype', labelKey: 'g_iptype' },
+  { id: 'g-ip', label: 'IP' },
+]);
+
+// Wi-Fi station: mode, association state and the addressing of the link.
+registerInstruments('wifi', [
+  { id: 'g-wmode', labelKey: 'g_wmode' },
+  { id: 'g-wstate', labelKey: 'g_wstate' },
+  { id: 'g-ssid', label: 'SSID' },
+  { kind: 'signal', labelKey: 'g_signal', minis: [{ id: 'g-rssi', label: 'RSSI' }, { id: 'g-chan', label: 'CH' }] },
+  { id: 'g-ip', label: 'IP' },
+  { id: 'g-gw', labelKey: 'g_gw' },
+  { id: 'g-mac', label: 'MAC' },
+]);
+
+// GNSS receiver: quality of the solution and the position itself (fed by live-nmea.js).
+registerInstruments('gnss', [
+  { id: 'g-fix', labelKey: 'gn_fix' },
+  { id: 'g-gsats', labelKey: 'gn_sats' },
+  { kind: 'signal', labelKey: 'g_signal', minis: [{ id: 'g-cn0', label: 'C/N0' }] },
+  { id: 'g-lat', label: 'Lat' },
+  { id: 'g-lon', label: 'Lon' },
+  { id: 'g-galt', labelKey: 'gn_alt' },
+  { id: 'g-gspd', labelKey: 'gn_speed' },
+  { id: 'g-hdop', label: 'HDOP' },
+  { id: 'g-gutc', label: 'UTC' },
+]);
+
+/* Built once at load time so the cells exist from the first paint, exactly like when they were
+   written in the HTML; updateInstVisibility() swaps the set as soon as a terminal is focused.
+   The labels carry data-i18n, so the language applier translates them like any other text. */
+buildInstStrip('cellular');
+
+
 /* === app/js/simcom/live-simcom.js === */
 /* live-simcom.js — 3GPP / SIMCom telemetry parsers for the instrument strip: signal (+CSQ,
    +CESQ), serving cell (+CPSI), operator (+COPS), registration (+CREG/+CGREG/+CEREG), SIM
@@ -24678,7 +24793,8 @@ function pdrv(fam) { const p = UI.focused ? UI.focused.profile : Profiles.get(Ap
 
 // Instrument strip: reflects the focused session
 function drawSignal(s) {
-  const bars = $('g-bars').children, n = s ? s.bars : 0;
+  const el = $('g-bars'); if (!el) return;   // a set without a signal cell
+  const bars = el.children, n = s ? s.bars : 0;
   for (let i = 0; i < 5; i++) bars[i].classList.toggle('lit', i < n);
   const dbm = $('g-dbm'); if (dbm) dbm.textContent = s ? `${s.dbm} dBm` : '—';   // g-dbm is no longer in the unified header
 }
@@ -24721,13 +24837,17 @@ function drawReg(reg) {
 // The ESP family shows its own cells (Wi-Fi mode/SSID/channel/MAC) and the Espressif logo.
 function updateInstVisibility() {
   const f = UI.focused, show = !!(f && f.profile && !f.profile.raw);
-  const fam = (f && f.profile && f.profile.family) || '';
+  // Which instruments to show is the profile's call, not a family the core knows about:
+  // the strip is rebuilt only when the set actually changes (see core/instruments.js).
+  const set = (f && f.profile && f.profile.instruments) || 'cellular';
   const hi = $('hdr-inst'), dh = $('dash');
   if (hi) {
     hi.style.display = show ? '' : 'none';
-    hi.classList.toggle('esp', fam === 'ESP');
-    hi.classList.toggle('gnss', fam === 'GNSS');   // receiver: fix and satellites, no network
+    if (hi.dataset.set !== set) { buildInstStrip(set); if (f) f.refreshStrip(); }
   }
+  // ↻ only makes sense if the profile has something to query (a receiver streams on its own).
+  const rb = $('dash-refresh');
+  if (rb) rb.hidden = !(f && f.profile && (f.profile.dashboard || []).length);
   if (dh) dh.style.display = show ? '' : 'none';
   syncBrand();
 }
@@ -25057,9 +25177,9 @@ class Session {
     if (this.isFocused) this.refreshStrip();
   }
 }
-const DASH_IDS = ['g-oper', 'g-sim', 'g-csq', 'g-mode', 'g-band', 'g-rsrp', 'g-rssi', 'g-rssnr', 'g-apn', 'g-iptype', 'g-ip',
-  'g-wmode', 'g-wstate', 'g-ssid', 'g-chan', 'g-gw', 'g-mac',   // Espressif cells
-  'g-fix', 'g-gsats', 'g-lat', 'g-lon', 'g-galt', 'g-gspd', 'g-hdop', 'g-gutc', 'g-cn0'];   // GNSS receiver cells
+// Every value cell of every registered set: a cell missing from the current strip is skipped
+// by drawSet(), so one list covers all the families without naming any of them.
+const DASH_IDS = instCellIds();
 
 /* === UI facade: delegates to the focused session (commands go to the focused terminal) === */
 /* ============================================================================
@@ -26028,7 +26148,8 @@ importInput.addEventListener('change', async () => {
 });
 $('b-import').addEventListener('click', () => importInput.click());
 
-if ($('dash-refresh')) $('dash-refresh').addEventListener('click', () => refreshDashboard());
+// (the ↻ button is created — and wired — by buildInstStrip in core/instruments.js, because the
+//  strip is rebuilt whenever the focused module changes its instrument set)
 
 // Collapse/expand the sidebar (AT command menu) to the left.
 function collapseSidebar(v) {

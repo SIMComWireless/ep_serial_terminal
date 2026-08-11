@@ -47,7 +47,8 @@ function pdrv(fam) { const p = UI.focused ? UI.focused.profile : Profiles.get(Ap
 
 // Instrument strip: reflects the focused session
 function drawSignal(s) {
-  const bars = $('g-bars').children, n = s ? s.bars : 0;
+  const el = $('g-bars'); if (!el) return;   // a set without a signal cell
+  const bars = el.children, n = s ? s.bars : 0;
   for (let i = 0; i < 5; i++) bars[i].classList.toggle('lit', i < n);
   const dbm = $('g-dbm'); if (dbm) dbm.textContent = s ? `${s.dbm} dBm` : '—';   // g-dbm is no longer in the unified header
 }
@@ -90,13 +91,17 @@ function drawReg(reg) {
 // The ESP family shows its own cells (Wi-Fi mode/SSID/channel/MAC) and the Espressif logo.
 function updateInstVisibility() {
   const f = UI.focused, show = !!(f && f.profile && !f.profile.raw);
-  const fam = (f && f.profile && f.profile.family) || '';
+  // Which instruments to show is the profile's call, not a family the core knows about:
+  // the strip is rebuilt only when the set actually changes (see core/instruments.js).
+  const set = (f && f.profile && f.profile.instruments) || 'cellular';
   const hi = $('hdr-inst'), dh = $('dash');
   if (hi) {
     hi.style.display = show ? '' : 'none';
-    hi.classList.toggle('esp', fam === 'ESP');
-    hi.classList.toggle('gnss', fam === 'GNSS');   // receiver: fix and satellites, no network
+    if (hi.dataset.set !== set) { buildInstStrip(set); if (f) f.refreshStrip(); }
   }
+  // ↻ only makes sense if the profile has something to query (a receiver streams on its own).
+  const rb = $('dash-refresh');
+  if (rb) rb.hidden = !(f && f.profile && (f.profile.dashboard || []).length);
   if (dh) dh.style.display = show ? '' : 'none';
   syncBrand();
 }
@@ -426,9 +431,9 @@ class Session {
     if (this.isFocused) this.refreshStrip();
   }
 }
-const DASH_IDS = ['g-oper', 'g-sim', 'g-csq', 'g-mode', 'g-band', 'g-rsrp', 'g-rssi', 'g-rssnr', 'g-apn', 'g-iptype', 'g-ip',
-  'g-wmode', 'g-wstate', 'g-ssid', 'g-chan', 'g-gw', 'g-mac',   // Espressif cells
-  'g-fix', 'g-gsats', 'g-lat', 'g-lon', 'g-galt', 'g-gspd', 'g-hdop', 'g-gutc', 'g-cn0'];   // GNSS receiver cells
+// Every value cell of every registered set: a cell missing from the current strip is skipped
+// by drawSet(), so one list covers all the families without naming any of them.
+const DASH_IDS = instCellIds();
 
 /* === UI facade: delegates to the focused session (commands go to the focused terminal) === */
 /* ============================================================================

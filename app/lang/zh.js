@@ -603,6 +603,7 @@ registerLang("zh", "中文", {
   "emu_reg5": "已注册（漫游）",
   "grp25": "信号监视器",
   "grp26": "配置",
+  "dash_refresh": "查询模块",
   "emu_gnss_rx": "接收机",
   "emu_gnss_tx": "正在输出 NMEA",
   "emu_gnss_fix": "定位有效",

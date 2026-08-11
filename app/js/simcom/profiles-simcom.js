@@ -112,19 +112,19 @@ const MDM9X07 = { ...STACK_A76XX, gnss: GNSS_SIM7600 };
 const MDM_CAPS = ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ftp', 'ssl', 'voice', 'lbs', 'sms', 'fs'];
 function regMdm9x07(id, name, model, band, bands, chip) {
   Profiles.register(Object.assign({
-    id, name, family: 'mdm9x07', vendor: 'SIMCom', category: 'Cellular', chip: chip || 'MDM9607', bands, caps: MDM_CAPS,
+    id, name, family: 'mdm9x07', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: chip || 'MDM9607', bands, caps: MDM_CAPS,
     identity: mkId(model, 'LE20B04SIM7600M22', band, [model, 'LE20B04SIM7600M22']),
   }, MDM9X07));
 }
 
 Profiles.register({
-  id: 'A76XX', name: 'SIMCom A76XX (LTE Cat-1 bis + 2G + GNSS)', family: 'A76XX', vendor: 'SIMCom', category: 'Cellular', chip: 'ASR1603',
+  id: 'A76XX', name: 'SIMCom A76XX (LTE Cat-1 bis + 2G + GNSS)', family: 'A76XX', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'ASR1603',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ftp', 'ssl', 'voice', 'wifi', 'lbs', 'sms', 'fs', 'mail', 'lwm2m', 'coap'],
   identity: mkId('A7672E', 'A011B02A7672M7_V1.0', 'EUTRAN-BAND3'),
   ...STACK_A76XX,
 });
 Profiles.register({
-  id: 'A7672SA-FASE', name: 'SIMCom A7672SA-FASE (A76XX + BLE, LATAM Bands)', family: 'A76XX', vendor: 'SIMCom', category: 'Cellular', chip: 'ASR1603',
+  id: 'A7672SA-FASE', name: 'SIMCom A7672SA-FASE (A76XX + BLE, LATAM Bands)', family: 'A76XX', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'ASR1603',
   caps: ['cellular', 'gnss', 'ble', 'tcpip', 'http', 'mqtt', 'ftp', 'ssl', 'voice', 'lbs', 'sms', 'fs', 'mail', 'lwm2m', 'coap'],
   identity: mkId('A7672SA-FASE', 'A011B02A7672M7_V1.0', 'EUTRAN-BAND4', ['SIMCOM_A7672SA-FASE', 'A7672SA-FASE-V1.0']),
   ...STACK_A76XX,   // A76XX family + BLE
@@ -139,25 +139,25 @@ regMdm9x07('SIM7600CE', 'SIMCom SIM7600CE (China)', 'SIM7600CE-H', 'EUTRAN-BAND1
 regMdm9x07('A7600', 'SIMCom A7600C1', 'A7600C1', 'EUTRAN-BAND1', 'LTE B1/3/5/8 · WCDMA B1/8 (China)');
 
 Profiles.register({
-  id: 'SIM7070G', name: 'SIMCom SIM7070 (Cat-M/NB/GPRS)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', chip: 'MDM9205',
+  id: 'SIM7070G', name: 'SIMCom SIM7070 (Cat-M/NB/GPRS)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'MDM9205',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ssl', 'lbs', 'sms', 'fs'],
   identity: mkId('SIM7070G', '1951B11SIM7070', 'EUTRAN-BAND8'),
   ...STACK_SIM70X0,
 });
 Profiles.register({
-  id: 'SIM7080G', name: 'SIMCom SIM7080 (Cat-M/NB)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', chip: 'MDM9205',
+  id: 'SIM7080G', name: 'SIMCom SIM7080 (Cat-M/NB)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'MDM9205',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ssl', 'lbs', 'sms', 'fs'],
   identity: mkId('SIM7080G', '1951B11SIM7080', 'EUTRAN-BAND8'),
   ...STACK_SIM70X0,
 });
 Profiles.register({
-  id: 'SIM7090G', name: 'SIMCom SIM7090 (Cat-M/NB)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', chip: 'MDM9205',
+  id: 'SIM7090G', name: 'SIMCom SIM7090 (Cat-M/NB)', family: 'SIM70x0', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'MDM9205',
   caps: ['cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ssl', 'lbs', 'sms', 'fs'],
   identity: mkId('SIM7090G', '1951B11SIM7090', 'EUTRAN-BAND8'),
   ...STACK_SIM70X0,
 });
 Profiles.register({
-  id: 'SIM7022', name: 'SIMCom SIM7022 (NB-IoT)', family: 'SIM7022', vendor: 'SIMCom', category: 'Cellular', chip: 'NB-IoT',
+  id: 'SIM7022', name: 'SIMCom SIM7022 (NB-IoT)', family: 'SIM7022', vendor: 'SIMCom', category: 'Cellular', instruments: 'cellular', chip: 'NB-IoT',
   caps: ['cellular', 'tcpip', 'http', 'mqtt', 'ssl', 'sms'],   // no GNSS or voice
   identity: mkId('SIM7022', 'SIM7022_V1.0', 'NBIOT-BAND8'),
   smsPdu: true,   // NB-IoT firmware usually ships without SMS text mode → the wizard uses PDU (CMGF=0)

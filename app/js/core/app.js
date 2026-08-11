@@ -800,7 +800,8 @@ importInput.addEventListener('change', async () => {
 });
 $('b-import').addEventListener('click', () => importInput.click());
 
-if ($('dash-refresh')) $('dash-refresh').addEventListener('click', () => refreshDashboard());
+// (the ↻ button is created — and wired — by buildInstStrip in core/instruments.js, because the
+//  strip is rebuilt whenever the focused module changes its instrument set)
 
 // Collapse/expand the sidebar (AT command menu) to the left.
 function collapseSidebar(v) {

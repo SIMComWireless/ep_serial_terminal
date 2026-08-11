@@ -114,13 +114,8 @@
   .bars i:nth-child(5){ height: 16px; }
   .bars i.lit { background: var(--amber); }
 
-  /* Header dashboard per family: cellular cells (cell-only), Espressif (esp-only) and GNSS
-     receiver (gnss-only). `gnss-hide` is for the few cells shared by cellular and Wi-Fi that
-     make no sense on a receiver (RSSI, IP). No class = shown for every family. */
-  #hdr-inst.esp .cell-only, #hdr-inst.gnss .cell-only { display: none; }
-  #hdr-inst:not(.esp) .esp-only { display: none; }
-  #hdr-inst:not(.gnss) .gnss-only { display: none; }
-  #hdr-inst.gnss .gnss-hide { display: none; }
+  /* The strip cells are built by core/instruments.js from the set the profile declares:
+     there is no per-family show/hide rule here any more. */
 
   /* SIM icon (SVG): follows the CPIN state (green READY · amber asks PIN/PUK · red no SIM) */
   .sim-ico { height: 18px; width: auto; color: var(--ink-dim); margin: 1px 0; transition: color .2s; }
