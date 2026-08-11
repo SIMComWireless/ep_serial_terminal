@@ -507,7 +507,7 @@ registerLang("ru", "RU", {
   "badges": "Метки (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "Hex-байты, напр. 41 54 0D 0A  ·  ↑/↓ история",
   "rename_hint": "Двойной клик для переименования (напр. SimTech AT COM30)",
-  "module": "Модуль",
+  "module": "Устройство",
   "gn_unsupported": "GNSS недоступен на {mod}.",
   "grp21": "Bluetooth",
   "i21_0": "Включить BLE",

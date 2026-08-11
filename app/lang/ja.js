@@ -507,7 +507,7 @@ registerLang("ja", "日本語", {
   "badges": "ラベル (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "16進バイト 例: 41 54 0D 0A  ·  ↑/↓ 履歴",
   "rename_hint": "ダブルクリックで名前変更（例: SimTech AT COM30）",
-  "module": "モジュール",
+  "module": "デバイス",
   "gn_unsupported": "{mod} では GNSS は利用できません。",
   "grp21": "Bluetooth",
   "i21_0": "BLE オン",

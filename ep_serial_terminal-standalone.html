@@ -2213,7 +2213,7 @@ function fmtBytes(n) {
    build-standalone.cjs replaces `stamp: ''` with the build date/time (and syncs the version
    from package.json), so any standalone in the field can be identified at a glance.
    An empty stamp means "running from the source tree" (dev). */
-const APP_BUILD = { version: '1.0.0', stamp: '2026-08-11 01:00' };
+const APP_BUILD = { version: '1.0.0', stamp: '2026-08-11 01:25' };
 
 /* ---- tiempo ---- */
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -2952,7 +2952,7 @@ registerLang("en", "EN", {
   "badges": "Labels (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "Hex bytes, e.g. 41 54 0D 0A  ·  ↑/↓ history",
   "rename_hint": "Double-click to rename (e.g. SimTech AT COM30)",
-  "module": "Module",
+  "module": "Device",
   "gn_unsupported": "GNSS is not available on {mod}.",
   "grp21": "Bluetooth",
   "i21_0": "BLE power on",
@@ -3715,7 +3715,7 @@ registerLang("es", "ES", {
   "badges": "Etiquetas (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "Bytes hex, ej. 41 54 0D 0A  ·  ↑/↓ historial",
   "rename_hint": "Doble clic para renombrar (ej. SimTech AT COM30)",
-  "module": "Módulo",
+  "module": "Dispositivo",
   "gn_unsupported": "GNSS no disponible en {mod}.",
   "grp21": "Bluetooth",
   "i21_0": "Encender BLE",
@@ -4478,7 +4478,7 @@ registerLang("pt", "PT", {
   "badges": "Rótulos (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "Bytes hex, ex. 41 54 0D 0A  ·  ↑/↓ histórico",
   "rename_hint": "Clique duplo para renomear (ex. SimTech AT COM30)",
-  "module": "Módulo",
+  "module": "Dispositivo",
   "gn_unsupported": "GNSS não disponível em {mod}.",
   "grp21": "Bluetooth",
   "i21_0": "Ligar BLE",
@@ -5241,7 +5241,7 @@ registerLang("zh", "中文", {
   "badges": "标签 (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "十六进制字节，如 41 54 0D 0A  ·  ↑/↓ 历史",
   "rename_hint": "双击重命名（如 SimTech AT COM30）",
-  "module": "模块",
+  "module": "设备",
   "gn_unsupported": "{mod} 不支持 GNSS。",
   "grp21": "Bluetooth",
   "i21_0": "开启 BLE",
@@ -6004,7 +6004,7 @@ registerLang("it", "IT", {
   "badges": "Etichette (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "Byte hex, es. 41 54 0D 0A  ·  ↑/↓ cronologia",
   "rename_hint": "Doppio clic per rinominare (es. SimTech AT COM30)",
-  "module": "Modulo",
+  "module": "Dispositivo",
   "gn_unsupported": "GNSS non disponibile su {mod}.",
   "grp21": "Bluetooth",
   "i21_0": "Accendi BLE",
@@ -6767,7 +6767,7 @@ registerLang("fr", "FR", {
   "badges": "Étiquettes (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "Octets hex, ex. 41 54 0D 0A  ·  ↑/↓ historique",
   "rename_hint": "Double-clic pour renommer (ex. SimTech AT COM30)",
-  "module": "Module",
+  "module": "Appareil",
   "gn_unsupported": "GNSS non disponible sur {mod}.",
   "grp21": "Bluetooth",
   "i21_0": "Activer BLE",
@@ -7530,7 +7530,7 @@ registerLang("ja", "日本語", {
   "badges": "ラベル (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "16進バイト 例: 41 54 0D 0A  ·  ↑/↓ 履歴",
   "rename_hint": "ダブルクリックで名前変更（例: SimTech AT COM30）",
-  "module": "モジュール",
+  "module": "デバイス",
   "gn_unsupported": "{mod} では GNSS は利用できません。",
   "grp21": "Bluetooth",
   "i21_0": "BLE オン",
@@ -8293,7 +8293,7 @@ registerLang("ko", "한국어", {
   "badges": "라벨 (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "16진 바이트, 예: 41 54 0D 0A  ·  ↑/↓ 기록",
   "rename_hint": "더블클릭하여 이름 변경 (예: SimTech AT COM30)",
-  "module": "모듈",
+  "module": "장치",
   "gn_unsupported": "{mod}에서는 GNSS를 사용할 수 없습니다.",
   "grp21": "Bluetooth",
   "i21_0": "BLE 켜기",
@@ -9056,7 +9056,7 @@ registerLang("de", "DE", {
   "badges": "Labels (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "Hex-Bytes, z. B. 41 54 0D 0A  ·  ↑/↓ Verlauf",
   "rename_hint": "Doppelklick zum Umbenennen (z. B. SimTech AT COM30)",
-  "module": "Modul",
+  "module": "Gerät",
   "gn_unsupported": "GNSS auf {mod} nicht verfügbar.",
   "grp21": "Bluetooth",
   "i21_0": "BLE einschalten",
@@ -9819,7 +9819,7 @@ registerLang("ru", "RU", {
   "badges": "Метки (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "Hex-байты, напр. 41 54 0D 0A  ·  ↑/↓ история",
   "rename_hint": "Двойной клик для переименования (напр. SimTech AT COM30)",
-  "module": "Модуль",
+  "module": "Устройство",
   "gn_unsupported": "GNSS недоступен на {mod}.",
   "grp21": "Bluetooth",
   "i21_0": "Включить BLE",
@@ -22565,6 +22565,123 @@ registerEmuHandler((emu, cmd) => (
 ));
 
 
+/* === app/js/j16/emulator-j16.js === */
+/* emulator-j16.js — virtual J16 Tracker: the interactive menu and the factory-test report.
+
+   The AT side is handled by the SIMCom set (the J16 carries an A76xx), so only what is the
+   tracker's own lives here: the menu keys and the report it prints. The report is emitted line
+   by line, like the real device does, so the console shows it streaming in.
+   Deterministic on purpose: the harness asserts against these exact numbers.
+   (part of the AT console · classic script, shared global scope — concatenated in order) */
+
+const J16_MENU = [
+  '',
+  '--------------------------------------------------',
+  ' 1: run the automatic sequence',
+  ' 2: run every manual test',
+  ' 3: run every bench test',
+  ' 0: list tests',
+  ' ?: this menu',
+  ' Type a test id to run one test, for example C9.',
+  '--------------------------------------------------',
+];
+
+/* One entry per test of the automatic sequence: the section header, its INFO lines and the
+   verdict. Keeping it structured (instead of one big string) lets a single test be re-run. */
+const J16_SEQUENCE = [
+  { id: 'A6', title: 'power-up reason', info: [], verdict: 'TEST;A6;PASS;battery;;' },
+  { id: 'D1', title: 'identity', verdict: 'TEST;D1;PASS;869890088755453;;', info: [
+    'module_model;A7670M5', 'firmware_revision;25187B01A7670M5A_SDK_260319', 'customer_version;NULL',
+    'cpu_uid;003A92621049D8BB', 'heap_free_bytes;950528'] },
+  { id: 'D2', title: 'partition sizes', verdict: 'TEST;D2;PASS;196608;bytes;', info: [
+    'app_partition_bytes;196608', 'app_bin_bytes;27052', 'cusdata_partition_bytes;32768',
+    'flash_bytes;32768', 'flash_type;4M Bytes', 'fs_total_bytes;225280', 'fs_free_bytes;65536'] },
+  { id: 'D6', title: 'die temperature', info: [], verdict: 'TEST;D6;PASS;-1;C;' },
+  { id: 'A1', title: 'external supply', verdict: 'TEST;A1;FAIL;0;mV;outside_supported_range', info: [
+    'adc1_pad_mv;0', 'vin_gain_x1000;82481', 'vin_calibrated;no'] },
+  { id: 'A3', title: 'backup cell', info: ['vbat_delta_mv;8'], verdict: 'TEST;A3;PASS;4295;mV;' },
+  { id: 'A5', title: 'external power detect', info: ['ext_detect_raw;1'], verdict: 'TEST;A5;FAIL;1;;disagrees_with_measured_vin' },
+  { id: 'B2', title: 'relay / ACC loopback', verdict: 'TEST;B2;FAIL;;;acc_did_not_follow_relay', info: [
+    'loopback_acc_raw_relay_energised;0', 'loopback_acc_raw_relay_released;0'] },
+  { id: 'B6', title: 'USIM2 disabled', verdict: 'TEST;B6;FAIL;0;;master_sim_is_not_sim1_relay_pin_at_risk', info: [
+    'master_sim;0', 'dual_sim_type;255'] },
+  { id: 'C1', title: 'I2C bus scan', info: ['i2c_device_7bit;0x19'], verdict: 'TEST;C1;PASS;1;devices;' },
+  { id: 'C2', title: 'accelerometer identity', info: ['accel_address_7bit;0x19', 'accel_device_id;0x11'], verdict: 'TEST;C2;PASS;SC7A20;;' },
+  { id: 'C3', title: 'gravity vector', info: ['accel_x_mg;-21', 'accel_y_mg;1042', 'accel_z_mg;-106'], verdict: 'TEST;C3;PASS;1047;mg;' },
+  { id: 'C5', title: 'MEMS_INT line', info: ['mems_int_idle_level;0', 'mems_int_active_level;1'], verdict: 'TEST;C5;PASS;;;int_line_toggles' },
+  { id: 'D3', title: 'filesystem round trip', info: [], verdict: 'TEST;D3;FAIL;;;write_fsync_read_mismatch' },
+  { id: 'D4', title: 'NVM read', info: [], verdict: 'TEST;D4;PASS;32;bytes;read_only_write_untested' },
+  { id: 'D5', title: 'RTC', info: ['rtc_readback;4067-12-26 13:49:32'], verdict: 'TEST;D5;FAIL;;;readback_mismatch' },
+  { id: 'C6', title: 'LTE operator scan', verdict: 'TEST;C6;PASS;5;operators;', info: [
+    'cops_raw;+COPS:(2, "VIVO", "", "72410", 7), (1, "", "", "72403", 7), (1, "", "", "72405", 7),,(0,1,2,3,4), (0,1,2)'] },
+  { id: 'C7', title: 'LTE attach', verdict: 'TEST;C7;PASS;42;dBm;', info: [
+    'sim_iccid;89554000000354590572', 'net_mode;LTE,Online', 'net_band;EUTRAN-BAND7',
+    'net_plmn;724-10', 'net_csq;22', 'net_rsrq_db;25', 'net_sinr_db;4'] },
+  { id: 'C9', title: 'GNSS fix', info: [], verdict: 'TEST;C9;FAIL;;;gnss_configure_failed' },
+];
+
+const J16_BANNER = [
+  '=== J16 factory test ===',
+  'INFO;fw_version;j16-1605-0.0.0-dev',
+  'INFO;board;J16',
+  'INFO;sku;1605',
+  'INFO;module;A7670SA-MNXV',
+  'INFO;board_flash_bytes;4194304',
+  'INFO;wifi_scan;yes',
+  'Press any key within 3000 ms for the menu.',
+];
+
+// The lines of one test: its section header, its INFO lines and its verdict.
+function j16TestLines(t) {
+  return ['--- ' + t.id + ' ' + t.title, ...(t.info || []).map((i) => 'INFO;' + i), t.verdict];
+}
+
+class J16EmuMixin {
+  /* Emits a block of lines with a small gap between them, so the console shows the report
+     arriving rather than appearing all at once. */
+  j16Emit(lines, gap) {
+    let i = 0;
+    const step = () => {
+      if (i >= lines.length) return;
+      this.output(lines[i++] + '\r\n');
+      this._later(gap || 40, step);
+    };
+    step();
+  }
+  j16RunSequence() {
+    const lines = [...J16_BANNER];
+    let pass = 0, fail = 0;
+    for (const t of J16_SEQUENCE) {
+      lines.push(...j16TestLines(t));
+      if (/;PASS;/.test(t.verdict)) pass++; else fail++;
+    }
+    lines.push(`RESULT;${fail ? 'FAIL' : 'PASS'};${pass};${fail};0`, ...J16_MENU);
+    this.j16Emit(lines, 25);
+  }
+}
+
+const _j16Mix = Object.getOwnPropertyDescriptors(J16EmuMixin.prototype);
+delete _j16Mix.constructor;
+Object.defineProperties(ATEmulator.prototype, _j16Mix);
+
+/* Menu keys only: anything starting with AT keeps going down the chain to the SIMCom set,
+   because the J16 carries an A76xx and answers its commands too. */
+registerEmuHandler((emu, cmd) => {
+  if ((emu.identity || {}).kind !== 'j16' || /^AT/i.test(cmd)) return EMU_PASS;
+  const key = cmd.trim();
+  if (key === '1') return emu.j16RunSequence();
+  if (key === '2' || key === '3') {
+    const subset = J16_SEQUENCE.filter((t) => (key === '2' ? /^[AB]/ : /^[CD]/).test(t.id));
+    return emu.j16Emit(subset.flatMap(j16TestLines), 25);
+  }
+  if (key === '0') return emu.j16Emit(J16_SEQUENCE.map((t) => ' ' + t.id + ': ' + t.title), 15);
+  if (key === '?') return emu.j16Emit(J16_MENU, 15);
+  const one = J16_SEQUENCE.find((t) => t.id === key.toUpperCase());
+  if (one) return emu.j16Emit(j16TestLines(one), 25);
+  return EMU_PASS;
+});
+
+
 /* === app/js/core/drivers.js === */
 // @ts-check
 /* drivers.js — DRIVER CONTRACTS (JSDoc @typedef), vendor-agnostic.
@@ -22698,6 +22815,10 @@ registerEmuHandler((emu, cmd) => (
  * @property {QuickItem[]} [quick]                             sentences for the "AT Commands" combo
  */
 /**
+ * Sidebar entry: a loose launcher { wiz } or a category { cat, items } whose children indent.
+ * @typedef {{wiz?: string, cat?: string, items?: string[]}} SidebarEntry
+ */
+/**
  * One cell of the header strip (see core/instruments.js). Default kind = a labelled value;
  * 'sim' adds the SIM-card icon, 'reg' draws the registration LEDs and 'signal' groups the
  * bars with its mini cells. `id` is what ui.set(id, …) writes to.
@@ -22769,6 +22890,8 @@ registerEmuHandler((emu, cmd) => (
  * @property {string} family
  * @property {string} [vendor]        Module maker shown as the <optgroup> of the selector (SIMCom, Espressif…)
  * @property {string} [category]      Family inside that maker (Cellular, GNSS, Wi-Fi, Wi-Fi + BLE)
+ * @property {SidebarEntry[]} [sidebar]  Menu layout of this device (see core/data.js SIDEBAR);
+ *                                   without one, the full layout is used and caps do the filtering
  * @property {string} [instruments]   Header strip set the module shows: 'cellular' | 'wifi' | 'gnss'
  *                                   (or one registered with registerInstruments) — see core/instruments.js
  * @property {string} [chip]
@@ -23862,10 +23985,18 @@ const mkGnssId = (model, chip) => ({
   kind: 'gnss', chipId: chip.id,
 });
 
+/* Menu of a standalone receiver: no cellular, no IP stack and no AT layer — just the live
+   NMEA view and the configuration of its chip. Flat, no categories. */
+const SIDEBAR_GNSS = [
+  { wiz: 'macros' },
+  { wiz: 'gnss' },
+  { wiz: 'gnsschip' },
+];
+
 const GNSS_CAPS = ['gnss', 'nmea'];
 function regGnss(id, name, chip, gnss, note) {
   Profiles.register({
-    id, name, family: 'GNSS', vendor: 'SIMCom', category: 'GNSS', instruments: 'gnss',
+    id, name, family: 'GNSS', vendor: 'SIMCom', category: 'GNSS', instruments: 'gnss', sidebar: SIDEBAR_GNSS,
     chip: chip.name, bands: note, caps: GNSS_CAPS,
     identity: mkGnssId(id, chip),
     gnss, quick: quickGnss(chip),
@@ -23947,6 +24078,15 @@ const SRV_ESP = {
   stop: () => 'AT+CIPSERVER=0',
 };
 
+/* ESP menu: Macros · Signal monitor · Wi-Fi · Protocols · Bluetooth. */
+const SIDEBAR_ESP = [
+  { wiz: 'macros' },
+  { wiz: 'sig' },
+  { wiz: 'wifi' },
+  { cat: 'cat_protocols', items: ['ping', 'tcpudp', 'http', 'mail', 'ftp', 'mqtt', 'lwm2m', 'coap'] },
+  { wiz: 'ble' },
+];
+
 /** @type {QuickTable} */
 const QUICK_ESP_BASE = {
   wifi: [
@@ -24002,19 +24142,19 @@ const QUICK_ESP32C6 = { ...QUICK_ESP_BASE,
 };
 
 Profiles.register({
-  id: 'ESP8266', name: 'Espressif ESP8266 (Wi-Fi AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi', instruments: 'wifi', chip: 'ESP8266EX',
+  id: 'ESP8266', name: 'Espressif ESP8266 (Wi-Fi AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi', instruments: 'wifi', sidebar: SIDEBAR_ESP, chip: 'ESP8266EX',
   caps: ['wifi', 'tcpip'],
   identity: { manufacturer: 'Espressif', model: 'ESP8266', revision: 'AT 2.2.1', imei: '', band: 'Wi-Fi 2.4 GHz b/g/n', ati: ['ESP8266 AT firmware'] },
   gnss: GNSS_NONE, tcp: TCP_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP_BASE, dashboard: DASH_ESP, signalPoll: SIGPOLL_ESP,
 });
 Profiles.register({
-  id: 'ESP32-C3', name: 'Espressif ESP32-C3 (Wi-Fi 4 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', instruments: 'wifi', chip: 'ESP32-C3',
+  id: 'ESP32-C3', name: 'Espressif ESP32-C3 (Wi-Fi 4 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', instruments: 'wifi', sidebar: SIDEBAR_ESP, chip: 'ESP32-C3',
   caps: ['wifi', 'ble', 'tcpip', 'http', 'mqtt'],
   identity: { manufacturer: 'Espressif', model: 'ESP32-C3', revision: 'AT 3.2.0', imei: '', band: 'Wi-Fi 4 2.4 GHz + BLE 5', ati: ['ESP32-C3 AT firmware'] },
   gnss: GNSS_NONE, tcp: TCP_ESP, http: HTTP_ESP, mqtt: MQTT_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP32C6, dashboard: DASH_ESP_V3, signalPoll: SIGPOLL_ESP,
 });
 Profiles.register({
-  id: 'ESP32-C6', name: 'Espressif ESP32-C6 (Wi-Fi 6 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', instruments: 'wifi', chip: 'ESP32-C6',
+  id: 'ESP32-C6', name: 'Espressif ESP32-C6 (Wi-Fi 6 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', instruments: 'wifi', sidebar: SIDEBAR_ESP, chip: 'ESP32-C6',
   caps: ['wifi', 'ble', 'tcpip', 'http', 'mqtt'],
   identity: { manufacturer: 'Espressif', model: 'ESP32-C6', revision: 'AT 3.4.0', imei: '', band: 'Wi-Fi 6 2.4 GHz + BLE 5', ati: ['ESP32-C6 AT firmware'] },
   gnss: GNSS_NONE, tcp: TCP_ESP, http: HTTP_ESP, mqtt: MQTT_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP32C6, dashboard: DASH_ESP_V3, signalPoll: SIGPOLL_ESP,
@@ -24073,29 +24213,17 @@ const SIDEBAR = [
   { wiz: 'jam' },
 ];
 
-// Sidebar layout for Espressif modules: Macros · Signal monitor · Wi-Fi · Protocols · Bluetooth.
-// (buildSidebar picks this layout when the family is ESP; the single-child Wi-Fi category is flattened.)
-// Sidebar layout for standalone GNSS receivers: they have no cellular, no IP stack and no AT
-// layer — only the live NMEA view and the configuration of their chip.
-const SIDEBAR_GNSS = [
-  { wiz: 'macros' },
-  { wiz: 'gnss' },        // flat, no categories: a receiver only has these three entries
-  { wiz: 'gnsschip' },
-];
-
-const SIDEBAR_ESP = [
-  { wiz: 'macros' },
-  { wiz: 'sig' },   // charts the RSSI of the associated AP
-  { cat: 'cat_wifi', items: ['wifi'] },
-  { cat: 'cat_protocols', items: ['ping', 'tcpudp', 'http', 'mail', 'ftp', 'mqtt', 'lwm2m', 'coap'] },
-  { wiz: 'ble' },
-];
-
 const MACROS = [
   { name:'Module health check', text:"# Module health check\nAT\n@100\nAT+GMR" },
   // { name:'Module health check', text:"# Module health check\nAT\n@100\nAT+GMR" }, 
   // add more macros...
 ];
+
+/* ---- extension points: a vendor folder adds its own menu entry and its own wizard without
+   this file (or any other core file) naming it. Both are called at load time from
+   app/js/<vendor>/…; if that folder disappears, nothing here refers to it. ---- */
+function registerQuickGroup(group) { if (!QUICK.some((g) => g.wiz === group.wiz)) QUICK.push(group); }
+function registerWizard(def) { if (!WIZARDS.some((w) => w.id === def.id)) WIZARDS.push(def); }
 
 const wt = (k) => t('wz_' + k);
 const WIZARDS = [
@@ -24164,6 +24292,155 @@ const WIZARDS = [
   { id:'pb', title:'Phonebook', render: (host) => renderPhonebook(host) },
   { id:'voice', title:'Voice calls', render: (host) => renderVoice(host) },
 ];
+
+
+/* === app/js/j16/j16-parser.js === */
+/* j16-parser.js — parser of the J16 Tracker factory-test report.
+
+   The device prints a line-oriented report over the serial port:
+     === J16 factory test ===
+     INFO;<key>;<value>              before the first section → device info
+     --- <id> <title>                starts a test section
+     INFO;<key>;<value>              inside a section → detail of that test
+     TEST;<id>;PASS|FAIL;<value>;<unit>;<reason>
+     RESULT;<PASS|FAIL>;<passed>;<failed>;<skipped>
+   Anything else (the interactive menu, prompts) is ignored.
+
+   Self-contained: nothing outside app/js/j16/ refers to this file.
+   (part of the AT console · classic script, shared global scope — concatenated in order) */
+
+/* Parses a whole report (a string, or an array of lines) into:
+   { header, info: {k:v}, tests: [{id, title, status, value, unit, reason, info}], result, lines }
+   `result` is null when the report has no RESULT line (a partial capture still parses). */
+function j16ParseReport(input) {
+  const lines = Array.isArray(input) ? input.slice() : String(input || '').split(/\r?\n/);
+  const out = { header: '', info: {}, tests: [], result: null, lines: lines.length };
+  const byId = new Map();
+  let cur = null;   // section in progress: INFO lines land on it
+
+  for (const raw of lines) {
+    const line = String(raw == null ? '' : raw).trim();
+    if (!line) continue;
+
+    const head = line.match(/^===\s*(.+?)\s*===$/);
+    if (head) { out.header = head[1]; cur = null; continue; }
+
+    // "--- A6 power-up reason": opens the section and gives the test its readable title
+    const sec = line.match(/^---\s*([A-Z]\d+)\s*(.*)$/i);
+    if (sec) {
+      const id = sec[1].toUpperCase();
+      cur = byId.get(id);
+      if (!cur) { cur = { id, title: sec[2] || '', status: null, value: '', unit: '', reason: '', info: {} }; byId.set(id, cur); out.tests.push(cur); }
+      else if (sec[2]) cur.title = sec[2];
+      continue;
+    }
+
+    const f = line.split(';');
+    const tag = (f[0] || '').toUpperCase();
+
+    if (tag === 'INFO' && f.length >= 2) {
+      const k = f[1], v = f.slice(2).join(';');
+      if (cur) cur.info[k] = v; else out.info[k] = v;   // before any section → device info
+      continue;
+    }
+
+    if (tag === 'TEST' && f.length >= 3) {
+      const id = (f[1] || '').toUpperCase();
+      let e = byId.get(id);
+      if (!e) { e = { id, title: '', status: null, value: '', unit: '', reason: '', info: {} }; byId.set(id, e); out.tests.push(e); }
+      e.status = (f[2] || '').toUpperCase();      // PASS | FAIL (anything else is kept as-is)
+      e.value = f[3] || '';
+      e.unit = f[4] || '';
+      e.reason = f[5] || '';
+      cur = null;                                  // the section is closed by its verdict
+      continue;
+    }
+
+    if (tag === 'RESULT' && f.length >= 2) {
+      out.result = {
+        status: (f[1] || '').toUpperCase(),
+        passed: Number(f[2] || 0) || 0,
+        failed: Number(f[3] || 0) || 0,
+        skipped: Number(f[4] || 0) || 0,
+      };
+      cur = null;
+    }
+  }
+  return out;
+}
+
+// Is this line part of a report? Used to pick the report out of a whole terminal log.
+function j16IsReportLine(line) {
+  return /^(===\s*J16|---\s*[A-Z]\d+\b|INFO;|TEST;|RESULT;)/i.test(String(line || '').trim());
+}
+
+/* Counters actually observed, so the summary is right even on a partial capture (and it shows
+   when the device's own RESULT line disagrees with what was printed). */
+function j16Tally(report) {
+  const t = { passed: 0, failed: 0, other: 0, total: report.tests.length };
+  for (const e of report.tests) {
+    if (e.status === 'PASS') t.passed++;
+    else if (e.status === 'FAIL') t.failed++;
+    else t.other++;
+  }
+  return t;
+}
+
+
+/* === app/js/j16/profiles-j16.js === */
+/* profiles-j16.js — the J16 Tracker device: profile, menu and wizard registration.
+
+   The J16 is a tracker built around a SIMCom A76xx: it speaks AT like the module inside it, and
+   on top of that it prints a factory-test report over the same port. So it reuses the SIMCom
+   cellular stack and only adds its own menu entry (Factory test).
+
+   Everything the J16 needs is registered from here through the core extension points
+   (registerQuickGroup / registerWizard / Profiles.register), so no file outside app/js/j16/
+   mentions it: deleting the folder simply removes the device from the list.
+   (part of the AT console · classic script, shared global scope — concatenated in order) */
+
+/* Menu: the cellular tools of the module it carries, plus its own factory test on top. */
+const SIDEBAR_J16 = [
+  { wiz: 'macros' },
+  { wiz: 'j16' },
+  { cat: 'cat_cellular', items: ['sim', 'basics', 'sig', 'sms'] },
+  { cat: 'cat_protocols', items: ['ping', 'tcpudp', 'http', 'mqtt'] },
+  { cat: 'cat_location', items: ['gnss'] },
+  { wiz: 'hw' },
+];
+
+// Menu entry + the wizard behind it. `cap: 'j16'` keeps it out of every other device's menu.
+registerQuickGroup({ nameKey: 'j16_menu', wiz: 'j16', cap: 'j16', items: [] });
+registerWizard({ id: 'j16', title: 'Factory test', render: (host) => renderJ16Factory(host) });
+
+/* Quick commands: the factory-test menu keys the device documents, plus the identity ones of
+   the module it carries (they are answered by the A76xx inside). */
+const QUICK_J16 = {
+  j16: [
+    ['Open menu (any key)', '\\n'],
+    ['1 · automatic sequence', '1'],
+    ['2 · every manual test', '2'],
+    ['3 · every bench test', '3'],
+    ['0 · list tests', '0'],
+    ['? · menu', '?'],
+    ['Run one test', '__TEST_ID__', 1],
+  ],
+};
+
+Profiles.register({
+  id: 'J16', name: 'J16 Tracker (A76xx + factory test)', family: 'J16',
+  vendor: 'EP', category: 'Trackers', instruments: 'cellular', sidebar: SIDEBAR_J16,
+  chip: 'A7670SA-MNXV', bands: 'LTE Cat-1 · GNSS · accelerometer',
+  caps: ['j16', 'cellular', 'gnss', 'tcpip', 'http', 'mqtt', 'ssl', 'sms', 'fs'],
+  identity: {
+    manufacturer: 'SIMCOM INCORPORATED', model: 'A7670M5', revision: '25187B01A7670M5A_SDK_260319',
+    imei: '869890088755453', band: 'EUTRAN-BAND7', ati: ['J16', 'A7670M5', '25187B01A7670M5A_SDK_260319'],
+    kind: 'j16',   // the emulator answers the tracker menu for this device (see emulator-j16.js)
+  },
+  // The AT side is the A76xx it carries: same drivers, same dashboard, same signal poll.
+  ...STACK_A76XX,
+  quick: { ...QUICK_SIMCOM, ...QUICK_J16 },
+});
 
 
 /* === app/js/core/macros.js === */
@@ -25970,8 +26247,9 @@ function buildSidebar() {
     return true;
   };
   const visibleInCat = (entry) => entry.items.filter((id) => { const g = QUICK.find((x) => x.wiz === id); return g && (!g.cap || profHasCap(prof, g.cap)); });
-  // ESP: Macros · Signal monitor · Wi-Fi · Protocols · Bluetooth · GNSS receiver: NMEA + chip config
-  const layout = prof.family === 'ESP' ? SIDEBAR_ESP : (prof.family === 'GNSS' ? SIDEBAR_GNSS : SIDEBAR);
+  // The menu layout belongs to the profile (a device with its own menu ships it in its own
+  // folder); without one, the full cellular layout is used and caps do the filtering.
+  const layout = prof.sidebar || SIDEBAR;
   for (const entry of layout) {
     if (onlyMacros) { if (entry.wiz === 'macros') addItem('macros', false); continue; }   // Macros only
     if (entry.cat) {
@@ -29473,6 +29751,283 @@ function renderMail(host) {
   readSrv();
 }
 
+
+
+/* === app/js/j16/lang-j16.js === */
+/* lang-j16.js — the J16 folder brings its own translations and merges them into the language
+   tables at load time, so removing app/js/j16/ removes its strings too (no orphan keys in
+   app/lang/*.js). English is the fallback for any language not listed.
+   (part of the AT console · classic script, shared global scope — concatenated in order) */
+
+const J16_STRINGS = {
+  en: { j16_menu: 'Factory test', wz_j16: 'Factory test', j16_run: 'Run', j16_running: 'Running the sequence…',
+    j16_fromlog: 'From log', j16_file: 'Open file', j16_paste: 'Paste', j16_parse: 'Parse',
+    j16_none: 'No factory-test report in the log', j16_device: 'Device', j16_tests: 'Tests',
+    j16_passed: 'passed', j16_failed: 'failed', j16_other: 'no verdict', j16_skipped: 'skipped',
+    j16_partial: 'The device reported {rp} passed / {rf} failed, but {p}/{f} were captured: the report looks partial.' },
+  es: { j16_menu: 'Test de fábrica', wz_j16: 'Test de fábrica', j16_run: 'Ejecutar', j16_running: 'Ejecutando la secuencia…',
+    j16_fromlog: 'Desde el log', j16_file: 'Abrir archivo', j16_paste: 'Pegar', j16_parse: 'Interpretar',
+    j16_none: 'No hay reporte de test de fábrica en el log', j16_device: 'Dispositivo', j16_tests: 'Pruebas',
+    j16_passed: 'pasaron', j16_failed: 'fallaron', j16_other: 'sin veredicto', j16_skipped: 'omitidas',
+    j16_partial: 'El equipo informó {rp} pasadas / {rf} fallidas, pero se capturaron {p}/{f}: el reporte parece incompleto.' },
+  pt: { j16_menu: 'Teste de fábrica', wz_j16: 'Teste de fábrica', j16_run: 'Executar', j16_running: 'Executando a sequência…',
+    j16_fromlog: 'Do log', j16_file: 'Abrir arquivo', j16_paste: 'Colar', j16_parse: 'Interpretar',
+    j16_none: 'Nenhum relatório de teste de fábrica no log', j16_device: 'Dispositivo', j16_tests: 'Testes',
+    j16_passed: 'passaram', j16_failed: 'falharam', j16_other: 'sem veredito', j16_skipped: 'ignorados',
+    j16_partial: 'O equipamento informou {rp} passaram / {rf} falharam, mas {p}/{f} foram capturados: o relatório parece parcial.' },
+  de: { j16_menu: 'Werkstest', wz_j16: 'Werkstest', j16_run: 'Starten', j16_running: 'Sequenz läuft…',
+    j16_fromlog: 'Aus dem Log', j16_file: 'Datei öffnen', j16_paste: 'Einfügen', j16_parse: 'Auswerten',
+    j16_none: 'Kein Werkstest-Bericht im Log', j16_device: 'Gerät', j16_tests: 'Tests',
+    j16_passed: 'bestanden', j16_failed: 'fehlgeschlagen', j16_other: 'ohne Urteil', j16_skipped: 'übersprungen',
+    j16_partial: 'Das Gerät meldete {rp} bestanden / {rf} fehlgeschlagen, erfasst wurden aber {p}/{f}: der Bericht wirkt unvollständig.' },
+  fr: { j16_menu: 'Test usine', wz_j16: 'Test usine', j16_run: 'Lancer', j16_running: 'Séquence en cours…',
+    j16_fromlog: 'Depuis le log', j16_file: 'Ouvrir un fichier', j16_paste: 'Coller', j16_parse: 'Analyser',
+    j16_none: 'Aucun rapport de test usine dans le log', j16_device: 'Appareil', j16_tests: 'Tests',
+    j16_passed: 'réussis', j16_failed: 'échoués', j16_other: 'sans verdict', j16_skipped: 'ignorés',
+    j16_partial: "L'appareil a annoncé {rp} réussis / {rf} échoués, mais {p}/{f} ont été capturés : le rapport semble partiel." },
+  it: { j16_menu: 'Test di fabbrica', wz_j16: 'Test di fabbrica', j16_run: 'Esegui', j16_running: 'Sequenza in corso…',
+    j16_fromlog: 'Dal log', j16_file: 'Apri file', j16_paste: 'Incolla', j16_parse: 'Interpreta',
+    j16_none: 'Nessun report di test di fabbrica nel log', j16_device: 'Dispositivo', j16_tests: 'Test',
+    j16_passed: 'superati', j16_failed: 'falliti', j16_other: 'senza verdetto', j16_skipped: 'saltati',
+    j16_partial: "L'apparecchio ha riportato {rp} superati / {rf} falliti, ma ne sono stati catturati {p}/{f}: il report sembra parziale." },
+  ru: { j16_menu: 'Заводской тест', wz_j16: 'Заводской тест', j16_run: 'Запустить', j16_running: 'Выполняется последовательность…',
+    j16_fromlog: 'Из журнала', j16_file: 'Открыть файл', j16_paste: 'Вставить', j16_parse: 'Разобрать',
+    j16_none: 'В журнале нет отчёта заводского теста', j16_device: 'Устройство', j16_tests: 'Тесты',
+    j16_passed: 'пройдено', j16_failed: 'провалено', j16_other: 'без вердикта', j16_skipped: 'пропущено',
+    j16_partial: 'Устройство сообщило {rp} пройдено / {rf} провалено, но захвачено {p}/{f}: отчёт неполный.' },
+  zh: { j16_menu: '工厂测试', wz_j16: '工厂测试', j16_run: '运行', j16_running: '正在执行序列…',
+    j16_fromlog: '从日志', j16_file: '打开文件', j16_paste: '粘贴', j16_parse: '解析',
+    j16_none: '日志中没有工厂测试报告', j16_device: '设备', j16_tests: '测试',
+    j16_passed: '通过', j16_failed: '失败', j16_other: '无结论', j16_skipped: '跳过',
+    j16_partial: '设备报告 {rp} 通过 / {rf} 失败，但只捕获到 {p}/{f}：报告似乎不完整。' },
+  ja: { j16_menu: '工場テスト', wz_j16: '工場テスト', j16_run: '実行', j16_running: 'シーケンス実行中…',
+    j16_fromlog: 'ログから', j16_file: 'ファイルを開く', j16_paste: '貼り付け', j16_parse: '解析',
+    j16_none: 'ログに工場テストのレポートがありません', j16_device: 'デバイス', j16_tests: 'テスト',
+    j16_passed: '合格', j16_failed: '不合格', j16_other: '判定なし', j16_skipped: 'スキップ',
+    j16_partial: 'デバイスは {rp} 合格 / {rf} 不合格と報告しましたが、取得できたのは {p}/{f} です。レポートが不完全のようです。' },
+  ko: { j16_menu: '공장 테스트', wz_j16: '공장 테스트', j16_run: '실행', j16_running: '시퀀스 실행 중…',
+    j16_fromlog: '로그에서', j16_file: '파일 열기', j16_paste: '붙여넣기', j16_parse: '해석',
+    j16_none: '로그에 공장 테스트 보고서가 없습니다', j16_device: '장치', j16_tests: '테스트',
+    j16_passed: '통과', j16_failed: '실패', j16_other: '판정 없음', j16_skipped: '건너뜀',
+    j16_partial: '장치는 {rp} 통과 / {rf} 실패로 보고했지만 {p}/{f}만 수집되었습니다: 보고서가 불완전해 보입니다.' },
+};
+
+// Merge into every registered language; a language without its own translation falls back to English.
+for (const lang of Object.keys(I18N)) Object.assign(I18N[lang], J16_STRINGS.en, J16_STRINGS[lang] || {});
+
+
+/* === app/js/j16/wizards-j16.js === */
+/* wizards-j16.js — J16 Tracker factory-test wizard: runs the report and shows it graphically.
+
+   Sources of a report, in the order the buttons offer them:
+     ▶ run     sends the menu key + "1" and captures what the device prints
+     ⤒ log     re-reads the focused terminal's log (the test may already have run)
+     📂 file   opens a .txt/.log saved earlier
+     📋 paste  a textarea, for a report pasted from somewhere else
+
+   Self-contained: its CSS is injected from here, so removing app/js/j16/ leaves nothing behind.
+   (part of the AT console · classic script, shared global scope — concatenated in order) */
+
+/* ---- styles (injected once; they do not live in app/css/styles.css on purpose) ---- */
+(function j16InjectCss() {
+  if (document.getElementById('j16-css')) return;
+  const s = document.createElement('style');
+  s.id = 'j16-css';
+  s.textContent = `
+  .j16-hero { display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 8px; padding: 12px 14px; }
+  .j16-verdict { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+  .j16-verdict.pass { color: var(--ok); }
+  .j16-verdict.fail { color: var(--err); }
+  .j16-counts { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--mono); font-size: 12px; }
+  .j16-count b { font-size: 16px; display: block; }
+  .j16-count.pass b { color: var(--ok); }
+  .j16-count.fail b { color: var(--err); }
+  .j16-count span { color: var(--ink-faint); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
+  .j16-bar { flex: 1 1 160px; min-width: 120px; height: 12px; border-radius: 6px; overflow: hidden;
+    display: flex; background: var(--surface); border: 1px solid var(--line-soft); }
+  .j16-bar i { display: block; height: 100%; }
+  .j16-bar .p { background: var(--ok); }
+  .j16-bar .f { background: var(--err); }
+  .j16-bar .o { background: var(--ink-faint); }
+  .j16-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .j16-chip { font-family: var(--mono); font-size: 11px; background: var(--surface-2);
+    border: 1px solid var(--line-soft); border-radius: 5px; padding: 3px 8px; color: var(--ink-dim); }
+  .j16-chip b { color: var(--ink); font-weight: 600; }
+  .j16-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
+  .j16-test { border: 1px solid var(--line-soft); border-left-width: 3px; border-radius: 6px;
+    background: var(--surface-2); padding: 8px 10px; min-width: 0; }
+  .j16-test.pass { border-left-color: var(--ok); }
+  .j16-test.fail { border-left-color: var(--err); }
+  .j16-test.other { border-left-color: var(--ink-faint); }
+  .j16-thead { display: flex; align-items: baseline; gap: 8px; }
+  .j16-id { font-family: var(--mono); font-weight: 700; font-size: 12px; color: var(--ink); }
+  .j16-title { flex: 1; font-size: 11px; color: var(--ink-dim); min-width: 0; overflow-wrap: anywhere; }
+  .j16-badge { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    border-radius: 4px; padding: 2px 6px; }
+  .j16-badge.pass { background: color-mix(in srgb, var(--ok) 20%, transparent); color: var(--ok); }
+  .j16-badge.fail { background: color-mix(in srgb, var(--err) 20%, transparent); color: var(--err); }
+  .j16-badge.other { background: var(--surface); color: var(--ink-faint); }
+  .j16-val { font-family: var(--mono); font-size: 13px; color: var(--ink); margin-top: 3px; overflow-wrap: anywhere; }
+  .j16-val .u { font-size: 10px; color: var(--ink-faint); margin-left: 3px; }
+  .j16-reason { font-family: var(--mono); font-size: 10px; color: var(--err); margin-top: 3px; overflow-wrap: anywhere; }
+  .j16-kv { margin-top: 6px; font-family: var(--mono); font-size: 10px; color: var(--ink-dim); }
+  .j16-kv div { display: flex; gap: 6px; }
+  .j16-kv span { color: var(--ink-faint); flex: 0 0 auto; }
+  .j16-kv b { font-weight: 500; color: var(--ink-dim); overflow-wrap: anywhere; min-width: 0; }
+  .j16-paste { width: 100%; box-sizing: border-box; min-height: 120px; font-family: var(--mono);
+    font-size: 11px; background: var(--surface-2); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+  `;
+  document.head.appendChild(s);
+})();
+
+/* Menu key + option 1 ("run the automatic sequence"). The device asks for any key within
+   3 s to open the menu, so the macro sends a key, waits, then the option. */
+const J16_RUN_MACRO = '\n@600\n1';
+
+function renderJ16Factory(host) {
+  host.innerHTML = '';
+  const sec = (txt) => { const d = document.createElement('div'); d.className = 'gn-sechead'; d.textContent = txt; return d; };
+  const mkBtn = (txt, fn) => { const b = document.createElement('button'); b.className = 'fs-btn'; b.textContent = txt; b.addEventListener('click', fn); return b; };
+  const note = (txt) => { const d = document.createElement('div'); d.className = 'fs-status'; d.style.color = 'var(--ink-dim)'; d.textContent = txt; return d; };
+
+  const bar = document.createElement('div'); bar.className = 'fs-bar';
+  const status = document.createElement('div'); status.className = 'fs-status';
+  const body = document.createElement('div');
+  host.append(bar, status, body);
+
+  // ---- sources ----
+  bar.append(
+    mkBtn('▶ ' + t('j16_run'), () => {
+      if (!UI.connected) { status.textContent = t('log_notconn'); return; }
+      status.textContent = t('j16_running');
+      runMacro(J16_RUN_MACRO, 200);
+      // the report streams into the log; re-read it once the sequence has had time to finish
+      setTimeout(fromLog, 12000);
+    }),
+    mkBtn('⤒ ' + t('j16_fromlog'), fromLog),
+    mkBtn('📂 ' + t('j16_file'), openFile),
+    mkBtn('📋 ' + t('j16_paste'), togglePaste),
+  );
+
+  const pasteWrap = document.createElement('div'); pasteWrap.hidden = true;
+  const paste = document.createElement('textarea'); paste.className = 'j16-paste';
+  paste.placeholder = '=== J16 factory test ===\nINFO;board;J16\nTEST;A6;PASS;battery;;\n…';
+  const pasteBar = document.createElement('div'); pasteBar.className = 'fs-bar';
+  pasteBar.appendChild(mkBtn(t('j16_parse'), () => show(j16ParseReport(paste.value))));
+  pasteWrap.append(paste, pasteBar);
+  host.insertBefore(pasteWrap, body);
+
+  function togglePaste() { pasteWrap.hidden = !pasteWrap.hidden; if (!pasteWrap.hidden) paste.focus(); }
+
+  function fromLog() {
+    const sess = UI.focused;
+    if (!sess) { status.textContent = t('log_notconn'); return; }
+    const lines = sess.lines.filter((l) => l.cls !== 'tx' && l.cls !== 'sys').map((l) => l.text);
+    if (!lines.some(j16IsReportLine)) { status.textContent = t('j16_none'); body.innerHTML = ''; return; }
+    show(j16ParseReport(lines));
+  }
+
+  function openFile() {
+    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.txt,.log,text/plain';
+    inp.addEventListener('change', () => {
+      const f = inp.files && inp.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = () => { show(j16ParseReport(String(r.result || ''))); status.textContent = f.name; };
+      r.readAsText(f);
+    });
+    inp.click();
+  }
+
+  // ---- render ----
+  function show(rep) {
+    body.innerHTML = '';
+    if (!rep.tests.length && !rep.result) { status.textContent = t('j16_none'); return; }
+    const tally = j16Tally(rep);
+    const verdict = rep.result ? rep.result.status : (tally.failed ? 'FAIL' : 'PASS');
+    const ok = verdict === 'PASS';
+    status.textContent = rep.header || 'J16 factory test';
+
+    // summary: verdict, counters and the proportion as a bar
+    const hero = document.createElement('div'); hero.className = 'j16-hero';
+    const v = document.createElement('div'); v.className = 'j16-verdict ' + (ok ? 'pass' : 'fail'); v.textContent = verdict;
+    const counts = document.createElement('div'); counts.className = 'j16-counts';
+    const count = (cls, n, label) => { const d = document.createElement('div'); d.className = 'j16-count ' + cls; d.innerHTML = `<b>${n}</b><span>${label}</span>`; return d; };
+    counts.append(count('pass', tally.passed, t('j16_passed')), count('fail', tally.failed, t('j16_failed')));
+    if (tally.other) counts.appendChild(count('other', tally.other, t('j16_other')));
+    if (rep.result && rep.result.skipped) counts.appendChild(count('other', rep.result.skipped, t('j16_skipped')));
+    const gauge = document.createElement('div'); gauge.className = 'j16-bar';
+    const seg = (cls, n) => { const i = document.createElement('i'); i.className = cls; i.style.width = (tally.total ? (n / tally.total) * 100 : 0) + '%'; return i; };
+    gauge.append(seg('p', tally.passed), seg('f', tally.failed), seg('o', tally.other));
+    hero.append(v, counts, gauge);
+    body.appendChild(hero);
+
+    // the device's own RESULT line vs what was actually printed: a mismatch means a partial capture
+    if (rep.result && (rep.result.passed !== tally.passed || rep.result.failed !== tally.failed)) {
+      body.appendChild(note(t('j16_partial')
+        .replace('{rp}', rep.result.passed).replace('{rf}', rep.result.failed)
+        .replace('{p}', tally.passed).replace('{f}', tally.failed)));
+    }
+
+    // device info (the INFO lines printed before the first test)
+    const infoKeys = Object.keys(rep.info);
+    if (infoKeys.length) {
+      body.appendChild(sec(t('j16_device')));
+      const chips = document.createElement('div'); chips.className = 'j16-chips';
+      infoKeys.forEach((k) => {
+        const c = document.createElement('div'); c.className = 'j16-chip';
+        c.innerHTML = `${k} <b></b>`;
+        c.querySelector('b').textContent = rep.info[k];
+        chips.appendChild(c);
+      });
+      body.appendChild(chips);
+    }
+
+    // one card per test — failures first, so what needs attention is at the top
+    body.appendChild(sec(t('j16_tests') + ` (${tally.total})`));
+    const grid = document.createElement('div'); grid.className = 'j16-grid';
+    const order = [...rep.tests].sort((a, b) => rank(a) - rank(b));
+    order.forEach((e) => grid.appendChild(testCard(e)));
+    body.appendChild(grid);
+  }
+
+  function rank(e) { return e.status === 'FAIL' ? 0 : (e.status === 'PASS' ? 2 : 1); }
+
+  function testCard(e) {
+    const cls = e.status === 'PASS' ? 'pass' : (e.status === 'FAIL' ? 'fail' : 'other');
+    const card = document.createElement('div'); card.className = 'j16-test ' + cls;
+    const head = document.createElement('div'); head.className = 'j16-thead';
+    const id = document.createElement('span'); id.className = 'j16-id'; id.textContent = e.id;
+    const title = document.createElement('span'); title.className = 'j16-title'; title.textContent = e.title || '';
+    const badge = document.createElement('span'); badge.className = 'j16-badge ' + cls; badge.textContent = e.status || '—';
+    head.append(id, title, badge);
+    card.appendChild(head);
+
+    if (e.value !== '') {
+      const val = document.createElement('div'); val.className = 'j16-val';
+      val.textContent = e.value;
+      if (e.unit) { const u = document.createElement('span'); u.className = 'u'; u.textContent = e.unit; val.appendChild(u); }
+      card.appendChild(val);
+    }
+    if (e.reason) { const r = document.createElement('div'); r.className = 'j16-reason'; r.textContent = e.reason; card.appendChild(r); }
+
+    const keys = Object.keys(e.info);
+    if (keys.length) {
+      const kv = document.createElement('div'); kv.className = 'j16-kv';
+      keys.forEach((k) => {
+        const row = document.createElement('div');
+        const ks = document.createElement('span'); ks.textContent = k;
+        const vb = document.createElement('b'); vb.textContent = e.info[k];
+        row.append(ks, vb); kv.appendChild(row);
+      });
+      card.appendChild(kv);
+    }
+    return card;
+  }
+
+  fromLog();   // if the terminal already holds a report, show it straight away
+}
 
 
 /* === app/js/core/init.js === */

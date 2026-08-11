@@ -507,7 +507,7 @@ registerLang("ko", "한국어", {
   "badges": "라벨 (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "16진 바이트, 예: 41 54 0D 0A  ·  ↑/↓ 기록",
   "rename_hint": "더블클릭하여 이름 변경 (예: SimTech AT COM30)",
-  "module": "모듈",
+  "module": "장치",
   "gn_unsupported": "{mod}에서는 GNSS를 사용할 수 없습니다.",
   "grp21": "Bluetooth",
   "i21_0": "BLE 켜기",

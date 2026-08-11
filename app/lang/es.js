@@ -507,7 +507,7 @@ registerLang("es", "ES", {
   "badges": "Etiquetas (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "Bytes hex, ej. 41 54 0D 0A  ·  ↑/↓ historial",
   "rename_hint": "Doble clic para renombrar (ej. SimTech AT COM30)",
-  "module": "Módulo",
+  "module": "Dispositivo",
   "gn_unsupported": "GNSS no disponible en {mod}.",
   "grp21": "Bluetooth",
   "i21_0": "Encender BLE",

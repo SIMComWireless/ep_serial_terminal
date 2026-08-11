@@ -147,3 +147,6 @@ vite.config.ts.timestamp-*
 .vscode/
 Thumbs.db
 .DS_Store
+
+# J16 factory test
+app/js/j16/

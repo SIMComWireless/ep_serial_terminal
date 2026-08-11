@@ -130,6 +130,10 @@
  * @property {QuickItem[]} [quick]                             sentences for the "AT Commands" combo
  */
 /**
+ * Sidebar entry: a loose launcher { wiz } or a category { cat, items } whose children indent.
+ * @typedef {{wiz?: string, cat?: string, items?: string[]}} SidebarEntry
+ */
+/**
  * One cell of the header strip (see core/instruments.js). Default kind = a labelled value;
  * 'sim' adds the SIM-card icon, 'reg' draws the registration LEDs and 'signal' groups the
  * bars with its mini cells. `id` is what ui.set(id, …) writes to.
@@ -201,6 +205,8 @@
  * @property {string} family
  * @property {string} [vendor]        Module maker shown as the <optgroup> of the selector (SIMCom, Espressif…)
  * @property {string} [category]      Family inside that maker (Cellular, GNSS, Wi-Fi, Wi-Fi + BLE)
+ * @property {SidebarEntry[]} [sidebar]  Menu layout of this device (see core/data.js SIDEBAR);
+ *                                   without one, the full layout is used and caps do the filtering
  * @property {string} [instruments]   Header strip set the module shows: 'cellular' | 'wifi' | 'gnss'
  *                                   (or one registered with registerInstruments) — see core/instruments.js
  * @property {string} [chip]

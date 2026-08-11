@@ -60,6 +60,15 @@ const SRV_ESP = {
   stop: () => 'AT+CIPSERVER=0',
 };
 
+/* ESP menu: Macros · Signal monitor · Wi-Fi · Protocols · Bluetooth. */
+const SIDEBAR_ESP = [
+  { wiz: 'macros' },
+  { wiz: 'sig' },
+  { wiz: 'wifi' },
+  { cat: 'cat_protocols', items: ['ping', 'tcpudp', 'http', 'mail', 'ftp', 'mqtt', 'lwm2m', 'coap'] },
+  { wiz: 'ble' },
+];
+
 /** @type {QuickTable} */
 const QUICK_ESP_BASE = {
   wifi: [
@@ -115,19 +124,19 @@ const QUICK_ESP32C6 = { ...QUICK_ESP_BASE,
 };
 
 Profiles.register({
-  id: 'ESP8266', name: 'Espressif ESP8266 (Wi-Fi AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi', instruments: 'wifi', chip: 'ESP8266EX',
+  id: 'ESP8266', name: 'Espressif ESP8266 (Wi-Fi AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi', instruments: 'wifi', sidebar: SIDEBAR_ESP, chip: 'ESP8266EX',
   caps: ['wifi', 'tcpip'],
   identity: { manufacturer: 'Espressif', model: 'ESP8266', revision: 'AT 2.2.1', imei: '', band: 'Wi-Fi 2.4 GHz b/g/n', ati: ['ESP8266 AT firmware'] },
   gnss: GNSS_NONE, tcp: TCP_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP_BASE, dashboard: DASH_ESP, signalPoll: SIGPOLL_ESP,
 });
 Profiles.register({
-  id: 'ESP32-C3', name: 'Espressif ESP32-C3 (Wi-Fi 4 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', instruments: 'wifi', chip: 'ESP32-C3',
+  id: 'ESP32-C3', name: 'Espressif ESP32-C3 (Wi-Fi 4 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', instruments: 'wifi', sidebar: SIDEBAR_ESP, chip: 'ESP32-C3',
   caps: ['wifi', 'ble', 'tcpip', 'http', 'mqtt'],
   identity: { manufacturer: 'Espressif', model: 'ESP32-C3', revision: 'AT 3.2.0', imei: '', band: 'Wi-Fi 4 2.4 GHz + BLE 5', ati: ['ESP32-C3 AT firmware'] },
   gnss: GNSS_NONE, tcp: TCP_ESP, http: HTTP_ESP, mqtt: MQTT_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP32C6, dashboard: DASH_ESP_V3, signalPoll: SIGPOLL_ESP,
 });
 Profiles.register({
-  id: 'ESP32-C6', name: 'Espressif ESP32-C6 (Wi-Fi 6 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', instruments: 'wifi', chip: 'ESP32-C6',
+  id: 'ESP32-C6', name: 'Espressif ESP32-C6 (Wi-Fi 6 + BLE AT)', family: 'ESP', vendor: 'Espressif', category: 'Wi-Fi + BLE', instruments: 'wifi', sidebar: SIDEBAR_ESP, chip: 'ESP32-C6',
   caps: ['wifi', 'ble', 'tcpip', 'http', 'mqtt'],
   identity: { manufacturer: 'Espressif', model: 'ESP32-C6', revision: 'AT 3.4.0', imei: '', band: 'Wi-Fi 6 2.4 GHz + BLE 5', ati: ['ESP32-C6 AT firmware'] },
   gnss: GNSS_NONE, tcp: TCP_ESP, http: HTTP_ESP, mqtt: MQTT_ESP, data: DATA_ESP, ping: PING_ESP, tcpServer: SRV_ESP, quick: QUICK_ESP32C6, dashboard: DASH_ESP_V3, signalPoll: SIGPOLL_ESP,

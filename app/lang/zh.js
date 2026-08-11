@@ -507,7 +507,7 @@ registerLang("zh", "中文", {
   "badges": "标签 (URC / PROMPT / ERROR)",
   "cmd_hex_ph": "十六进制字节，如 41 54 0D 0A  ·  ↑/↓ 历史",
   "rename_hint": "双击重命名（如 SimTech AT COM30）",
-  "module": "模块",
+  "module": "设备",
   "gn_unsupported": "{mod} 不支持 GNSS。",
   "grp21": "Bluetooth",
   "i21_0": "开启 BLE",

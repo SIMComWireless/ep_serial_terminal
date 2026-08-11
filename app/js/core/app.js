@@ -622,8 +622,9 @@ function buildSidebar() {
     return true;
   };
   const visibleInCat = (entry) => entry.items.filter((id) => { const g = QUICK.find((x) => x.wiz === id); return g && (!g.cap || profHasCap(prof, g.cap)); });
-  // ESP: Macros · Signal monitor · Wi-Fi · Protocols · Bluetooth · GNSS receiver: NMEA + chip config
-  const layout = prof.family === 'ESP' ? SIDEBAR_ESP : (prof.family === 'GNSS' ? SIDEBAR_GNSS : SIDEBAR);
+  // The menu layout belongs to the profile (a device with its own menu ships it in its own
+  // folder); without one, the full cellular layout is used and caps do the filtering.
+  const layout = prof.sidebar || SIDEBAR;
   for (const entry of layout) {
     if (onlyMacros) { if (entry.wiz === 'macros') addItem('macros', false); continue; }   // Macros only
     if (entry.cat) {

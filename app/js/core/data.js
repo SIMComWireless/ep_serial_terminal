@@ -49,29 +49,17 @@ const SIDEBAR = [
   { wiz: 'jam' },
 ];
 
-// Sidebar layout for Espressif modules: Macros · Signal monitor · Wi-Fi · Protocols · Bluetooth.
-// (buildSidebar picks this layout when the family is ESP; the single-child Wi-Fi category is flattened.)
-// Sidebar layout for standalone GNSS receivers: they have no cellular, no IP stack and no AT
-// layer — only the live NMEA view and the configuration of their chip.
-const SIDEBAR_GNSS = [
-  { wiz: 'macros' },
-  { wiz: 'gnss' },        // flat, no categories: a receiver only has these three entries
-  { wiz: 'gnsschip' },
-];
-
-const SIDEBAR_ESP = [
-  { wiz: 'macros' },
-  { wiz: 'sig' },   // charts the RSSI of the associated AP
-  { cat: 'cat_wifi', items: ['wifi'] },
-  { cat: 'cat_protocols', items: ['ping', 'tcpudp', 'http', 'mail', 'ftp', 'mqtt', 'lwm2m', 'coap'] },
-  { wiz: 'ble' },
-];
-
 const MACROS = [
   { name:'Module health check', text:"# Module health check\nAT\n@100\nAT+GMR" },
   // { name:'Module health check', text:"# Module health check\nAT\n@100\nAT+GMR" }, 
   // add more macros...
 ];
+
+/* ---- extension points: a vendor folder adds its own menu entry and its own wizard without
+   this file (or any other core file) naming it. Both are called at load time from
+   app/js/<vendor>/…; if that folder disappears, nothing here refers to it. ---- */
+function registerQuickGroup(group) { if (!QUICK.some((g) => g.wiz === group.wiz)) QUICK.push(group); }
+function registerWizard(def) { if (!WIZARDS.some((w) => w.id === def.id)) WIZARDS.push(def); }
 
 const wt = (k) => t('wz_' + k);
 const WIZARDS = [
